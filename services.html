@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Services | Bridgee Solutions - VA, Software Development, BPO</title>
+  <meta name="description" content="Explore the comprehensive outsourcing services offered by Bridgee Solutions, including Virtual Assistance, Software Development, and Custom BPO solutions designed to enhance your business efficiency and growth.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <!-- AOS (Animate on Scroll) -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+  <!-- Fonts and Custom Styles -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      animation: gradient 15s ease infinite;
+      background-size: 400% 400%;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .cta-button {
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .cta-button:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: rgba(255,255,255,0.1);
+      z-index: -1;
+      transition: width 0.3s ease;
+    }
+
+    .cta-button:hover:before {
+      width: 100%;
+    }
+
+    .tech-logo {
+      filter: grayscale(100%);
+      transition: all 0.3s ease;
+    }
+
+    .tech-logo:hover {
+      filter: grayscale(0%);
+      transform: scale(1.1);
+    }
+
+    .testimonial-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Bridgee Solutions",
+      "url": "https://www.bridgeesolutions.com",
+      "logo": "https://www.bridgeesolutions.com/Solutions.png",
+      "description": "Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Addis Ababa",
+        "addressCountry": "ET"
+      },
+      "sameAs": [
+        "https://www.facebook.com/bridgeesolutions",
+        "https://www.twitter.com/bridgeesolutions",
+        "https://www.linkedin.com/company/bridgeesolutions"
+      ]
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "Virtual Assistance",
+      "name": "Virtual Assistance Services",
+      "description": "Boost productivity with skilled remote assistants from Bridgee Solutions handling admin, inboxes, research & more.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Bridgee Solutions"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Ethiopia"
+      },
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.bridgeesolutions.com#contact",
+          "actionPlatform": [
+            "http://schema.org/DesktopWebPlatform",
+            "http://schema.org/IOSPlatform",
+            "http://schema.org/AndroidPlatform"
+          ]
+        }
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "Software Development",
+      "name": "Software Development Solutions",
+      "description": "Full-stack web & mobile solutions — custom-built by our agile, experienced dev teams.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Bridgee Solutions"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Ethiopia"
+      },
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.bridgeesolutions.com#contact",
+          "actionPlatform": [
+            "http://schema.org/DesktopWebPlatform",
+            "http://schema.org/IOSPlatform",
+            "http://schema.org/AndroidPlatform"
+          ]
+        }
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "Custom BPO Services",
+      "name": "Custom BPO Services",
+      "description": "Outsource customer support, lead gen, data entry, or accounting — tailored to your needs.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Bridgee Solutions"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Ethiopia"
+      },
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.bridgeesolutions.com#contact",
+          "actionPlatform": [
+            "http://schema.org/DesktopWebPlatform",
+            "http://schema.org/IOSPlatform",
+            "http://schema.org/AndroidPlatform"
+          ]
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                <a href="index.html" class="flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-lg">
+                    <img src="Solutions.png" alt="Bridgee Solutions Logo" class="h-12 w-auto" />
+                    <span class="ml-2 text-xl font-semibold text-gray-800">Bridgee <span class="text-blue-600">Solutions</span></span>
+                </a>
+                </div>
+
+                <div class="md:flex items-center hidden space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
+                    <a href="about.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
+                    <a href="services.html" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
+                    <a href="index.html#careers" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
+                    <a href="index.html#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
+                    <a href="index.html#contact" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button class="outline-none mobile-menu-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md" id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 bg-white/30 backdrop-blur-lg shadow-lg z-50" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
+                    <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
+                    <a href="about.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
+                    <a href="services.html" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
+                    <a href="index.html#careers" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
+                    <a href="index.html#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
+                    <a href="index.html#contact" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main id="services-content">
+        <section class="py-12 md:py-16 text-center bg-blue-50">
+            <div class="container mx-auto px-6">
+                <h1 class="text-4xl md:text-5xl font-bold text-blue-700 mb-4" data-aos="fade-up">Our Core Services</h1>
+                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">Tailored solutions to drive your business forward. Click on a service to learn more.</p>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-6 py-12 md:py-16">
+            <div class="space-y-8 max-w-4xl mx-auto">
+
+                <!-- Virtual Assistance -->
+                <div id="virtual-assistance" class="bg-white rounded-xl shadow-lg overflow-hidden" data-aos="fade-up">
+                    <button aria-expanded="false" aria-controls="va-details" class="w-full p-6 text-left focus:outline-none focus:bg-gray-100 hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-headset text-blue-600 text-2xl"></i>
+                            </span>
+                            <h3 class="text-2xl font-semibold text-gray-800 hover:text-blue-600">Virtual Assistance</h3>
+                            <i class="fas fa-chevron-down ml-auto text-gray-500 transform transition-transform duration-300"></i>
+                        </div>
+                    </button>
+                    <div id="va-details" class="hidden p-6 border-t border-gray-200 bg-gray-50">
+                        <p class="text-gray-700 mb-4">We will provide dedicated virtual assistants who will handle a wide range of administrative and operational tasks—allowing you to focus on strategy and growth. Our virtual assistants will manage calendars, schedule meetings, handle email correspondence, conduct online research, and support day-to-day project coordination. Each virtual assistant will undergo rigorous training and will adapt quickly to your unique processes and preferred tools.</p>
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Common Tools Used:</h4>
+                        <ul class="list-disc list-inside text-gray-600 space-y-1 mb-4 pl-4">
+                            <li>Microsoft Office 365 (Outlook, Excel, Word)</li>
+                            <li>Google Workspace (Gmail, Calendar, Docs, Sheets)</li>
+                            <li>Slack or Microsoft Teams (Communication)</li>
+                            <li>Trello, Asana, or ClickUp (Task Management)</li>
+                            <li>Zoom or Google Meet (Video Conferencing)</li>
+                            <li>Dropbox or Google Drive (Cloud File Sharing)</li>
+                        </ul>
+                        <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
+                        <p class="text-gray-600">Please contact us for a personalized quote tailored to your specific needs.</p>
+                        <a href="index.html#contact" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
+                    </div>
+                </div>
+
+                <!-- Software Development -->
+                <div id="software-development" class="bg-white rounded-xl shadow-lg overflow-hidden" data-aos="fade-up">
+                    <button aria-expanded="false" aria-controls="dev-details" class="w-full p-6 text-left focus:outline-none focus:bg-gray-100 hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-code text-blue-600 text-2xl"></i>
+                            </span>
+                            <h3 class="text-2xl font-semibold text-gray-800 hover:text-blue-600">Software Development</h3>
+                            <i class="fas fa-chevron-down ml-auto text-gray-500 transform transition-transform duration-300"></i>
+                        </div>
+                    </button>
+                    <div id="dev-details" class="hidden p-6 border-t border-gray-200 bg-gray-50">
+                        <p class="text-gray-700 mb-4">Our software development teams will build, maintain, and scale web and mobile applications according to your specifications. Whether you require a customer-facing portal, an internal dashboard, or a full-featured mobile app, we will design, code, and deploy solutions aligned with industry best practices. All developers will be versed in agile methodologies and will collaborate closely with your product managers to ensure rapid iterations and robust code quality.</p>
+                        <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
+                        <p class="text-gray-600">Please contact us for a personalized quote tailored to your project scope and requirements.</p>
+                         <a href="index.html#contact" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
+                    </div>
+                </div>
+
+                <!-- Custom BPO Services -->
+                <div id="bpo-services" class="bg-white rounded-xl shadow-lg overflow-hidden" data-aos="fade-up">
+                    <button aria-expanded="false" aria-controls="bpo-details" class="w-full p-6 text-left focus:outline-none focus:bg-gray-100 hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-people-arrows text-blue-600 text-2xl"></i>
+                            </span>
+                            <h3 class="text-2xl font-semibold text-gray-800 hover:text-blue-600">Custom BPO Services</h3>
+                            <i class="fas fa-chevron-down ml-auto text-gray-500 transform transition-transform duration-300"></i>
+                        </div>
+                    </button>
+                    <div id="bpo-details" class="hidden p-6 border-t border-gray-200 bg-gray-50">
+                        <p class="text-gray-700 mb-4">Our custom services offering will address any specialized business process or bespoke project requirement you may have. Whether you need workflow automation, specialized data entry, market research, or a unique combination of multiple services, we will assemble a dedicated team tailored to your exact needs. Every custom engagement will begin with a discovery phase to map out requirements, followed by a scalable execution plan.</p>
+                        <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
+                        <p class="text-gray-600">Please contact us for a personalized quote for your custom service needs.</p>
+                         <a href="index.html#contact" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
+                    </div>
+                </div>
+                 <!-- Placeholder for Custom Solutions - if different from Custom BPO -->
+                <div id="custom-solutions" class="bg-white rounded-xl shadow-lg overflow-hidden" data-aos="fade-up">
+                    <button aria-expanded="false" aria-controls="cs-details" class="w-full p-6 text-left focus:outline-none focus:bg-gray-100 hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-lightbulb text-blue-600 text-2xl"></i>
+                            </span>
+                            <h3 class="text-2xl font-semibold text-gray-800 hover:text-blue-600">Tailored Solutions & Consulting</h3>
+                            <i class="fas fa-chevron-down ml-auto text-gray-500 transform transition-transform duration-300"></i>
+                        </div>
+                    </button>
+                    <div id="cs-details" class="hidden p-6 border-t border-gray-200 bg-gray-50">
+                        <p class="text-gray-700 mb-4">Beyond our standard service categories, we offer specialized consulting and tailored solutions. If you have a unique challenge or require a multi-faceted approach that combines various aspects of our expertise, we're here to build that with you. This can include process optimization consulting, setting up remote teams with specific skill sets, or project-based strategic support.</p>
+                        <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
+                        <p class="text-gray-600">Let's discuss your unique requirements to build a custom quote.</p>
+                         <a href="index.html#contact" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Discuss Your Project</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <section class="py-12 md:py-16 bg-gray-100 mt-12 md:mt-16" data-aos="fade-up">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 text-center">Why Choose Bridgee Solutions?</h2>
+                <p class="text-lg text-gray-600 mb-10 text-center max-w-3xl mx-auto">At Bridgee Solutions, we go beyond traditional outsourcing—we provide businesses with a seamless, personalized, and results-driven experience. Here’s what makes us different from the rest:</p>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Point 1 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 p-2 rounded-full mr-3"><i class="fas fa-sliders-h text-blue-600 text-xl"></i></span>
+                            <h3 class="text-xl font-semibold text-gray-700">Tailored Solutions</h3>
+                        </div>
+                        <p class="text-gray-600">We don’t believe in one-size-fits-all. We customize our services to fit your specific requirements, ensuring maximum efficiency and cost savings.</p>
+                    </div>
+                    <!-- Point 2 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 p-2 rounded-full mr-3"><i class="fas fa-users-cog text-blue-600 text-xl"></i></span>
+                            <h3 class="text-xl font-semibold text-gray-700">Skilled Talent</h3>
+                        </div>
+                        <p class="text-gray-600">Located in Addis Ababa, Ethiopia, we tap into a highly skilled workforce trained to meet international standards. Our professionals are adaptable, multilingual, and tech-savvy.</p>
+                    </div>
+                    <!-- Point 3 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 p-2 rounded-full mr-3"><i class="fas fa-dollar-sign text-blue-600 text-xl"></i></span>
+                            <h3 class="text-xl font-semibold text-gray-700">Competitive Pricing</h3>
+                        </div>
+                        <p class="text-gray-600">We offer cost-effective solutions that reduce overhead while maintaining high-quality performance. Our efficient processes ensure premium services at an affordable price.</p>
+                    </div>
+                    <!-- Point 4 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 p-2 rounded-full mr-3"><i class="fas fa-headset text-blue-600 text-xl"></i></span>
+                            <h3 class="text-xl font-semibold text-gray-700">Personalized Support</h3>
+                        </div>
+                        <p class="text-gray-600">We provide dedicated account management, ensuring clear communication and fast response times. Our clients always know what’s happening—no hidden fees, no surprises.</p>
+                    </div>
+                    <!-- Point 5 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 p-2 rounded-full mr-3"><i class="fas fa-lightbulb text-blue-600 text-xl"></i></span>
+                            <h3 class="text-xl font-semibold text-gray-700">Innovation & Growth</h3>
+                        </div>
+                        <p class="text-gray-600">We leverage cutting-edge technology and continuously adapt to industry trends. We help you stay ahead with AI-driven processes, automation, and modern workflow tools.</p>
+                    </div>
+                    <!-- Point 6 -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 p-2 rounded-full mr-3"><i class="fas fa-handshake text-blue-600 text-xl"></i></span>
+                            <h3 class="text-xl font-semibold text-gray-700">True Partnership</h3>
+                        </div>
+                        <p class="text-gray-600">We see ourselves as an extension of your team. We focus on building long-term relationships, ensuring your business scales successfully with our support.</p>
+                    </div>
+                </div>
+                <p class="text-center text-lg text-gray-700 mt-10" data-aos="fade-up">Let’s bridge the gap between your business and success. Partner with Bridgee Solutions today and experience outsourcing done right!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="md:col-span-2">
+                    <a href="index.html" class="flex items-center mb-6 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-lg">
+                    <img src="Solutions_darkmode.png" alt="Bridgee Solutions Logo" class="h-8 w-auto mr-2">
+                    <span class="text-xl font-semibold">Bridgee <span class="text-blue-400">Solutions</span></span>
+                    </a>
+
+                    <p class="text-gray-300 mb-4">Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Home</a></li>
+                        <li><a href="about.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">About Us</a></li>
+                        <li><a href="index.html#careers" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Careers</a></li>
+                        <li><a href="index.html#blog" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Blog</a></li>
+                        <li><a href="index.html#contact" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="services.html#virtual-assistance" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
+                        <li><a href="services.html#software-development" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
+                        <li><a href="services.html#bpo-services" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
+                        <li><a href="services.html#custom-solutions" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom Solutions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">GDPR Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-300">
+                <p>© 2023 Bridgee Solutions. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+      const menuButton = document.getElementById('mobile-menu-button');
+      const menu = document.getElementById('mobile-menu');
+
+      menuButton.addEventListener('click', function() {
+        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
+        menuButton.setAttribute('aria-expanded', !isExpanded);
+        menu.classList.toggle('hidden');
+        document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
+
+        if (!isExpanded && !menu.classList.contains('hidden')) { // If menu is now open
+          const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+          if (focusableElements.length > 0) {
+            focusableElements[0].focus();
+          }
+        }
+      });
+
+      // Focus trapping
+      menu.addEventListener('keydown', function(event) {
+        if (menu.classList.contains('hidden') || event.key !== 'Tab') return;
+
+        const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+        if (focusableElements.length === 0) return;
+        const firstFocusableElement = focusableElements[0];
+        const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+        if (event.shiftKey) { // Shift + Tab
+          if (document.activeElement === firstFocusableElement) {
+            lastFocusableElement.focus();
+            event.preventDefault();
+          }
+        } else { // Tab
+          if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus();
+            event.preventDefault();
+          }
+        }
+      });
+
+      // Escape key to close
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
+          menu.classList.add('hidden');
+          document.body.style.overflow = '';
+          menuButton.setAttribute('aria-expanded', 'false');
+          menuButton.focus();
+        }
+      });
+    </script>
+
+  <!-- Accordion Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const accordionButtons = document.querySelectorAll('button[aria-expanded][aria-controls]');
+
+      accordionButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          const currentlyExpanded = this.getAttribute('aria-expanded') === 'true';
+          const controlsId = this.getAttribute('aria-controls');
+          const detailsPanel = document.getElementById(controlsId);
+          const chevronIcon = this.querySelector('.fa-chevron-down, .fa-chevron-up');
+
+          // Behavior: Close others when one is opened
+          if (!currentlyExpanded) { // If we are about to open this one
+            accordionButtons.forEach(otherButton => {
+              if (otherButton !== this) {
+                otherButton.setAttribute('aria-expanded', 'false');
+                const otherDetailsPanelId = otherButton.getAttribute('aria-controls');
+                const otherDetailsPanel = document.getElementById(otherDetailsPanelId);
+                if (otherDetailsPanel) {
+                  otherDetailsPanel.classList.add('hidden');
+                }
+                const otherChevronIcon = otherButton.querySelector('.fa-chevron-down, .fa-chevron-up');
+                if (otherChevronIcon) {
+                  otherChevronIcon.classList.remove('fa-chevron-up');
+                  otherChevronIcon.classList.add('fa-chevron-down');
+                }
+              }
+            });
+          }
+
+          // Toggle the clicked accordion
+          if (detailsPanel) {
+            if (currentlyExpanded) {
+              this.setAttribute('aria-expanded', 'false');
+              detailsPanel.classList.add('hidden');
+              if (chevronIcon) {
+                chevronIcon.classList.remove('fa-chevron-up');
+                chevronIcon.classList.add('fa-chevron-down');
+              }
+            } else {
+              this.setAttribute('aria-expanded', 'true');
+              detailsPanel.classList.remove('hidden');
+              if (chevronIcon) {
+                chevronIcon.classList.remove('fa-chevron-down');
+                chevronIcon.classList.add('fa-chevron-up');
+              }
+            }
+          }
+        });
+      });
+    });
+  </script>
+
+  <!-- AOS and other scripts -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init();
+
+    // Fade-in hero elements on page load (if this script is still needed and separate)
+    // window.addEventListener('DOMContentLoaded', () => {
+    //   document.getElementById('hero-text')?.classList.remove('opacity-0', 'translate-y-6');
+    //   document.getElementById('hero-image')?.classList.remove('opacity-0', 'translate-y-6');
+    // });
+  </script>
+</body>
+</html>

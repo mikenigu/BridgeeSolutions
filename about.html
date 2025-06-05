@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Bridgee Solutions | Our Story, Mission, and Values</title>
+  <meta name="description" content="Learn about Bridgee Solutions, our mission to provide top-tier outsourcing services from Addis Ababa, our values, our journey, and the dedicated team behind our success.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <!-- AOS (Animate on Scroll) -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+  <!-- Fonts and Custom Styles -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      animation: gradient 15s ease infinite;
+      background-size: 400% 400%;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .cta-button {
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .cta-button:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: rgba(255,255,255,0.1);
+      z-index: -1;
+      transition: width 0.3s ease;
+    }
+
+    .cta-button:hover:before {
+      width: 100%;
+    }
+
+    .tech-logo {
+      filter: grayscale(100%);
+      transition: all 0.3s ease;
+    }
+
+    .tech-logo:hover {
+      filter: grayscale(0%);
+      transform: scale(1.1);
+    }
+
+    .testimonial-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Bridgee Solutions",
+      "url": "https://www.bridgeesolutions.com",
+      "logo": "https://www.bridgeesolutions.com/Solutions.png",
+      "description": "Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Addis Ababa",
+        "addressCountry": "ET"
+      },
+      "sameAs": [
+        "https://www.facebook.com/bridgeesolutions",
+        "https://www.twitter.com/bridgeesolutions",
+        "https://www.linkedin.com/company/bridgeesolutions"
+      ]
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "Virtual Assistance",
+      "name": "Virtual Assistance Services",
+      "description": "Boost productivity with skilled remote assistants from Bridgee Solutions handling admin, inboxes, research & more.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Bridgee Solutions"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Ethiopia"
+      },
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.bridgeesolutions.com#contact",
+          "actionPlatform": [
+            "http://schema.org/DesktopWebPlatform",
+            "http://schema.org/IOSPlatform",
+            "http://schema.org/AndroidPlatform"
+          ]
+        }
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "Software Development",
+      "name": "Software Development Solutions",
+      "description": "Full-stack web & mobile solutions — custom-built by our agile, experienced dev teams.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Bridgee Solutions"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Ethiopia"
+      },
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.bridgeesolutions.com#contact",
+          "actionPlatform": [
+            "http://schema.org/DesktopWebPlatform",
+            "http://schema.org/IOSPlatform",
+            "http://schema.org/AndroidPlatform"
+          ]
+        }
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "Custom BPO Services",
+      "name": "Custom BPO Services",
+      "description": "Outsource customer support, lead gen, data entry, or accounting — tailored to your needs.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Bridgee Solutions"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Ethiopia"
+      },
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.bridgeesolutions.com#contact",
+          "actionPlatform": [
+            "http://schema.org/DesktopWebPlatform",
+            "http://schema.org/IOSPlatform",
+            "http://schema.org/AndroidPlatform"
+          ]
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                <a href="index.html" class="flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-lg">
+                    <img src="Solutions.png" alt="Bridgee Solutions Logo" class="h-12 w-auto" />
+                    <span class="ml-2 text-xl font-semibold text-gray-800">Bridgee <span class="text-blue-600">Solutions</span></span>
+                </a>
+                </div>
+
+                <div class="md:flex items-center hidden space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
+                    <a href="about.html" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
+                    <a href="index.html#services" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
+                    <a href="index.html#careers" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
+                    <a href="index.html#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
+                    <a href="index.html#contact" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button class="outline-none mobile-menu-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md" id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 bg-white/30 backdrop-blur-lg shadow-lg z-50" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
+                    <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
+                    <a href="about.html" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
+                    <a href="index.html#services" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
+                    <a href="index.html#careers" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
+                    <a href="index.html#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
+                    <a href="index.html#contact" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main id="about-us-content">
+    <section class="bg-gradient-to-r from-blue-700 to-blue-500 text-white py-16 md:py-24">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4" data-aos="fade-up">About Bridgee Solutions</h1>
+            <p class="text-lg md:text-xl text-blue-200" data-aos="fade-up" data-aos-delay="100">Your Partner in Growth and Efficiency.</p>
+        </div>
+    </section>
+
+    <div class="py-12 md:py-16 bg-white">
+        <div class="container mx-auto px-6">
+
+            <section class="mb-12 md:mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center" data-aos="fade-up">Who We Are</h2>
+                <div class="max-w-3xl mx-auto text-lg text-gray-700 space-y-4" data-aos="fade-up" data-aos-delay="100">
+                    <p>Founded in 2024 by Fiker Anteneh and Michael Nigussie, Bridgee Solutions was born from a shared vision to bridge the gap between global businesses seeking reliable, skilled outsourcing services and the rich pool of untapped talent in Ethiopia. With Fiker's extensive background in operations management and customer success, combined with Michael's deep expertise in technology and software development, Bridgee Solutions is uniquely positioned to offer a comprehensive suite of BPO and technology solutions.</p>
+                    <p>We are more than just an outsourcing company; we are a dedicated partner committed to understanding your unique business needs and delivering tailored services that drive growth, efficiency, and innovation. Our roots in Addis Ababa, Ethiopia, provide us with a unique advantage – access to a vibrant, educated, and motivated workforce eager to contribute to the global digital economy.</p>
+                </div>
+            </section>
+
+            <section class="mb-12 md:mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center" data-aos="fade-up">Our Journey</h2>
+                <div class="max-w-3xl mx-auto text-lg text-gray-700 space-y-4" data-aos="fade-up" data-aos-delay="100">
+                    <p>Starting with a small but passionate team, Bridgee Solutions embarked on its mission to showcase Ethiopian talent on the world stage. Our initial focus was on providing exceptional virtual assistant services, quickly establishing a reputation for reliability and quality. As our clients' needs grew, so did our expertise. We expanded into software development, leveraging local tech talent to build innovative solutions, and further diversified into custom BPO services, covering customer support, data entry, and more.</p>
+                    <p>Each milestone in our journey has been marked by a commitment to learning, adaptation, and exceeding expectations. We've invested heavily in training programs, technology infrastructure, and creating a supportive work environment that nurtures talent and fosters professional growth. Today, Bridgee Solutions stands as a testament to the power of vision, dedication, and the incredible potential within Ethiopia.</p>
+                </div>
+            </section>
+
+            <section class="mb-12 md:mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center" data-aos="fade-up">Our Mission, Vision & Values</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                        <div class="bg-blue-100 p-4 rounded-full inline-block mb-4">
+                            <i class="fas fa-rocket text-blue-600 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-blue-600 mb-3">Our Mission</h3>
+                        <p class="text-gray-600">To empower businesses globally by providing high-quality, cost-effective outsourcing solutions delivered by exceptional Ethiopian talent, fostering growth for our clients and opportunities for our team.</p>
+                    </div>
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                        <div class="bg-blue-100 p-4 rounded-full inline-block mb-4">
+                             <i class="fas fa-eye text-blue-600 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-blue-600 mb-3">Our Vision</h3>
+                        <p class="text-gray-600">To be the leading BPO and technology solutions provider in East Africa, recognized for our commitment to excellence, innovation, and creating a positive impact on the global business landscape and local communities.</p>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="300" class="text-left md:text-center">
+                         <div class="bg-blue-100 p-4 rounded-full inline-block mb-4 md:mx-auto">
+                            <i class="fas fa-heart text-blue-600 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-blue-600 mb-3 md:text-center">Our Values</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <h4 class="text-xl font-semibold text-gray-700">Reliability</h4>
+                                <p class="text-gray-600">We deliver consistent, high-quality services.</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold text-gray-700">Innovation</h4>
+                                <p class="text-gray-600">We embrace creativity and continuous improvement.</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold text-gray-700">Integrity</h4>
+                                <p class="text-gray-600">We operate with transparency and ethical practices.</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold text-gray-700">Collaboration</h4>
+                                <p class="text-gray-600">We work as a true extension of your team.</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold text-gray-700">Empowerment</h4>
+                                <p class="text-gray-600">We invest in our people and communities.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-12 md:mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-12 mb-8 text-center" data-aos="fade-up">Why Partner With Bridgee?</h2>
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div class="flex items-start p-4 rounded-lg hover:shadow-lg transition-shadow duration-300" data-aos="fade-up" data-aos-delay="100">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4 flex-shrink-0"> <i class="fas fa-check text-blue-600 text-xl"></i> </div>
+                        <div> <h4 class="font-semibold text-gray-800 text-lg mb-1">Cost-effective</h4> <p class="text-gray-600">Scale without the overhead. Save up to 70% compared to in-house hiring.</p> </div>
+                    </div>
+                    <div class="flex items-start p-4 rounded-lg hover:shadow-lg transition-shadow duration-300" data-aos="fade-up" data-aos-delay="200">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4 flex-shrink-0"> <i class="fas fa-globe-africa text-blue-600 text-xl"></i> </div>
+                        <div> <h4 class="font-semibold text-gray-800 text-lg mb-1">Skilled local talent</h4> <p class="text-gray-600">Handpicked professionals from Addis Ababa with rigorous vetting.</p> </div>
+                    </div>
+                    <div class="flex items-start p-4 rounded-lg hover:shadow-lg transition-shadow duration-300" data-aos="fade-up" data-aos-delay="300">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4 flex-shrink-0"> <i class="fas fa-bullseye text-blue-600 text-xl"></i> </div>
+                        <div> <h4 class="font-semibold text-gray-800 text-lg mb-1">Customized teams</h4> <p class="text-gray-600">Built to match your exact goals, KPIs, and company culture.</p> </div>
+                    </div>
+                    <div class="flex items-start p-4 rounded-lg hover:shadow-lg transition-shadow duration-300" data-aos="fade-up" data-aos-delay="400">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4 flex-shrink-0"> <i class="fas fa-chart-line text-blue-600 text-xl"></i> </div>
+                        <div> <h4 class="font-semibold text-gray-800 text-lg mb-1">Growth-focused</h4> <p class="text-gray-600">We align our success with yours — your growth is our metric.</p> </div>
+                    </div>
+                </div>
+                <div class="mt-12 bg-blue-50 p-8 rounded-lg shadow-xl" data-aos="fade-up" data-aos-delay="500">
+                    <h4 class="font-bold text-blue-800 text-2xl mb-3 text-center">Our Commitment</h4>
+                    <p class="text-blue-700 text-center text-lg">Every Bridgee team member completes our 200-hour training program in communication, tools, and best practices before joining client projects, ensuring they are ready to deliver value from day one.</p>
+                </div>
+            </section>
+
+            <section class="mb-12 md:mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-12 mb-10 text-center" data-aos="fade-up">Meet Our Leadership</h2>
+                <div class="grid md:grid-cols-2 gap-10">
+                    <div class="text-center p-6 bg-gray-50 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                        <div class="w-36 h-36 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-gray-500 shadow-md">
+                            <i class="fas fa-user text-5xl"></i> <!-- Placeholder Icon -->
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800">Fiker Anteneh</h4>
+                        <p class="text-blue-600 font-semibold">Co-founder & COO</p>
+                        <p class="text-gray-600 mt-3 text-sm">With a passion for operational excellence and client success, Fiker ensures Bridgee's services consistently exceed expectations.</p>
+                    </div>
+                    <div class="text-center p-6 bg-gray-50 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                        <div class="w-36 h-36 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-gray-500 shadow-md">
+                             <i class="fas fa-user-tie text-5xl"></i> <!-- Placeholder Icon -->
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800">Michael Nigussie</h4>
+                        <p class="text-blue-600 font-semibold">Co-founder & CTO</p>
+                        <p class="text-gray-600 mt-3 text-sm">Michael drives our technological innovation, leading our development teams to build cutting-edge solutions for our clients.</p>
+                    </div>
+                </div>
+                <p class="text-center text-gray-600 mt-12" data-aos="fade-up">More team member profiles coming soon!</p>
+            </section>
+
+            <section class="mb-12 md:mb-16">
+                 <p class="text-center text-gray-700 mt-12 text-lg" data-aos="fade-up">Our Office Location: <span class="font-semibold">Addis Ababa, Ethiopia</span></p>
+            </section>
+
+            <section class="pb-6 md:pb-0">
+                <p class="text-center text-xl text-blue-600 font-semibold mt-10 mb-6" data-aos="fade-up">At Bridgee Solutions, we are more than just a service provider—we are your partner in success. Let’s grow together! 🚀</p>
+            </section>
+        </div>
+    </div>
+</main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="md:col-span-2">
+                    <a href="index.html" class="flex items-center mb-6 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-lg">
+                    <img src="Solutions_darkmode.png" alt="Bridgee Solutions Logo" class="h-8 w-auto mr-2">
+                    <span class="text-xl font-semibold">Bridgee <span class="text-blue-400">Solutions</span></span>
+                    </a>
+
+                    <p class="text-gray-300 mb-4">Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="about.html" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">About Us</a></li>
+                        <li><a href="index.html#careers" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Careers</a></li>
+                        <li><a href="index.html#blog" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Blog</a></li>
+                        <li><a href="index.html#contact" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html#services" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
+                        <li><a href="index.html#services" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
+                        <li><a href="index.html#services" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
+                        <li><a href="index.html#services" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom Solutions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">GDPR Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-300">
+                <p>© 2023 Bridgee Solutions. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+      const menuButton = document.getElementById('mobile-menu-button');
+      const menu = document.getElementById('mobile-menu');
+
+      menuButton.addEventListener('click', function() {
+        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
+        menuButton.setAttribute('aria-expanded', !isExpanded);
+        menu.classList.toggle('hidden');
+        document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
+
+        if (!isExpanded && !menu.classList.contains('hidden')) { // If menu is now open
+          const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+          if (focusableElements.length > 0) {
+            focusableElements[0].focus();
+          }
+        }
+      });
+
+      // Focus trapping
+      menu.addEventListener('keydown', function(event) {
+        if (menu.classList.contains('hidden') || event.key !== 'Tab') return;
+
+        const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+        if (focusableElements.length === 0) return;
+        const firstFocusableElement = focusableElements[0];
+        const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+        if (event.shiftKey) { // Shift + Tab
+          if (document.activeElement === firstFocusableElement) {
+            lastFocusableElement.focus();
+            event.preventDefault();
+          }
+        } else { // Tab
+          if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus();
+            event.preventDefault();
+          }
+        }
+      });
+
+      // Escape key to close
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
+          menu.classList.add('hidden');
+          document.body.style.overflow = '';
+          menuButton.setAttribute('aria-expanded', 'false');
+          menuButton.focus();
+        }
+      });
+    </script>
+
+  <!-- AOS and other scripts -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init();
+
+    // Fade-in hero elements on page load (if this script is still needed and separate)
+    // window.addEventListener('DOMContentLoaded', () => {
+    //   document.getElementById('hero-text')?.classList.remove('opacity-0', 'translate-y-6');
+    //   document.getElementById('hero-image')?.classList.remove('opacity-0', 'translate-y-6');
+    // });
+  </script>
+</body>
+</html>

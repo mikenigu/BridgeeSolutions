@@ -131,6 +131,12 @@
     .testimonial-swiper .swiper-wrapper {
          transition-timing-function: linear !important;
     }
+
+    .testimonial-card p.text-blue-100 {
+        white-space: normal !important;
+        word-wrap: break-word !important; /* For older browsers */
+        overflow-wrap: break-word !important;
+    }
   </style>
   <script type="application/ld+json">
     {
@@ -787,6 +793,20 @@
         }
         */
       });
+
+      // Explicit event listeners for pause on hover as a workaround
+      const swiperInstance = document.querySelector('.testimonial-swiper')?.swiper;
+      if (swiperInstance) {
+        const swiperWrapper = document.querySelector('.testimonial-swiper');
+        if (swiperWrapper) { // Ensure swiperWrapper is found
+            swiperWrapper.addEventListener('mouseenter', () => {
+              swiperInstance.autoplay.stop();
+            });
+            swiperWrapper.addEventListener('mouseleave', () => {
+              swiperInstance.autoplay.start();
+            });
+        }
+      }
     });
 
     // Fade-in hero elements on page load (if this script is still needed and separate)

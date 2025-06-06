@@ -116,6 +116,21 @@
         background-color: #2563eb; /* Blue-600 for active dot */
         opacity: 1;
     }
+
+    /* Hide Swiper navigation buttons for testimonial carousel */
+    .testimonial-swiper .swiper-button-next,
+    .testimonial-swiper .swiper-button-prev,
+    .testimonial-swiper .swiper-pagination {
+        display: none !important; /* Use !important to ensure override if other styles exist */
+    }
+
+    .testimonial-swiper .swiper-slide {
+        width: auto;
+        flex-shrink: 0;
+    }
+    .testimonial-swiper .swiper-wrapper {
+         transition-timing-function: linear !important;
+    }
   </style>
   <script type="application/ld+json">
     {
@@ -736,35 +751,41 @@
     // Testimonial Swiper Initialization
     document.addEventListener('DOMContentLoaded', function () {
       const testimonialSwiper = new Swiper('.testimonial-swiper', {
-        // Optional parameters
         loop: true,
-        slidesPerView: 1, // Default to 1 slide for mobile
-        spaceBetween: 30, // Space between slides
+        slidesPerView: 'auto', // Key for continuous scroll with variable width slides
+        spaceBetween: 40,    // Adjust as needed, was 30-40
+        speed: 8000,         // Duration of the entire loop transition (e.g., 8 seconds)
         autoplay: {
-          delay: 5000, // 5 seconds
-          disableOnInteraction: false, // Autoplay will not be disabled after user interactions (swipes)
-          pauseOnMouseEnter: true, // Pause autoplay when mouse enters the swiper container
+          delay: 0,          // Start scrolling immediately
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true, // Retain this
         },
+        freeMode: true,      // Enables free mode scrolling
+        // Ensure navigation is commented out or removed
+        // navigation: { ... },
+        // Comment out or remove pagination configuration
+        /*
         pagination: {
           el: '.swiper-pagination',
           clickable: true,
         },
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
+        */
+        // Breakpoints might be less critical with slidesPerView: 'auto'
+        // but can be kept if specific spaceBetween adjustments are desired per breakpoint.
+        // For simplicity in this step, we can comment them out or leave as is if they don't conflict.
+        // Let's try commenting them out for now to ensure 'auto' takes full effect.
+        /*
         breakpoints: {
-          // when window width is >= 768px (md in Tailwind)
           768: {
-            slidesPerView: 2,
+            slidesPerView: 2, // This would conflict with 'auto' if not handled carefully
             spaceBetween: 30
           },
-          // when window width is >= 1024px (lg in Tailwind)
           1024: {
-            slidesPerView: 3,
+            slidesPerView: 3, // This would conflict with 'auto'
             spaceBetween: 40
           }
         }
+        */
       });
     });
 

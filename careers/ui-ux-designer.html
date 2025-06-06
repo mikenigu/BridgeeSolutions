@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UI/UX Designer | Careers | Bridgee Solutions</title>
+  <meta name="description" content="Seeking a creative UI/UX Designer at Bridgee Solutions in Addis Ababa (Remote Friendly). Design intuitive and engaging user experiences for web and mobile applications.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <!-- AOS (Animate on Scroll) -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+  <!-- Fonts and Custom Styles -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      scroll-behavior: smooth;
+    }
+    .hero-gradient {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      animation: gradient 15s ease infinite;
+      background-size: 400% 400%;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .cta-button {
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .cta-button:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: rgba(255,255,255,0.1);
+      z-index: -1;
+      transition: width 0.3s ease;
+    }
+    .cta-button:hover:before {
+      width: 100%;
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "JobPosting",
+      "title": "UI/UX Designer",
+      "description": "<p>We are seeking a talented UI/UX Designer to create intuitive, engaging, and visually appealing user interfaces and experiences for our web and mobile applications. You will be responsible for the entire design process, from user research and wireframing to high-fidelity mockups and prototyping.</p>",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Bridgee Solutions",
+        "value": "UIUX-001"
+      },
+      "datePosted": "2024-03-15",
+      "validThrough": "2024-04-15",
+      "employmentType": "FULL_TIME",
+      "hiringOrganization": {
+        "@type": "Organization",
+        "name": "Bridgee Solutions",
+        "sameAs": "https://www.bridgeesolutions.com",
+        "logo": "../Solutions.png"
+      },
+      "jobLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Addis Ababa",
+          "addressCountry": "ET"
+        }
+      },
+      "jobLocationType": "TELECOMMUTE",
+      "applicantLocationRequirements": {
+        "@type": "Country",
+        "name": "Ethiopia"
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                <a href="../index.html" class="flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-lg">
+                    <img src="../Solutions.png" alt="Bridgee Solutions Logo" class="h-12 w-auto" />
+                    <span class="ml-2 text-xl font-semibold text-gray-800">Bridgee <span class="text-blue-600">Solutions</span></span>
+                </a>
+                </div>
+
+                <div class="md:flex items-center hidden space-x-8">
+                    <a href="../index.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
+                    <a href="../about.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
+                    <a href="../services.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
+                    <a href="../careers.html" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
+                    <a href="../index.html#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
+                    <a href="../contact.html" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button class="outline-none mobile-menu-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md" id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 bg-white/30 backdrop-blur-lg shadow-lg z-50" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
+                    <a href="../index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
+                    <a href="../about.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
+                    <a href="../services.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
+                    <a href="../careers.html" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
+                    <a href="../index.html#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
+                    <a href="../contact.html" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main id="job-detail-content" class="bg-white py-12 md:py-16">
+        <div class="container mx-auto px-6">
+            <div class="mb-8 text-sm" data-aos="fade-right">
+                <a href="../careers.html" class="text-blue-600 hover:text-blue-800 font-semibold transition duration-300 inline-flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to All Careers
+                </a>
+            </div>
+
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-2" data-aos="fade-up">UI/UX Designer</h1>
+
+            <p class="text-lg text-gray-600 mb-6" data-aos="fade-up" data-aos-delay="100">
+                Location: Addis Ababa, Ethiopia - Remote Friendly | Job Type: Full-time
+            </p>
+
+            <section class="mb-8" data-aos="fade-up" data-aos-delay="200">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-3">Role Overview</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    We are seeking a talented and creative UI/UX Designer to craft intuitive, engaging, and visually appealing user interfaces and experiences for our web and mobile applications. You will be responsible for the entire design process, from conducting user research and creating wireframes to developing high-fidelity mockups and interactive prototypes.
+                </p>
+            </section>
+
+            <section class="mb-8" data-aos="fade-up" data-aos-delay="300">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-3">Key Responsibilities</h2>
+                <ul class="list-disc list-inside text-gray-700 space-y-2 pl-4 leading-relaxed">
+                    <li>Conduct user research, interviews, and usability testing to understand user needs and pain points.</li>
+                    <li>Create user personas, journey maps, wireframes, and sitemaps to guide design decisions.</li>
+                    <li>Develop high-fidelity mockups, visual designs, and interactive prototypes for web and mobile platforms.</li>
+                    <li>Collaborate closely with developers, product managers, and other stakeholders to ensure design feasibility and consistency.</li>
+                    <li>Maintain and evolve design systems and style guides.</li>
+                </ul>
+            </section>
+
+            <section class="mb-8" data-aos="fade-up" data-aos-delay="400">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-3">Required Qualifications</h2>
+                <ul class="list-disc list-inside text-gray-700 space-y-2 pl-4 leading-relaxed">
+                    <li>Proven experience as a UI/UX Designer or similar role, with a strong portfolio showcasing your design work.</li>
+                    <li>Proficiency in design and prototyping tools such as Figma, Sketch, Adobe XD, or similar.</li>
+                    <li>Solid understanding of user-centered design principles, usability, and accessibility best practices.</li>
+                    <li>Excellent visual design skills with a keen eye for detail, typography, color, and layout.</li>
+                    <li>Ability to effectively communicate design ideas and rationale to stakeholders.</li>
+                </ul>
+            </section>
+
+            <section class="mb-8" data-aos="fade-up" data-aos-delay="500">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-3">Preferred Qualifications</h2>
+                <ul class="list-disc list-inside text-gray-700 space-y-2 pl-4 leading-relaxed">
+                    <li>Experience designing for responsive web applications and native mobile apps (iOS and Android).</li>
+                    <li>Knowledge of HTML, CSS, and basic front-end development concepts.</li>
+                    <li>Experience working in an agile development environment.</li>
+                </ul>
+            </section>
+
+            <section class="mb-8" data-aos="fade-up" data-aos-delay="600">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-3">What We Offer (Benefits)</h2>
+                <ul class="list-disc list-inside text-gray-700 space-y-2 pl-4 leading-relaxed">
+                    <li>Competitive remuneration and benefits.</li>
+                    <li>Flexible work options, including remote opportunities.</li>
+                    <li>A creative and collaborative environment to grow your skills.</li>
+                    <li>Opportunity to work on diverse projects and shape user experiences.</li>
+                    <li>Access to industry-standard design tools and resources.</li>
+                </ul>
+            </section>
+
+            <section class="mt-10 py-8 bg-blue-50 p-6 md:p-8 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="700">
+                <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 text-center">Apply for this Role</h2>
+
+                <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6 max-w-xl mx-auto">
+                    <div>
+                        <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" name="full_name" id="full_name" placeholder="Enter your full name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" name="email" id="email" placeholder="you@example.com" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1">Phone Number (Optional)</label>
+                        <input type="tel" name="phone_number" id="phone_number" placeholder="+251 ..." class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label for="cover_letter" class="block text-sm font-medium text-gray-700 mb-1">Cover Letter (Optional)</label>
+                        <textarea name="cover_letter" id="cover_letter" rows="4" placeholder="Paste your cover letter here or briefly tell us why you're a good fit." class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="cv_upload" class="block text-sm font-medium text-gray-700 mb-1">Upload CV (PDF, DOC, DOCX)</label>
+                        <input type="file" name="cv_upload" id="cv_upload" required accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    </div>
+
+                    <input type="hidden" name="job_title" id="job_title_hidden" value="UI/UX Designer">
+
+                    <div class="text-center pt-4">
+                        <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                            Submit Application
+                        </button>
+                    </div>
+                </form>
+                <p class="text-xs text-gray-500 mt-6 text-center">
+                    Bridgee Solutions is an equal opportunity employer. We celebrate diversity and are committed to creating an inclusive environment for all employees. By submitting your application, you agree to our Privacy Policy (link placeholder).
+                </p>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="md:col-span-2">
+                    <a href="../index.html" class="flex items-center mb-6 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-lg">
+                    <img src="../Solutions_darkmode.png" alt="Bridgee Solutions Logo" class="h-8 w-auto mr-2">
+                    <span class="text-xl font-semibold">Bridgee <span class="text-blue-400">Solutions</span></span>
+                    </a>
+                    <p class="text-gray-300 mb-4">Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../about.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">About Us</a></li>
+                        <li><a href="../careers.html" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Careers</a></li>
+                        <li><a href="../index.html#blog" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Blog</a></li>
+                        <li><a href="../contact.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../services.html#virtual-assistance" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
+                        <li><a href="../services.html#software-development" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
+                        <li><a href="../services.html#bpo-services" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
+                        <li><a href="../services.html#custom-solutions" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom Solutions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../privacy-policy.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
+                        <li><a href="../terms-of-service.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
+                        <li><a href="../gdpr-compliance.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">GDPR Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-300">
+                <p>© 2024 Bridgee Solutions. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+      const menuButton = document.getElementById('mobile-menu-button');
+      const menu = document.getElementById('mobile-menu');
+
+      menuButton.addEventListener('click', function() {
+        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
+        menuButton.setAttribute('aria-expanded', !isExpanded);
+        menu.classList.toggle('hidden');
+        document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
+
+        if (!isExpanded && !menu.classList.contains('hidden')) {
+          const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+          if (focusableElements.length > 0) {
+            focusableElements[0].focus();
+          }
+        }
+      });
+
+      menu.addEventListener('keydown', function(event) {
+        if (menu.classList.contains('hidden') || event.key !== 'Tab') return;
+
+        const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+        if (focusableElements.length === 0) return;
+        const firstFocusableElement = focusableElements[0];
+        const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+        if (event.shiftKey) {
+          if (document.activeElement === firstFocusableElement) {
+            lastFocusableElement.focus();
+            event.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus();
+            event.preventDefault();
+          }
+        }
+      });
+
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
+          menu.classList.add('hidden');
+          document.body.style.overflow = '';
+          menuButton.setAttribute('aria-expanded', 'false');
+          menuButton.focus();
+        }
+      });
+    </script>
+
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+</body>
+</html>

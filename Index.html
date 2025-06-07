@@ -81,6 +81,19 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
+    .testimonial-swiper {
+      position: relative; /* Ensure it's a positioning context for absolute arrows */
+      padding-left: 40px; /* Space for prev arrow */
+      padding-right: 40px; /* Space for next arrow */
+      padding-bottom: 30px; /* Space for pagination dots */
+      /* overflow: hidden; is usually part of swiper's default or added by class */
+    }
+
+    /* Swiper Pagination Custom Positioning */
+    .testimonial-swiper .swiper-pagination {
+        bottom: 5px; /* Adjust to sit within the new padding-bottom */
+    }
+
     /* Swiper Navigation Buttons Styling */
     .testimonial-swiper .swiper-button-next,
     .testimonial-swiper .swiper-button-prev {
@@ -90,6 +103,13 @@
         background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
         border-radius: 50%; /* Make them circular */
         transition: background-color 0.3s ease;
+        /* top: 50%; transform: translateY(-50%); Swiper default, ensure it's there or add if needed */
+    }
+    .testimonial-swiper .swiper-button-next {
+        right: 10px; /* Adjusted position */
+    }
+    .testimonial-swiper .swiper-button-prev {
+        left: 10px; /* Adjusted position */
     }
 
     .testimonial-swiper .swiper-button-next:hover,

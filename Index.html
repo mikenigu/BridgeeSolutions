@@ -860,6 +860,71 @@
     
     // Testimonial Swiper Initialization
     document.addEventListener('DOMContentLoaded', function () {
+      console.log("DOM fully loaded and parsed. Initializing logo scroller.");
+
+      function animateLogoRow(rowId, scrollSpeedPxPerFrame, moveContentRightToLeft) {
+        const rowElement = document.getElementById(rowId);
+        if (!rowElement) {
+          console.error(`Logo row not found: ${rowId}`);
+          return;
+        }
+        console.log(`Initializing animation for ${rowId}. Speed: ${scrollSpeedPxPerFrame}, RTL: ${moveContentRightToLeft}`);
+
+        if (rowElement.children.length === 0) {
+            console.error(`No logos found in ${rowId} to animate.`);
+            return;
+        }
+
+        const originalLogos = Array.from(rowElement.children);
+        originalLogos.forEach(logo => {
+          rowElement.appendChild(logo.cloneNode(true));
+        });
+
+        // Force a reflow to ensure scrollWidth is calculated correctly after duplication.
+        // Accessing offsetWidth can trigger this.
+        void rowElement.offsetWidth;
+
+        const scrollWidthOfOneSet = rowElement.scrollWidth / 2;
+        let currentPositionDotPx = 0; // Using a more descriptive name
+
+        if (scrollWidthOfOneSet === 0) {
+            console.error(`Calculated scrollWidthOfOneSet is 0 for ${rowId}. Animation may not work. Check logo visibility, CSS, and parent container dimensions.`);
+            // Attempt to continue, but it's a bad sign.
+        } else {
+            console.log(`${rowId} - scrollWidthOfOneSet: ${scrollWidthOfOneSet}px`);
+        }
+
+        if (!moveContentRightToLeft) {
+            // For LTR, set the initial transform so the duplicated content (now on the right)
+            // is shifted to appear as if it's to the left of the original,
+            // and the original content starts off-screen to the left.
+             rowElement.style.transform = `translateX(-${scrollWidthOfOneSet}px)`;
+        }
+
+
+        function step() {
+          currentPositionDotPx += scrollSpeedPxPerFrame;
+          if (currentPositionDotPx >= scrollWidthOfOneSet) {
+            currentPositionDotPx -= scrollWidthOfOneSet;
+          }
+
+          if (moveContentRightToLeft) { // Content moves from Right to Left on screen
+            rowElement.style.transform = `translateX(-${currentPositionDotPx}px)`;
+          } else { // Content moves from Left to Right on screen
+            // Transform from -scrollWidthOfOneSet up to 0
+            rowElement.style.transform = `translateX(${currentPositionDotPx - scrollWidthOfOneSet}px)`;
+          }
+          requestAnimationFrame(step);
+        }
+
+        console.log(`Starting animation loop for ${rowId}`);
+        requestAnimationFrame(step);
+      }
+
+      // Ensure this speed is low enough for "slow" movement. 0.5px per frame is usually good.
+      animateLogoRow('tech-logo-row-1', 0.5, true);  // Row 1: content moves Right-To-Left on screen
+      animateLogoRow('tech-logo-row-2', 0.5, false); // Row 2: content moves Left-To-Right on screen
+
       const testimonialSwiper = new Swiper('.testimonial-swiper', {
         loop: true,
         slidesPerView: 1, // Default to 1 slide for mobile

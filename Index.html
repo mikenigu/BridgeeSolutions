@@ -92,6 +92,49 @@
       /* Existing classes: mb-6 leading-relaxed - these will be in HTML */
     }
 
+    .tech-logo-scroller-container {
+      overflow: hidden;
+      padding: 20px 0;
+      /* background-color: #f9fafb; */ /* Example background */
+    }
+
+    .tech-logo-row {
+      display: flex;
+      width: fit-content;
+    }
+
+    .tech-logo-row .tech-logo {
+      margin-right: 32px; /* Equivalent to gap-8 */
+      flex-shrink: 0; /* Prevent logos from shrinking */
+    }
+
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0%);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes scroll-right {
+      0% {
+        transform: translateX(-50%);
+      }
+      100% {
+        transform: translateX(0%);
+      }
+    }
+
+    #tech-logo-row-1 {
+      animation: scroll-left 80s linear infinite;
+    }
+
+    #tech-logo-row-2 {
+      animation: scroll-right 80s linear infinite;
+      /* margin-top: 20px; */ /* This is in inline style in HTML */
+    }
+
     .testimonial-swiper {
       position: relative; /* Ensure it's a positioning context for absolute arrows */
       padding-left: 40px; /* Space for prev arrow */

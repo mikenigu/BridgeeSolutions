@@ -79,6 +79,17 @@
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
+      height: 420px; /* Fixed height for testimonial cards */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .testimonial-card p.text-blue-100 {
+      flex-grow: 1; /* Allows the paragraph to take available space */
+      overflow-y: auto; /* Add vertical scroll if content overflows */
+      padding-right: 5px; /* Space for scrollbar */
+      /* Existing classes: mb-6 leading-relaxed - these will be in HTML */
     }
 
     .testimonial-swiper {
@@ -147,11 +158,20 @@
     */
 
     /* Comment out styles for continuous scroll if they exist */
-    /*
     .testimonial-swiper .swiper-slide {
-        width: auto;
-        flex-shrink: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform: scale(0.85); /* Default scale for non-active slides */
+      opacity: 0.7; /* Default opacity for non-active slides */
+        /* width: auto; */ /* Original commented line */
+        /* flex-shrink: 0; */ /* Original commented line */
     }
+
+    .testimonial-swiper .swiper-slide-active {
+      transform: scale(1); /* Full size */
+      opacity: 1; /* Full opacity */
+      z-index: 1; /* Ensure active slide is on top */
+    }
+    /*
     .testimonial-swiper .swiper-wrapper {
          transition-timing-function: linear !important;
     }
@@ -788,6 +808,7 @@
         loop: true,
         slidesPerView: 1, // Default to 1 slide for mobile
         spaceBetween: 30,
+        centeredSlides: true,
         autoplay: false, // Disable autoplay
         navigation: {
           nextEl: '.swiper-button-next',

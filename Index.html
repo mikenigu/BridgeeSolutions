@@ -858,7 +858,7 @@
   <script>
     AOS.init();
     
-    // Testimonial Swiper Initialization
+    // Testimonial Swiper Initialization & Logo Scroller
     document.addEventListener('DOMContentLoaded', function () {
       console.log("DOM fully loaded and parsed. Initializing logo scroller.");
 
@@ -880,38 +880,30 @@
           rowElement.appendChild(logo.cloneNode(true));
         });
 
-        // Force a reflow to ensure scrollWidth is calculated correctly after duplication.
-        // Accessing offsetWidth can trigger this.
         void rowElement.offsetWidth;
 
         const scrollWidthOfOneSet = rowElement.scrollWidth / 2;
-        let currentPositionDotPx = 0; // Using a more descriptive name
+        let currentPositionDotPx = 0;
 
         if (scrollWidthOfOneSet === 0) {
             console.error(`Calculated scrollWidthOfOneSet is 0 for ${rowId}. Animation may not work. Check logo visibility, CSS, and parent container dimensions.`);
-            // Attempt to continue, but it's a bad sign.
         } else {
             console.log(`${rowId} - scrollWidthOfOneSet: ${scrollWidthOfOneSet}px`);
         }
 
         if (!moveContentRightToLeft) {
-            // For LTR, set the initial transform so the duplicated content (now on the right)
-            // is shifted to appear as if it's to the left of the original,
-            // and the original content starts off-screen to the left.
              rowElement.style.transform = `translateX(-${scrollWidthOfOneSet}px)`;
         }
-
 
         function step() {
           currentPositionDotPx += scrollSpeedPxPerFrame;
           if (currentPositionDotPx >= scrollWidthOfOneSet) {
-            currentPositionDotPx -= scrollWidthOfOneSet;
+            currentPositionDotPx = currentPositionDotPx % scrollWidthOfOneSet; // Refined reset logic
           }
 
-          if (moveContentRightToLeft) { // Content moves from Right to Left on screen
+          if (moveContentRightToLeft) {
             rowElement.style.transform = `translateX(-${currentPositionDotPx}px)`;
-          } else { // Content moves from Left to Right on screen
-            // Transform from -scrollWidthOfOneSet up to 0
+          } else {
             rowElement.style.transform = `translateX(${currentPositionDotPx - scrollWidthOfOneSet}px)`;
           }
           requestAnimationFrame(step);
@@ -921,16 +913,15 @@
         requestAnimationFrame(step);
       }
 
-      // Ensure this speed is low enough for "slow" movement. 0.5px per frame is usually good.
-      animateLogoRow('tech-logo-row-1', 0.5, true);  // Row 1: content moves Right-To-Left on screen
-      animateLogoRow('tech-logo-row-2', 0.5, false); // Row 2: content moves Left-To-Right on screen
+      animateLogoRow('tech-logo-row-1', 0.5, true);
+      animateLogoRow('tech-logo-row-2', 0.5, false);
 
       const testimonialSwiper = new Swiper('.testimonial-swiper', {
         loop: true,
-        slidesPerView: 1, // Default to 1 slide for mobile
+        slidesPerView: 1,
         spaceBetween: 30,
         centeredSlides: true,
-        autoplay: false, // Disable autoplay
+        autoplay: false,
         navigation: {
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev',
@@ -940,32 +931,16 @@
           clickable: true,
         },
         breakpoints: {
-          // when window width is >= 768px (Tailwind 'md' breakpoint)
           768: {
             slidesPerView: 2,
             spaceBetween: 30
           },
-          // when window width is >= 1024px (Tailwind 'lg' breakpoint)
           1024: {
             slidesPerView: 3,
             spaceBetween: 40
           }
         }
       });
-
-      // // Explicit event listeners for pause on hover as a workaround (should be removed or remain commented as autoplay is false)
-      // const swiperInstance = document.querySelector('.testimonial-swiper')?.swiper;
-      // if (swiperInstance) {
-      //   const swiperWrapper = document.querySelector('.testimonial-swiper');
-      //   if (swiperWrapper) { // Ensure swiperWrapper is found
-      //       swiperWrapper.addEventListener('mouseenter', () => {
-      //         swiperInstance.autoplay.stop();
-      //       });
-      //       swiperWrapper.addEventListener('mouseleave', () => {
-      //         swiperInstance.autoplay.start();
-      //       });
-      //   }
-      // }
     });
 
     // Fade-in hero elements on page load (if this script is still needed and separate)
@@ -976,7 +951,3 @@
   </script>
 </body>
 </html>
-
-[end of Index.html]
-
-[end of Index.html]

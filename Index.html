@@ -81,12 +81,70 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Styling for testimonial cards and text wrapping preserved */
+    /* Swiper Navigation Buttons Styling */
+    .testimonial-swiper .swiper-button-next,
+    .testimonial-swiper .swiper-button-prev {
+        color: #2563eb; /* Blue-600 from Tailwind */
+        width: 30px;
+        height: 30px;
+        background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+        border-radius: 50%; /* Make them circular */
+        transition: background-color 0.3s ease;
+    }
+
+    .testimonial-swiper .swiper-button-next:hover,
+    .testimonial-swiper .swiper-button-prev:hover {
+        background-color: rgba(255, 255, 255, 1); /* Opaque white background on hover */
+    }
+
+    .testimonial-swiper .swiper-button-next::after,
+    .testimonial-swiper .swiper-button-prev::after {
+        font-size: 16px; /* Adjust size of the arrow icon */
+        font-weight: bold;
+    }
+
+    /* Swiper Pagination Dots Styling */
+    .testimonial-swiper .swiper-pagination-bullet {
+        background-color: #93c5fd; /* Blue-300 from Tailwind for inactive dots */
+        opacity: 0.8;
+        width: 10px; /* Slightly larger dots */
+        height: 10px;
+        transition: background-color 0.3s ease, opacity 0.3s ease;
+    }
+
+    .testimonial-swiper .swiper-pagination-bullet-active {
+        background-color: #2563eb; /* Blue-600 for active dot */
+        opacity: 1;
+    }
+
+    /* Ensure Swiper navigation is visible (remove or comment out any display: none rule for these) */
+    /*
+    .testimonial-swiper .swiper-button-next,
+    .testimonial-swiper .swiper-button-prev,
+    .testimonial-swiper .swiper-pagination {
+        display: none !important;
+    }
+    */
+
+    /* Comment out styles for continuous scroll if they exist */
+    /*
+    .testimonial-swiper .swiper-slide {
+        width: auto;
+        flex-shrink: 0;
+    }
+    .testimonial-swiper .swiper-wrapper {
+         transition-timing-function: linear !important;
+    }
+    */
+
+    /* Remove explicit text-wrapping for p tags if Swiper handles it */
+    /*
     .testimonial-card p.text-blue-100 {
         white-space: normal !important;
-        word-wrap: break-word !important; /* For older browsers */
+        word-wrap: break-word !important;
         overflow-wrap: break-word !important;
     }
+    */
   </style>
   <script type="application/ld+json">
     {
@@ -454,100 +512,108 @@
                 <p class="text-lg text-blue-100 max-w-2xl mx-auto leading-relaxed">Don't just take our word for it — hear from businesses that have grown with Bridgee Solutions.</p>
             </div>
             
-            <!-- Testimonial container -->
-            <div class="testimonial-container-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"> {/* Adjusted for static display */}
-                <!-- Testimonial 1 -->
-                <div class="testimonial-card p-8 rounded-xl">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">MC</div>
-                        <div>
-                            <h4 class="font-bold">Michael Chen</h4>
-                            <p class="text-blue-200 text-sm">Founder, Startup Innovators Inc.</p>
+            <!-- Swiper container -->
+            <div class="swiper testimonial-swiper overflow-hidden">
+                <div class="swiper-wrapper">
+                    <!-- Testimonial 1 -->
+                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">MC</div>
+                            <div>
+                                <h4 class="font-bold">Michael Chen</h4>
+                                <p class="text-blue-200 text-sm">Founder, Startup Innovators Inc.</p>
+                            </div>
+                        </div>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"Bridgee Solutions provided an incredibly skilled virtual assistant who transformed our administrative workflow. Tasks that used to take hours are now done in minutes. Highly recommend their professionalism and efficiency!"</p>
+                        <div class="flex">
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
                         </div>
                     </div>
-                    <p class="text-blue-100 mb-6 leading-relaxed">"Bridgee Solutions provided an incredibly skilled virtual assistant who transformed our administrative workflow. Tasks that used to take hours are now done in minutes. Highly recommend their professionalism and efficiency!"</p>
-                    <div class="flex">
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                    </div>
-                </div>
 
-                <!-- Testimonial 2 -->
-                <div class="testimonial-card p-8 rounded-xl">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">PS</div>
-                        <div>
-                            <h4 class="font-bold">Priya Sharma</h4>
-                            <p class="text-blue-200 text-sm">Marketing Director, GlobalReach Ltd.</p>
+                    <!-- Testimonial 2 -->
+                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">PS</div>
+                            <div>
+                                <h4 class="font-bold">Priya Sharma</h4>
+                                <p class="text-blue-200 text-sm">Marketing Director, GlobalReach Ltd.</p>
+                            </div>
+                        </div>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"The custom BPO services we received for lead generation were top-notch. The Bridgee team quickly understood our targets and delivered quality leads that have significantly boosted our sales pipeline. Their team integrated seamlessly with ours."</p>
+                        <div class="flex">
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
                         </div>
                     </div>
-                    <p class="text-blue-100 mb-6 leading-relaxed">"The custom BPO services we received for lead generation were top-notch. The Bridgee team quickly understood our targets and delivered quality leads that have significantly boosted our sales pipeline. Their team integrated seamlessly with ours."</p>
-                    <div class="flex">
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                    </div>
-                </div>
 
-                <!-- Testimonial 3 -->
-                <div class="testimonial-card p-8 rounded-xl">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">JK</div>
-                        <div>
-                            <h4 class="font-bold">James Kalu</h4>
-                            <p class="text-blue-200 text-sm">CTO, Enterprise Solutions Hub</p>
+                    <!-- Testimonial 3 -->
+                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">JK</div>
+                            <div>
+                                <h4 class="font-bold">James Kalu</h4>
+                                <p class="text-blue-200 text-sm">CTO, Enterprise Solutions Hub</p>
+                            </div>
+                        </div>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"We needed a flexible team of developers for a critical project, and Bridgee Solutions delivered. Their full-stack expertise and agile approach were key to our success. They are a reliable technology partner."</p>
+                        <div class="flex">
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
                         </div>
                     </div>
-                    <p class="text-blue-100 mb-6 leading-relaxed">"We needed a flexible team of developers for a critical project, and Bridgee Solutions delivered. Their full-stack expertise and agile approach were key to our success. They are a reliable technology partner."</p>
-                    <div class="flex">
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                    </div>
-                </div>
-                <!-- New Testimonial 1 (Previously added) -->
-                <div class="testimonial-card p-8 rounded-xl">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">LW</div>
-                        <div>
-                            <h4 class="font-bold">Lisa Wong</h4>
-                            <p class="text-blue-200 text-sm">Operations Manager, TechStrive Solutions</p>
+                    <!-- New Testimonial 1 (Previously added) -->
+                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">LW</div>
+                            <div>
+                                <h4 class="font-bold">Lisa Wong</h4>
+                                <p class="text-blue-200 text-sm">Operations Manager, TechStrive Solutions</p>
+                            </div>
+                        </div>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"The software development team from Bridgee Solutions was exceptional. They delivered our project on time, under budget, and the quality was outstanding. Their communication throughout the process was proactive and clear."</p>
+                        <div class="flex">
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
                         </div>
                     </div>
-                    <p class="text-blue-100 mb-6 leading-relaxed">"The software development team from Bridgee Solutions was exceptional. They delivered our project on time, under budget, and the quality was outstanding. Their communication throughout the process was proactive and clear."</p>
-                    <div class="flex">
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                    </div>
-                </div>
-                <!-- New Testimonial 2 (Previously added) -->
-                <div class="testimonial-card p-8 rounded-xl">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">DM</div>
-                        <div>
-                            <h4 class="font-bold">David Miller</h4>
-                            <p class="text-blue-200 text-sm">CEO, GreenLeaf Organics</p>
+                    <!-- New Testimonial 2 (Previously added) -->
+                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">DM</div>
+                            <div>
+                                <h4 class="font-bold">David Miller</h4>
+                                <p class="text-blue-200 text-sm">CEO, GreenLeaf Organics</p>
+                            </div>
+                        </div>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"Outsourcing our customer service to Bridgee has allowed us to focus on our core business. Our customer satisfaction rates have improved, and the Bridgee team feels like a true extension of our own."</p>
+                        <div class="flex">
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star text-yellow-300"></i>
                         </div>
                     </div>
-                    <p class="text-blue-100 mb-6 leading-relaxed">"Outsourcing our customer service to Bridgee has allowed us to focus on our core business. Our customer satisfaction rates have improved, and the Bridgee team feels like a true extension of our own."</p>
-                    <div class="flex">
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                        <i class="fas fa-star text-yellow-300"></i>
-                    </div>
                 </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination"></div>
+
+                <!-- Add Navigation Buttons -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
             </div>
             <!-- "Read More Success Stories" button removed -->
         </div>
@@ -698,45 +764,34 @@
     
     // Testimonial Swiper Initialization
     document.addEventListener('DOMContentLoaded', function () {
-      // const testimonialSwiper = new Swiper('.testimonial-swiper', {
-      //   loop: true,
-      //   slidesPerView: 'auto', // Key for continuous scroll with variable width slides
-      //   spaceBetween: 40,    // Adjust as needed, was 30-40
-      //   speed: 20000,         // Duration of the entire loop transition (e.g., 8 seconds)
-      //   autoplay: {
-      //     delay: 0,          // Start scrolling immediately
-      //     disableOnInteraction: false,
-      //     pauseOnMouseEnter: true, // Retain this
-      //   },
-      //   freeMode: true,      // Enables free mode scrolling
-      //   // Ensure navigation is commented out or removed
-      //   // navigation: { ... },
-      //   // Comment out or remove pagination configuration
-      //   /*
-      //   pagination: {
-      //     el: '.swiper-pagination',
-      //     clickable: true,
-      //   },
-      //   */
-      //   // Breakpoints might be less critical with slidesPerView: 'auto'
-      //   // but can be kept if specific spaceBetween adjustments are desired per breakpoint.
-      //   // For simplicity in this step, we can comment them out or leave as is if they don't conflict.
-      //   // Let's try commenting them out for now to ensure 'auto' takes full effect.
-      //   /*
-      //   breakpoints: {
-      //     768: {
-      //       slidesPerView: 2, // This would conflict with 'auto' if not handled carefully
-      //       spaceBetween: 30
-      //     },
-      //     1024: {
-      //       slidesPerView: 3, // This would conflict with 'auto'
-      //       spaceBetween: 40
-      //     }
-      //   }
-      //   */
-      // });
+      const testimonialSwiper = new Swiper('.testimonial-swiper', {
+        loop: true,
+        slidesPerView: 1, // Default to 1 slide for mobile
+        spaceBetween: 30,
+        autoplay: false, // Disable autoplay
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        breakpoints: {
+          // when window width is >= 768px (Tailwind 'md' breakpoint)
+          768: {
+            slidesPerView: 2,
+            spaceBetween: 30
+          },
+          // when window width is >= 1024px (Tailwind 'lg' breakpoint)
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 40
+          }
+        }
+      });
 
-      // // Explicit event listeners for pause on hover as a workaround
+      // // Explicit event listeners for pause on hover as a workaround (should be removed or remain commented as autoplay is false)
       // const swiperInstance = document.querySelector('.testimonial-swiper')?.swiper;
       // if (swiperInstance) {
       //   const swiperWrapper = document.querySelector('.testimonial-swiper');

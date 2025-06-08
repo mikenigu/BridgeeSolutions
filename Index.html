@@ -100,7 +100,8 @@
 
     .tech-logo-row {
       display: flex;
-      width: max-content; /* Makes the row exactly as wide as its flex children */
+      width: 100%; /* Changed from max-content */
+      justify-content: center; /* Added */
     }
 
     .tech-logo-row .tech-logo {
@@ -116,33 +117,6 @@
     }
 
     /* Keyframes and animation application removed for JS driven animation */
-    /*
-    @keyframes scroll-left {
-      0% {
-        transform: translateX(0%);
-      }
-      100% {
-        transform: translateX(-50%);
-      }
-    }
-
-    @keyframes scroll-right {
-      0% {
-        transform: translateX(-50%);
-      }
-      100% {
-        transform: translateX(0%);
-      }
-    }
-
-    #tech-logo-row-1 {
-      animation: scroll-left 80s linear infinite;
-    }
-
-    #tech-logo-row-2 {
-      animation: scroll-right 80s linear infinite;
-    }
-    */
 
     .testimonial-swiper {
       position: relative; /* Ensure it's a positioning context for absolute arrows */
@@ -288,14 +262,10 @@
 }
 
 /* Apply to the specific tracks within each section */
-/* Row 1 - scrolls Right to Left */
 #logo-scroller-row1-section .ticker-track { /* Applies to both tracks in section 1 */
-  /* animation: ticker-ltr 60s linear infinite; */ /* Adjust 60s for speed */
 }
 
-/* Row 2 - scrolls Left to Right */
 #logo-scroller-row2-section .ticker-track { /* Applies to both tracks in section 2 */
-  /* animation: ticker-rtl 60s linear infinite; */ /* Adjust 60s for speed */
 }
   </style>
   <script type="application/ld+json">
@@ -920,77 +890,6 @@
     
     // Testimonial Swiper Initialization & Logo Scroller
     document.addEventListener('DOMContentLoaded', function () {
-      // Logo Scroller (JS Animation - to be removed or commented out)
-      // console.log("DOM fully loaded and parsed. Initializing logo scroller.");
-      /*
-      function animateLogoRow(rowId, scrollSpeedPxPerFrame, moveContentRightToLeft) {
-        const rowElement = document.getElementById(rowId);
-        if (!rowElement) {
-          console.error(`Logo row not found: ${rowId}`);
-          return;
-        }
-        // console.log(`Initializing animation for ${rowId}. Speed: ${scrollSpeedPxPerFrame}, RTL: ${moveContentRightToLeft}`);
-
-        if (rowElement.children.length === 0) {
-            // console.error(`No logos found in ${rowId} to animate at outset.`);
-            return;
-        }
-
-        const originalLogos = Array.from(rowElement.children);
-
-        let calculatedWidthOfOneSet = 0;
-        const logoMarginRight = 64;
-
-        originalLogos.forEach(logo => {
-          calculatedWidthOfOneSet += logo.offsetWidth + logoMarginRight;
-        });
-
-        // console.log(`${rowId} - Calculated width of ONE set (logos + margins): ${calculatedWidthOfOneSet}px`);
-
-        originalLogos.forEach(logo => {
-          rowElement.appendChild(logo.cloneNode(true));
-        });
-
-        void rowElement.offsetWidth;
-
-        const scrollWidthOfOneSet = calculatedWidthOfOneSet;
-
-        let currentPositionDotPx = 0;
-
-        if (scrollWidthOfOneSet === 0) {
-            // console.error(`${rowId} - scrollWidthOfOneSet is 0. Animation cannot proceed meaningfully.`);
-            return;
-        } else {
-            // console.log(`${rowId} - USING scrollWidthOfOneSet for animation: ${scrollWidthOfOneSet}px`);
-        }
-
-        if (!moveContentRightToLeft) {
-            rowElement.style.transform = `translateX(-${scrollWidthOfOneSet}px)`;
-            // console.log(`${rowId} - Initial LTR transform set to: translateX(-${scrollWidthOfOneSet}px)`);
-        }
-
-        function step() {
-          currentPositionDotPx += scrollSpeedPxPerFrame;
-
-          if (currentPositionDotPx >= scrollWidthOfOneSet) {
-            currentPositionDotPx -= scrollWidthOfOneSet;
-          }
-
-          if (moveContentRightToLeft) {
-            rowElement.style.transform = `translateX(-${currentPositionDotPx}px)`;
-          } else {
-            rowElement.style.transform = `translateX(${currentPositionDotPx - scrollWidthOfOneSet}px)`;
-          }
-          requestAnimationFrame(step);
-        }
-
-        // console.log(`Starting animation loop for ${rowId}`);
-        requestAnimationFrame(step);
-      }
-
-      // animateLogoRow('tech-logo-row-1', 0.5, true);
-      // animateLogoRow('tech-logo-row-2', 0.5, false);
-      */
 
       const testimonialSwiper = new Swiper('.testimonial-swiper', {
         loop: true,

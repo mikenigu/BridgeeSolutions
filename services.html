@@ -78,20 +78,20 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    @keyframes subtle-fade-in-up {
+    @keyframes slide-in-from-left {
       0% {
         opacity: 0;
-        transform: translateY(5px);
+        transform: translateX(-20px); /* Slide from left */
       }
       100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateX(0);
       }
     }
 
-    .animate-subtle-fade-in-up {
-      animation: subtle-fade-in-up 0.5s ease-out forwards;
-      opacity: 0; /* Start hidden, animation will make it visible */
+    .animate-slide-in-from-left {
+      animation: slide-in-from-left 0.6s ease-out forwards;
+      opacity: 0; /* Start hidden */
     }
   </style>
   <script type="application/ld+json">
@@ -267,19 +267,53 @@
                         </div>
                     </div>
                     <div id="va-details" class="p-6 border-t border-gray-200 bg-gray-50">
-                        <p class="text-gray-700 mb-4">We will provide <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">dedicated virtual assistants</span> who will handle a wide range of administrative and operational tasks—allowing you to <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">focus on strategy and growth</span>. Our virtual assistants will manage calendars, schedule meetings, handle email correspondence, conduct online research, and support day-to-day project coordination. Each virtual assistant will undergo <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">rigorous training</span> and will adapt quickly to your unique processes and preferred tools.</p>
-                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Common Tools Used:</h4>
-                        <ul class="list-disc list-inside text-gray-600 space-y-1 mb-4 pl-4 md:grid md:grid-cols-2 md:gap-x-6">
-                            <li>Microsoft Office 365 (Outlook, Excel, Word)</li>
-                            <li>Google Workspace (Gmail, Calendar, Docs, Sheets)</li>
-                            <li>Slack or Microsoft Teams (Communication)</li>
-                            <li>Trello, Asana, or ClickUp (Task Management)</li>
-                            <li>Zoom or Google Meet (Video Conferencing)</li>
-                            <li>Dropbox or Google Drive (Cloud File Sharing)</li>
-                        </ul>
-                        <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
-                        <p class="text-gray-600">Please contact us for a personalized quote tailored to your specific needs.</p>
-                        <a href="contact.html" class="mt-4 inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
+                        <p class="text-gray-700 mb-4">We will provide <span class="font-semibold text-blue-600 animate-slide-in-from-left">dedicated virtual assistants</span> who will handle a wide range of administrative and operational tasks—allowing you to <span class="font-semibold text-blue-600 animate-slide-in-from-left">focus on strategy and growth</span>. Our virtual assistants will manage calendars, schedule meetings, handle email correspondence, conduct online research, and support day-to-day project coordination. Each virtual assistant will undergo <span class="font-semibold text-blue-600 animate-slide-in-from-left">rigorous training</span> and will adapt quickly to your unique processes and preferred tools.</p>
+                        <div class="pt-4 mt-6 border-t border-gray-300">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-2">Common Tools Used:</h4>
+                            <ul class="text-gray-600 space-y-1 md:grid md:grid-cols-2 md:gap-x-6">
+                                <li class="flex items-start p-2 rounded-md transition-all duration-150 ease-in-out hover:bg-blue-100 hover:shadow-sm">
+                                    <span class="flex-shrink-0 w-5 h-5 mr-2 text-blue-500 pt-px">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                    <span>Microsoft Office 365 (Outlook, Excel, Word)</span>
+                                </li>
+                                <li class="flex items-start p-2 rounded-md transition-all duration-150 ease-in-out hover:bg-blue-100 hover:shadow-sm">
+                                    <span class="flex-shrink-0 w-5 h-5 mr-2 text-blue-500 pt-px">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                    <span>Google Workspace (Gmail, Calendar, Docs, Sheets)</span>
+                                </li>
+                                <li class="flex items-start p-2 rounded-md transition-all duration-150 ease-in-out hover:bg-blue-100 hover:shadow-sm">
+                                    <span class="flex-shrink-0 w-5 h-5 mr-2 text-blue-500 pt-px">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                    <span>Slack or Microsoft Teams (Communication)</span>
+                                </li>
+                                <li class="flex items-start p-2 rounded-md transition-all duration-150 ease-in-out hover:bg-blue-100 hover:shadow-sm">
+                                    <span class="flex-shrink-0 w-5 h-5 mr-2 text-blue-500 pt-px">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                    <span>Trello, Asana, or ClickUp (Task Management)</span>
+                                </li>
+                                <li class="flex items-start p-2 rounded-md transition-all duration-150 ease-in-out hover:bg-blue-100 hover:shadow-sm">
+                                    <span class="flex-shrink-0 w-5 h-5 mr-2 text-blue-500 pt-px">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                    <span>Zoom or Google Meet (Video Conferencing)</span>
+                                </li>
+                                <li class="flex items-start p-2 rounded-md transition-all duration-150 ease-in-out hover:bg-blue-100 hover:shadow-sm">
+                                    <span class="flex-shrink-0 w-5 h-5 mr-2 text-blue-500 pt-px">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                    <span>Dropbox or Google Drive (Cloud File Sharing)</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="pt-4 mt-6 border-t border-gray-300">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-1">Pricing:</h4>
+                            <p class="text-gray-600 mb-3">Please contact us for a personalized quote tailored to your specific needs.</p>
+                            <a href="contact.html" class="inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
+                        </div>
                     </div>
                 </div>
 
@@ -294,10 +328,16 @@
                         </div>
                     </div>
                     <div id="dev-details" class="p-6 border-t border-gray-200 bg-gray-50">
-                        <p class="text-gray-700 mb-4">Our software development teams will <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">build, maintain, and scale</span> web and mobile applications according to your specifications. Whether you require a customer-facing portal, an internal dashboard, or a full-featured mobile app, we will design, code, and deploy solutions aligned with <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">industry best practices</span>. All developers will be versed in agile methodologies and will collaborate closely with your product managers to ensure <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">rapid iterations and robust code quality</span>.</p>
-                        <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
-                        <p class="text-gray-600">Please contact us for a personalized quote tailored to your project scope and requirements.</p>
-                         <a href="contact.html" class="mt-4 inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
+                        <blockquote class="border-l-4 border-blue-500 pl-4 py-2 my-4 italic text-gray-600 bg-blue-50">
+Our software development teams will <span class="font-semibold text-blue-600 animate-slide-in-from-left">build, maintain, and scale</span> web and mobile applications according to your specifications.
+                        </blockquote>
+                        <p class="text-gray-700 mb-4">
+Whether you require a customer-facing portal, an internal dashboard, or a full-featured mobile app, we will design, code, and deploy solutions aligned with <span class="font-semibold text-blue-600 animate-slide-in-from-left">industry best practices</span>. All developers will be versed in agile methodologies and will collaborate closely with your product managers to ensure <span class="font-semibold text-blue-600 animate-slide-in-from-left">rapid iterations and robust code quality</span>.</p>
+                        <div class="pt-4 mt-6 border-t border-gray-300">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-1">Pricing:</h4>
+                            <p class="text-gray-600 mb-3">Please contact us for a personalized quote tailored to your project scope and requirements.</p>
+                             <a href="contact.html" class="inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
+                        </div>
                     </div>
                 </div>
 
@@ -312,10 +352,18 @@
                         </div>
                     </div>
                     <div id="bpo-details" class="p-6 border-t border-gray-200 bg-gray-50">
-                        <p class="text-gray-700 mb-4">Our custom services offering will address any <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">specialized business process</span> or bespoke project requirement you may have. Whether you need workflow automation, specialized data entry, market research, or a unique combination of multiple services, we will assemble a <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">dedicated team tailored to your exact needs</span>. <i class="fas fa-users text-blue-500 ml-1 animate-subtle-fade-in-up"></i> Every custom engagement will begin with a discovery phase to map out requirements, followed by a <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">scalable execution plan</span>.</p>
-                        <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
-                        <p class="text-gray-600">Please contact us for a personalized quote for your custom service needs.</p>
-                         <a href="contact.html" class="mt-4 inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
+                        <p class="text-gray-700 mb-4">Our custom services offering will address any <span class="font-semibold text-blue-600 animate-slide-in-from-left">specialized business process</span> or bespoke project requirement you may have. Whether you need workflow automation, specialized data entry, market research, or a unique combination of multiple services, we will assemble a <span class="font-semibold text-blue-600 animate-slide-in-from-left">dedicated team tailored to your exact needs</span>.</p>
+                        <div class="my-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-md flex items-start">
+                            <i class="fas fa-clipboard-check text-blue-600 mr-3 text-xl pt-1"></i>
+                            <p class="text-sm text-gray-700">
+                                Every custom engagement will begin with a <span class="font-semibold text-blue-600 animate-slide-in-from-left">discovery phase</span> to map out requirements, followed by a <span class="font-semibold text-blue-600 animate-slide-in-from-left">scalable execution plan</span>.
+                            </p>
+                        </div>
+                        <div class="pt-4 mt-6 border-t border-gray-300">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-1">Pricing:</h4>
+                            <p class="text-gray-600 mb-3">Please contact us for a personalized quote for your custom service needs.</p>
+                             <a href="contact.html" class="inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
+                        </div>
                     </div>
                 </div>
                  <!-- Placeholder for Custom Solutions - if different from Custom BPO -->
@@ -329,10 +377,12 @@
                         </div>
                     </div>
                     <div id="cs-details" class="p-6 border-t border-gray-200 bg-gray-50">
-                        <p class="text-gray-700 mb-4">Beyond our standard service categories, we offer <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">specialized consulting and tailored solutions</span>. If you have a unique challenge or require a <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">multi-faceted approach</span> <i class="fas fa-puzzle-piece text-blue-500 ml-1 animate-subtle-fade-in-up"></i> that combines various aspects of our expertise, we're here to build that with you. This can include process optimization consulting, setting up remote teams with specific skill sets, or <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">project-based strategic support</span>.</p>
-                        <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
-                        <p class="text-gray-600">Let's discuss your unique requirements to build a custom quote.</p>
-                         <a href="contact.html" class="mt-4 inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Discuss Your Project</a>
+                        <p class="text-gray-700 mb-4">Beyond our standard service categories, we offer <span class="font-semibold text-blue-600 animate-slide-in-from-left">specialized consulting and tailored solutions</span>. If you have a unique challenge or require a <span class="font-semibold text-blue-600 animate-slide-in-from-left">multi-faceted approach</span> that combines various aspects of our expertise, we're here to build that with you. This can include process optimization consulting, setting up remote teams with specific skill sets, or <span class="font-semibold text-blue-600 animate-slide-in-from-left">project-based strategic support</span>.</p>
+                        <div class="pt-4 mt-6 border-t border-gray-300">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-1">Pricing:</h4>
+                            <p class="text-gray-600 mb-3">Let's discuss your unique requirements to build a custom quote.</p>
+                             <a href="contact.html" class="inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Discuss Your Project</a>
+                        </div>
                     </div>
                 </div>
 

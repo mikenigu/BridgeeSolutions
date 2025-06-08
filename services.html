@@ -77,6 +77,38 @@
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
+
+    .service-figure {
+      width: 100px; /* Initial size, can be adjusted */
+      height: auto;
+      float: right;
+      margin-top: 5px;
+      margin-left: 15px;
+      margin-bottom: 10px;
+    }
+
+    /* Specific clearfix for the paragraph containing the floated image in VA details */
+    #va-details > p.text-gray-700:first-of-type::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    @keyframes subtle-fade-in-up {
+      0% {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-subtle-fade-in-up {
+      animation: subtle-fade-in-up 0.5s ease-out forwards;
+      opacity: 0; /* Start hidden, animation will make it visible */
+    }
   </style>
   <script type="application/ld+json">
     {
@@ -251,7 +283,7 @@
                         </div>
                     </div>
                     <div id="va-details" class="p-6 border-t border-gray-200 bg-gray-50">
-                        <p class="text-gray-700 mb-4">We will provide dedicated virtual assistants who will handle a wide range of administrative and operational tasks—allowing you to focus on strategy and growth. Our virtual assistants will manage calendars, schedule meetings, handle email correspondence, conduct online research, and support day-to-day project coordination. Each virtual assistant will undergo rigorous training and will adapt quickly to your unique processes and preferred tools.</p>
+                        <p class="text-gray-700 mb-4">We will provide <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">dedicated virtual assistants</span> who will handle a wide range of administrative and operational tasks—allowing you to <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">focus on strategy and growth</span>. <img src="assets/people-who-support.svg" alt="Illustration of people supporting each other, representing virtual assistance" class="service-figure">Our virtual assistants will manage calendars, schedule meetings, handle email correspondence, conduct online research, and support day-to-day project coordination. Each virtual assistant will undergo <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">rigorous training</span> and will adapt quickly to your unique processes and preferred tools.</p>
                         <h4 class="text-lg font-semibold text-gray-700 mb-2">Common Tools Used:</h4>
                         <ul class="list-disc list-inside text-gray-600 space-y-1 mb-4 pl-4 md:grid md:grid-cols-2 md:gap-x-6">
                             <li>Microsoft Office 365 (Outlook, Excel, Word)</li>
@@ -278,7 +310,7 @@
                         </div>
                     </div>
                     <div id="dev-details" class="p-6 border-t border-gray-200 bg-gray-50">
-                        <p class="text-gray-700 mb-4">Our software development teams will build, maintain, and scale web and mobile applications according to your specifications. Whether you require a customer-facing portal, an internal dashboard, or a full-featured mobile app, we will design, code, and deploy solutions aligned with industry best practices. All developers will be versed in agile methodologies and will collaborate closely with your product managers to ensure rapid iterations and robust code quality.</p>
+                        <p class="text-gray-700 mb-4">Our software development teams will <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">build, maintain, and scale</span> web and mobile applications according to your specifications. Whether you require a customer-facing portal, an internal dashboard, or a full-featured mobile app, we will design, code, and deploy solutions aligned with <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">industry best practices</span>. <i class="fas fa-thumbs-up text-blue-500 ml-1 animate-subtle-fade-in-up"></i> All developers will be versed in agile methodologies and will collaborate closely with your product managers to ensure <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">rapid iterations and robust code quality</span>.</p>
                         <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
                         <p class="text-gray-600">Please contact us for a personalized quote tailored to your project scope and requirements.</p>
                          <a href="contact.html" class="mt-4 inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
@@ -296,7 +328,7 @@
                         </div>
                     </div>
                     <div id="bpo-details" class="p-6 border-t border-gray-200 bg-gray-50">
-                        <p class="text-gray-700 mb-4">Our custom services offering will address any specialized business process or bespoke project requirement you may have. Whether you need workflow automation, specialized data entry, market research, or a unique combination of multiple services, we will assemble a dedicated team tailored to your exact needs. Every custom engagement will begin with a discovery phase to map out requirements, followed by a scalable execution plan.</p>
+                        <p class="text-gray-700 mb-4">Our custom services offering will address any <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">specialized business process</span> or bespoke project requirement you may have. Whether you need workflow automation, specialized data entry, market research, or a unique combination of multiple services, we will assemble a <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">dedicated team tailored to your exact needs</span>. <i class="fas fa-users text-blue-500 ml-1 animate-subtle-fade-in-up"></i> Every custom engagement will begin with a discovery phase to map out requirements, followed by a <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">scalable execution plan</span>.</p>
                         <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
                         <p class="text-gray-600">Please contact us for a personalized quote for your custom service needs.</p>
                          <a href="contact.html" class="mt-4 inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Request a Quote</a>
@@ -313,7 +345,7 @@
                         </div>
                     </div>
                     <div id="cs-details" class="p-6 border-t border-gray-200 bg-gray-50">
-                        <p class="text-gray-700 mb-4">Beyond our standard service categories, we offer specialized consulting and tailored solutions. If you have a unique challenge or require a multi-faceted approach that combines various aspects of our expertise, we're here to build that with you. This can include process optimization consulting, setting up remote teams with specific skill sets, or project-based strategic support.</p>
+                        <p class="text-gray-700 mb-4">Beyond our standard service categories, we offer <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">specialized consulting and tailored solutions</span>. If you have a unique challenge or require a <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">multi-faceted approach</span> <i class="fas fa-puzzle-piece text-blue-500 ml-1 animate-subtle-fade-in-up"></i> that combines various aspects of our expertise, we're here to build that with you. This can include process optimization consulting, setting up remote teams with specific skill sets, or <span class="font-semibold text-blue-600 animate-subtle-fade-in-up">project-based strategic support</span>.</p>
                         <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-1">Pricing:</h4>
                         <p class="text-gray-600">Let's discuss your unique requirements to build a custom quote.</p>
                          <a href="contact.html" class="mt-4 inline-block px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Discuss Your Project</a>

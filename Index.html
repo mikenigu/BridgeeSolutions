@@ -102,6 +102,7 @@
       display: flex;
       width: 100%; /* Changed from max-content */
       justify-content: center; /* Added */
+      flex-wrap: wrap; /* Added */
     }
 
     .tech-logo-row .tech-logo {
@@ -267,6 +268,31 @@
 
 #logo-scroller-row2-section .ticker-track { /* Applies to both tracks in section 2 */
 }
+
+        /* Responsive adjustments for tech logos */
+        @media (max-width: 768px) { /* Tablet breakpoint */
+          .tech-logo-row .tech-logo {
+            margin-right: 32px; /* Reduce margin for tablets */
+            margin-bottom: 20px; /* Add some bottom margin if they wrap */
+          }
+          /* Adjust the last logo in a row to not have excessive margin if centered */
+          .tech-logo-row .tech-logo:last-child {
+            margin-right: 0; /* Or adjust as needed if centering handles it */
+          }
+        }
+
+        @media (max-width: 480px) { /* Mobile breakpoint */
+          .tech-logo-row .tech-logo {
+            margin-right: 16px; /* Further reduce margin for mobiles */
+            margin-left: 16px; /* Add some left margin for better centering feel when wrapped */
+            margin-bottom: 16px; /* Adjust bottom margin */
+          }
+           /* Ensure even spacing for mobile when wrapped and centered */
+          .tech-logo-row {
+            padding-left: 16px; /* Add some padding to the row itself */
+            padding-right: 16px;
+          }
+        }
   </style>
   <script type="application/ld+json">
     {

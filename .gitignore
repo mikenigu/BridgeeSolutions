@@ -1,0 +1,8 @@
+# CV uploads
+uploads/
+
+# Python virtual environment
+venv/
+*.venv/
+env/
+ENV/

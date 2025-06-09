@@ -1,10 +1,13 @@
+from dotenv import load_dotenv
+load_dotenv()
+from flask_cors import CORS, cross_origin
 from flask import Flask, request, jsonify
 import os
 from werkzeug.utils import secure_filename
 import telegram # Import the python-telegram-bot library
 
 app = Flask(__name__)
-
+CORS(app)
 # --- Configuration ---
 # For a real application, use environment variables for sensitive data like tokens and IDs
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', 'YOUR_TELEGRAM_BOT_TOKEN_PLACEHOLDER')
@@ -72,8 +75,13 @@ async def send_telegram_notification(applicant_data, cv_filepath):
 def hello_world():
     return 'Hello, Bridgee Solutions Backend!'
 
-@app.route('/api/submit-application', methods=['POST'])
+@app.route('/api/submit-application', methods=['POST','OPTIONS'])
+
+@cross_origin(origins='*', methods=['POST'], allow_headers=['Content-Type'])
 async def submit_application(): # Make route async
+    
+    if request.method == 'OPTIONS':
+        return jsonify({'message': 'CORS preflight successful'}), 200
     if request.method == 'POST':
         # Extract form data
         form_data = request.form.to_dict() # Get all form fields as a dictionary

@@ -1,9 +1,14 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin # Make sure cross_origin is imported
 import os
-from werkzeug.utils import secure_filename
-import telegram # Import the python-telegram-bot library
+from dotenv import load_dotenv
+from werkzeug.utils import secure_filename # Keep for now, might be used by other routes later or full version
+import telegram # Keep for now
+
+load_dotenv()
 
 app = Flask(__name__)
+CORS(app) # Initialize CORS globally
 
 # --- Configuration ---
 # For a real application, use environment variables for sensitive data like tokens and IDs
@@ -72,83 +77,21 @@ async def send_telegram_notification(applicant_data, cv_filepath):
 def hello_world():
     return 'Hello, Bridgee Solutions Backend!'
 
-@app.route('/api/submit-application', methods=['POST'])
-async def submit_application(): # Make route async
+@app.route('/api/submit-application', methods=['POST', 'OPTIONS'])
+@cross_origin() # Apply a simple cross_origin decorator for testing
+async def submit_application(): # Keep it async even if not strictly needed for this simple version
+    if request.method == 'OPTIONS':
+        print("Simplified endpoint: Received OPTIONS request")
+        return jsonify({'message': 'CORS preflight successful (simplified endpoint)'}), 200
+
     if request.method == 'POST':
-        # Extract form data
-        form_data = request.form.to_dict() # Get all form fields as a dictionary
-        full_name = form_data.get('full_name')
-        email = form_data.get('email')
-        job_title = form_data.get('job_title')
+        # Just get one field to confirm form data is coming through at all
+        job_title = request.form.get('job_title', 'N/A')
+        print(f"Simplified endpoint: Received POST request for job: {job_title}. Form data: {request.form}")
+        return jsonify({'message': f'Test POST for {job_title} received successfully by simplified endpoint!'}), 200
 
-        if not all([full_name, email, job_title]):
-            return jsonify({'error': 'Missing required fields (name, email, job_title)'}), 400
-
-        cv_file = None
-        cv_filepath = None
-        filename = None # Initialize filename
-
-        if 'cv_upload' not in request.files:
-            return jsonify({'error': 'No CV file part in the request'}), 400
-
-        cv_file = request.files['cv_upload']
-
-        if cv_file.filename == '':
-            return jsonify({'error': 'No CV file selected'}), 400
-
-        if cv_file and allowed_file(cv_file.filename):
-            original_filename = secure_filename(cv_file.filename)
-            # Create a more unique filename to avoid overwrites and add original submitter info
-            # Example: filename = f"{secure_filename(email)}_{int(time.time())}_{original_filename}"
-            # For now, keeping it simpler for the subtask, but uniqueness is important.
-            filename = original_filename # In a real app, ensure this is unique.
-
-            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                os.makedirs(app.config['UPLOAD_FOLDER'])
-
-            cv_filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
-            try:
-                cv_file.save(cv_filepath)
-            except Exception as e:
-                print(f"Error saving CV: {e}")
-                return jsonify({'error': f'Could not save CV file: {e}'}), 500
-        else:
-            # This error is now for if allowed_file returns false
-            return jsonify({'error': 'Invalid CV file type. Allowed: pdf, doc, docx'}), 400
-
-        # Prepare applicant data dictionary for Telegram function
-        applicant_data = {
-            'full_name': full_name,
-            'email': email,
-            'phone_number': form_data.get('phone_number', ''),
-            'cover_letter': form_data.get('cover_letter', ''),
-            'job_title': job_title
-        }
-
-        # Send notification
-        telegram_success = await send_telegram_notification(applicant_data, cv_filepath)
-
-        if telegram_success:
-            # Optionally, delete the CV from local server after sending if it's stored elsewhere
-            # or if Telegram is the primary archive. For now, we'll keep it.
-            # if cv_filepath and os.path.exists(cv_filepath):
-            #     os.remove(cv_filepath)
-            #     print(f"Removed temporary CV: {cv_filepath}")
-
-            return jsonify({
-                'message': 'Application received successfully and notification sent!',
-                'filename': filename # Use the potentially modified filename
-            }), 200
-        else:
-            # If Telegram failed, it's still a successful application upload,
-            # but HR needs to be notified through a fallback or logs checked.
-            return jsonify({
-                'message': 'Application received, but failed to send Telegram notification. Please contact admin.',
-                'filename': filename # Use the potentially modified filename
-            }), 500 # Internal server error because notification failed
-    else:
-        return jsonify({'error': 'Method not allowed'}), 405
+    # Fallback, though should not be reached if methods are correctly restricted
+    return jsonify({'error': 'Method not allowed by simplified endpoint logic'}), 405
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

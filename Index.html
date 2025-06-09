@@ -118,6 +118,33 @@
     }
 
     /* Keyframes and animation application removed for JS driven animation */
+    /*
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0%);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes scroll-right {
+      0% {
+        transform: translateX(-50%);
+      }
+      100% {
+        transform: translateX(0%);
+      }
+    }
+
+    #tech-logo-row-1 {
+      animation: scroll-left 80s linear infinite;
+    }
+
+    #tech-logo-row-2 {
+      animation: scroll-right 80s linear infinite;
+    }
+    */
 
     .testimonial-swiper {
       position: relative; /* Ensure it's a positioning context for absolute arrows */
@@ -263,38 +290,15 @@
 }
 
 /* Apply to the specific tracks within each section */
+/* Row 1 - scrolls Right to Left */
 #logo-scroller-row1-section .ticker-track { /* Applies to both tracks in section 1 */
-  /* animation: ticker-ltr 60s linear infinite; */
+  /* animation: ticker-ltr 60s linear infinite; */ /* Adjust 60s for speed */
 }
 
+/* Row 2 - scrolls Left to Right */
 #logo-scroller-row2-section .ticker-track { /* Applies to both tracks in section 2 */
-  /* animation: ticker-rtl 60s linear infinite; */
+  /* animation: ticker-rtl 60s linear infinite; */ /* Adjust 60s for speed */
 }
-
-        /* Responsive adjustments for tech logos */
-        @media (max-width: 768px) { /* Tablet breakpoint */
-          .tech-logo-row .tech-logo {
-            margin-right: 32px; /* Reduce margin for tablets */
-            margin-bottom: 20px; /* Add some bottom margin if they wrap */
-          }
-          /* Adjust the last logo in a row to not have excessive margin if centered */
-          .tech-logo-row .tech-logo:last-child {
-            margin-right: 0; /* Or adjust as needed if centering handles it */
-          }
-        }
-
-        @media (max-width: 480px) { /* Mobile breakpoint */
-          .tech-logo-row .tech-logo {
-            margin-right: 16px; /* Further reduce margin for mobiles */
-            margin-left: 16px; /* Add some left margin for better centering feel when wrapped */
-            margin-bottom: 16px; /* Adjust bottom margin */
-          }
-           /* Ensure even spacing for mobile when wrapped and centered */
-          .tech-logo-row {
-            padding-left: 16px; /* Add some padding to the row itself */
-            padding-right: 16px;
-          }
-        }
   </style>
   <script type="application/ld+json">
     {
@@ -507,7 +511,7 @@
     </section>
 
     <!-- Why Choose Us Section -->
-    <section id="why-us" class="py-28 bg-gray-100">
+    <section id="why-us" class="py-28 bg-gray-50">
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/2 mb-12 md:mb-0 md:pr-12" data-aos="fade-up"  data-aos-duration="600"  data-aos-offset="100"  data-aos-easing="ease-out-cubic">
@@ -642,7 +646,7 @@
     </section>
 
     <!-- Careers Section -->
-    <section id="careers" class="py-28 bg-gray-100">
+    <section id="careers" class="py-28 bg-white">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16" data-aos="fade-up" data-aos-duration="600" data-aos-offset="100" data-aos-easing="ease-out-cubic">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Join Our <span class="text-blue-600">Team</span></h2>
@@ -774,7 +778,7 @@
     </section>
 
     <!-- Blog Preview Section -->
-    <section id="blog" class="py-28 bg-white">
+    <section id="blog" class="py-28 bg-gray-50">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16" data-aos="fade-up" data-aos-duration="600" data-aos-offset="100" data-aos-easing="ease-out-cubic">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">From Our <span class="text-blue-600">Blog</span></h2>
@@ -918,6 +922,77 @@
     
     // Testimonial Swiper Initialization & Logo Scroller
     document.addEventListener('DOMContentLoaded', function () {
+      // Logo Scroller (JS Animation - to be removed or commented out)
+      // console.log("DOM fully loaded and parsed. Initializing logo scroller.");
+      /*
+      function animateLogoRow(rowId, scrollSpeedPxPerFrame, moveContentRightToLeft) {
+        const rowElement = document.getElementById(rowId);
+        if (!rowElement) {
+          console.error(`Logo row not found: ${rowId}`);
+          return;
+        }
+        // console.log(`Initializing animation for ${rowId}. Speed: ${scrollSpeedPxPerFrame}, RTL: ${moveContentRightToLeft}`);
+
+        if (rowElement.children.length === 0) {
+            // console.error(`No logos found in ${rowId} to animate at outset.`);
+            return;
+        }
+
+        const originalLogos = Array.from(rowElement.children);
+
+        let calculatedWidthOfOneSet = 0;
+        const logoMarginRight = 64;
+
+        originalLogos.forEach(logo => {
+          calculatedWidthOfOneSet += logo.offsetWidth + logoMarginRight;
+        });
+
+        // console.log(`${rowId} - Calculated width of ONE set (logos + margins): ${calculatedWidthOfOneSet}px`);
+
+        originalLogos.forEach(logo => {
+          rowElement.appendChild(logo.cloneNode(true));
+        });
+
+        void rowElement.offsetWidth;
+
+        const scrollWidthOfOneSet = calculatedWidthOfOneSet;
+
+        let currentPositionDotPx = 0;
+
+        if (scrollWidthOfOneSet === 0) {
+            // console.error(`${rowId} - scrollWidthOfOneSet is 0. Animation cannot proceed meaningfully.`);
+            return;
+        } else {
+            // console.log(`${rowId} - USING scrollWidthOfOneSet for animation: ${scrollWidthOfOneSet}px`);
+        }
+
+        if (!moveContentRightToLeft) {
+            rowElement.style.transform = `translateX(-${scrollWidthOfOneSet}px)`;
+            // console.log(`${rowId} - Initial LTR transform set to: translateX(-${scrollWidthOfOneSet}px)`);
+        }
+
+        function step() {
+          currentPositionDotPx += scrollSpeedPxPerFrame;
+
+          if (currentPositionDotPx >= scrollWidthOfOneSet) {
+            currentPositionDotPx -= scrollWidthOfOneSet;
+          }
+
+          if (moveContentRightToLeft) {
+            rowElement.style.transform = `translateX(-${currentPositionDotPx}px)`;
+          } else {
+            rowElement.style.transform = `translateX(${currentPositionDotPx - scrollWidthOfOneSet}px)`;
+          }
+          requestAnimationFrame(step);
+        }
+
+        // console.log(`Starting animation loop for ${rowId}`);
+        requestAnimationFrame(step);
+      }
+
+      // animateLogoRow('tech-logo-row-1', 0.5, true);
+      // animateLogoRow('tech-logo-row-2', 0.5, false);
+      */
 
       const testimonialSwiper = new Swiper('.testimonial-swiper', {
         loop: true,

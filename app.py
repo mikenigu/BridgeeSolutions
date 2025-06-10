@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin # Make sure cross_origin is imported
 import os
 import asyncio # Added asyncio
+import uuid # Import uuid module
+import json # Import json module
+from datetime import datetime # Import datetime
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename # Keep for now, might be used by other routes later or full version
 import telegram # Keep for now
@@ -15,6 +18,7 @@ CORS(app) # Initialize CORS globally
 # For a real application, use environment variables for sensitive data like tokens and IDs
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', 'YOUR_TELEGRAM_BOT_TOKEN_PLACEHOLDER')
 HR_CHAT_ID = os.environ.get('HR_CHAT_ID', 'YOUR_HR_CHAT_ID_PLACEHOLDER') # Can be a user ID or group/channel ID
+APPLICATION_LOG_FILE = 'submitted_applications.log.json' # Log file for submitted applications
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
@@ -110,9 +114,34 @@ def submit_application(): # Synchronous route
 
         print(f"Full endpoint: Received POST for job: {job_title}. Form data: {request.form}")
 
+        if not all([full_name, email, job_title]): # Basic check, full_name is not used by log yet but essential for application
+            return jsonify({'error': 'Missing required fields (full_name, email, job_title)'}), 400
 
-        if not all([full_name, email, job_title]):
-            return jsonify({'error': 'Missing required fields (name, email, job_title)'}), 400
+        # --- Duplicate Application Check ---
+        applications_log = []
+        if os.path.exists(APPLICATION_LOG_FILE):
+            try:
+                with open(APPLICATION_LOG_FILE, 'r') as f:
+                    content = f.read()
+                    if content:
+                        applications_log = json.loads(content)
+                        if not isinstance(applications_log, list): # Ensure it's a list
+                            print(f"Warning: Log file {APPLICATION_LOG_FILE} does not contain a list. Resetting log.")
+                            applications_log = []
+                    else:
+                        applications_log = [] # File is empty
+            except json.JSONDecodeError:
+                print(f"Warning: Could not decode JSON from {APPLICATION_LOG_FILE}. Starting with an empty log.")
+                applications_log = [] # File is malformed
+            except IOError as e:
+                print(f"Warning: Could not read {APPLICATION_LOG_FILE}: {e}. Starting with an empty log.")
+                applications_log = []
+
+        for app_log in applications_log:
+            # Ensure keys exist in log entry before accessing
+            if app_log.get('email') == email and app_log.get('job_title') == job_title:
+                return jsonify({'error': 'You have already applied for this position.'}), 409
+        # --- End Duplicate Application Check ---
 
         cv_file = None
         cv_filepath = None
@@ -128,8 +157,9 @@ def submit_application(): # Synchronous route
 
         if cv_file and allowed_file(cv_file.filename):
             original_filename = secure_filename(cv_file.filename)
-            # In a real app, make filename unique (e.g., timestamp or UUID prefix)
-            filename = original_filename
+            # Generate a unique filename
+            unique_filename = f"{uuid.uuid4()}-{original_filename}"
+            filename = unique_filename
 
             # Ensure uploads folder exists (Flask often runs from project root in dev)
             upload_folder_path = app.config['UPLOAD_FOLDER']
@@ -156,6 +186,27 @@ def submit_application(): # Synchronous route
             'cover_letter': form_data.get('cover_letter', ''),
             'job_title': job_title
         }
+
+        # --- Log Application ---
+        # The applications_log list is already populated from the duplicate check step earlier
+        # or initialized as an empty list if the log file didn't exist or was invalid.
+        new_application_entry = {
+            'email': email,
+            'job_title': job_title,
+            'timestamp': datetime.utcnow().isoformat() + 'Z',
+            'full_name': full_name,
+            'phone_number': form_data.get('phone_number', ''),
+            'cv_filename': filename # This is the unique filename
+        }
+        applications_log.append(new_application_entry)
+
+        try:
+            with open(APPLICATION_LOG_FILE, 'w') as f:
+                json.dump(applications_log, f, indent=4)
+            print(f"Successfully logged application for {full_name} to {APPLICATION_LOG_FILE}")
+        except IOError as e:
+            print(f"Error: Could not write to {APPLICATION_LOG_FILE}: {e}. Application for {full_name} was processed but not logged.")
+        # --- End Log Application ---
 
         # Send notification using asyncio.run() to call the async Telegram function
         print(f"Preparing to send Telegram notification for {full_name}...")

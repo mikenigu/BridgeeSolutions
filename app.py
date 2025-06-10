@@ -196,7 +196,8 @@ def submit_application(): # Synchronous route
             'timestamp': datetime.utcnow().isoformat() + 'Z',
             'full_name': full_name,
             'phone_number': form_data.get('phone_number', ''),
-            'cv_filename': filename # This is the unique filename
+            'cv_filename': filename, # This is the unique filename
+            'status': 'new' # New field
         }
         applications_log.append(new_application_entry)
 

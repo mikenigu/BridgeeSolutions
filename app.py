@@ -26,28 +26,44 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def escape_markdown_v2(text: str) -> str:
+    """Escapes special characters for MarkdownV2."""
+    if not isinstance(text, str):
+        return ""
+    escape_chars = r'_*[]()~`>#+-=|{}.!'
+    # Escape each character with a preceding backslash
+    for char in escape_chars:
+        text = text.replace(char, '\\' + char)
+    return text
+
 async def send_telegram_notification(applicant_data, cv_filepath):
     bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
 
     message_text = f"📢 New Job Application Received!\n\n"
+
     # Escape MarkdownV2 characters for user-provided fields
-    job_title = applicant_data.get('job_title', 'N/A').replace('.', '\\.') # Basic example, more comprehensive escaping might be needed
-    full_name = applicant_data.get('full_name', 'N/A').replace('.', '\\.')
-    email = applicant_data.get('email', 'N/A').replace('.', '\\.')
-    phone = applicant_data.get('phone_number', '').replace('.', '\\.')
-    cover_letter_snippet = applicant_data.get('cover_letter', '')[:200].replace('.', '\\.') + "..."
+    job_title = escape_markdown_v2(applicant_data.get('job_title', 'N/A'))
+    full_name = escape_markdown_v2(applicant_data.get('full_name', 'N/A'))
+    email = escape_markdown_v2(applicant_data.get('email', 'N/A'))
+    phone_number = escape_markdown_v2(applicant_data.get('phone_number', '')) # Renamed for clarity
+
+    raw_cover_letter = applicant_data.get('cover_letter', '')
+    truncated_cover_letter = raw_cover_letter[:200]
+    cover_letter_snippet = escape_markdown_v2(truncated_cover_letter)
+    if len(raw_cover_letter) > 200:
+        cover_letter_snippet += escape_markdown_v2("...")
 
 
     message_text += f"**Job Title:** {job_title}\n"
     message_text += f"**Name:** {full_name}\n"
     message_text += f"**Email:** {email}\n"
     if applicant_data.get('phone_number'): # Check if phone exists before adding
-        message_text += f"**Phone:** {phone}\n"
+        message_text += f"**Phone:** {phone_number}\n" # Use the new variable name
 
     if applicant_data.get('cover_letter'): # Check if cover_letter exists
         message_text += f"\n**Cover Letter Snippet:**\n{cover_letter_snippet}\n"
 
-    message_text += f"\n\n📄 CV attached."
+    message_text += f"\n\n📄 CV attached\\." # Escape the final period as well
 
     try:
         # Send the text message (using MarkdownV2 for bolding)

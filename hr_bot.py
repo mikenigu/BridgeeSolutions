@@ -19,7 +19,7 @@ if platform.system() == "Windows":
 
 from dotenv import load_dotenv
 import telegram # Added for telegram.error.BadRequest
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 from telegram.ext import (
     Application,
     ApplicationBuilder, # For v20+
@@ -193,6 +193,30 @@ async def review_applications_command(update: Update, context: ContextTypes.DEFA
             logger.error(f"Generic error sending application message for {cv_filename}: {e}", exc_info=True)
             await update.message.reply_text(f"A general error occurred while displaying application for {escape_markdown_v2(str(cv_filename))}.")
 
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Sends a welcome message with a reply keyboard for easy command access."""
+    if not await restricted_access(update, context):
+        return
+
+    keyboard = [
+        ["Review New Applications"],  # This button text will be sent as a message if clicked
+        # ["List All Applications"], # Placeholder for a future command
+        ["Help"]                     # Placeholder for a future command
+    ]
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard,
+        resize_keyboard=True,       # Makes the keyboard smaller and less intrusive
+        one_time_keyboard=False     # Keeps the keyboard open until the user explicitly closes it
+    )
+
+    await update.message.reply_text(
+        "Welcome to the HR Bot! Please use the menu below or type commands.\n\n"
+        "The 'Review New Applications' button currently serves as a reminder to use the "
+        "/review_applications command (you can also type it).\n\n"
+        "Future updates will make these buttons directly trigger actions.",
+        reply_markup=reply_markup
+    )
+
 async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handles button presses from inline keyboards."""
     query = update.callback_query
@@ -309,6 +333,7 @@ def main(): # Changed from async def
     # ---- HANDLERS ----
     application.add_handler(CommandHandler("review_applications", review_applications_command))
     application.add_handler(CallbackQueryHandler(button_callback_handler))
+    application.add_handler(CommandHandler("start", start_command))
 
     logger.info("HR Bot starting...")
     application.run_polling() # Changed from await application.run_polling()

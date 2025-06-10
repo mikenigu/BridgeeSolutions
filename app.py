@@ -39,7 +39,7 @@ def escape_markdown_v2(text: str) -> str:
 async def send_telegram_notification(applicant_data, cv_filepath):
     bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
 
-    message_text = f"📢 New Job Application Received!\n\n"
+    message_text = f"📢 New Job Application Received\!\n\n"
 
     # Escape MarkdownV2 characters for user-provided fields
     job_title = escape_markdown_v2(applicant_data.get('job_title', 'N/A'))

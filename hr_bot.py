@@ -4,6 +4,19 @@ import logging
 from datetime import datetime # Though not used in initial setup, good to have for later
 import asyncio # Required for python-telegram-bot v20+ async operations
 
+# Apply Windows event loop policy patch if on Windows
+import platform
+if platform.system() == "Windows":
+    current_policy = asyncio.get_event_loop_policy()
+    # Only set the policy if it's not already WindowsSelectorEventLoopPolicy
+    # or if we specifically want to ensure it is.
+    # For simplicity here, we'll set it if on Windows,
+    # assuming it might be Proactor by default.
+    # A more nuanced check could be:
+    # if not isinstance(current_policy, asyncio.WindowsSelectorEventLoopPolicy):
+    # This simple set is often fine for dedicated bot scripts.
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 from dotenv import load_dotenv
 import telegram # Added for telegram.error.BadRequest
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup

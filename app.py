@@ -1,6 +1,3 @@
-from dotenv import load_dotenv
-load_dotenv()
-from flask_cors import CORS, cross_origin
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin # Make sure cross_origin is imported
 import os
@@ -11,8 +8,8 @@ import telegram # Keep for now
 load_dotenv()
 
 app = Flask(__name__)
-
 CORS(app) # Initialize CORS globally
+
 # --- Configuration ---
 # For a real application, use environment variables for sensitive data like tokens and IDs
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', 'YOUR_TELEGRAM_BOT_TOKEN_PLACEHOLDER')
@@ -79,7 +76,6 @@ async def send_telegram_notification(applicant_data, cv_filepath):
 @app.route('/')
 def hello_world():
     return 'Hello, Bridgee Solutions Backend!'
-
 
 @app.route('/api/submit-application', methods=['POST', 'OPTIONS'])
 @cross_origin() # Apply a simple cross_origin decorator for testing

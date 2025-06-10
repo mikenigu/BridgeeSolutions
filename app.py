@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin # Make sure cross_origin is imported
 import os
+import asyncio # Added asyncio
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename # Keep for now, might be used by other routes later or full version
 import telegram # Keep for now
@@ -78,20 +79,115 @@ def hello_world():
     return 'Hello, Bridgee Solutions Backend!'
 
 @app.route('/api/submit-application', methods=['POST', 'OPTIONS'])
-@cross_origin() # Apply a simple cross_origin decorator for testing
-async def submit_application(): # Keep it async even if not strictly needed for this simple version
+@cross_origin() # Keep CORS decorator
+def submit_application(): # Synchronous route
     if request.method == 'OPTIONS':
-        print("Simplified endpoint: Received OPTIONS request")
-        return jsonify({'message': 'CORS preflight successful (simplified endpoint)'}), 200
+        print("Full endpoint: Received OPTIONS request")
+        return jsonify({'message': 'CORS preflight successful (full endpoint)'}), 200
 
     if request.method == 'POST':
-        # Just get one field to confirm form data is coming through at all
-        job_title = request.form.get('job_title', 'N/A')
-        print(f"Simplified endpoint: Received POST request for job: {job_title}. Form data: {request.form}")
-        return jsonify({'message': f'Test POST for {job_title} received successfully by simplified endpoint!'}), 200
+        # Extract form data
+        form_data = request.form.to_dict()
+        full_name = form_data.get('full_name')
+        email = form_data.get('email')
+        job_title = form_data.get('job_title')
 
-    # Fallback, though should not be reached if methods are correctly restricted
-    return jsonify({'error': 'Method not allowed by simplified endpoint logic'}), 405
+        print(f"Full endpoint: Received POST for job: {job_title}. Form data: {request.form}")
+
+
+        if not all([full_name, email, job_title]):
+            return jsonify({'error': 'Missing required fields (name, email, job_title)'}), 400
+
+        cv_file = None
+        cv_filepath = None
+        filename = None # Initialize filename
+
+        if 'cv_upload' not in request.files:
+            return jsonify({'error': 'No CV file part in the request'}), 400
+
+        cv_file = request.files['cv_upload']
+
+        if cv_file.filename == '':
+            return jsonify({'error': 'No CV file selected'}), 400
+
+        if cv_file and allowed_file(cv_file.filename):
+            original_filename = secure_filename(cv_file.filename)
+            # In a real app, make filename unique (e.g., timestamp or UUID prefix)
+            filename = original_filename
+
+            # Ensure uploads folder exists (Flask often runs from project root in dev)
+            upload_folder_path = app.config['UPLOAD_FOLDER']
+            if not os.path.exists(upload_folder_path):
+                os.makedirs(upload_folder_path)
+                print(f"Created upload folder: {upload_folder_path}")
+
+            cv_filepath = os.path.join(upload_folder_path, filename)
+
+            try:
+                cv_file.save(cv_filepath)
+                print(f"CV saved to {cv_filepath}")
+            except Exception as e:
+                print(f"Error saving CV: {e}")
+                return jsonify({'error': f'Could not save CV file: {str(e)}'}), 500
+        else:
+            return jsonify({'error': 'Invalid CV file type. Allowed: pdf, doc, docx'}), 400
+
+        # Prepare applicant data dictionary for Telegram function
+        applicant_data = {
+            'full_name': full_name,
+            'email': email,
+            'phone_number': form_data.get('phone_number', ''),
+            'cover_letter': form_data.get('cover_letter', ''),
+            'job_title': job_title
+        }
+
+        # Send notification using asyncio.run() to call the async Telegram function
+        print(f"Preparing to send Telegram notification for {full_name}...")
+        telegram_success = False # Initialize
+        try:
+            telegram_success = asyncio.run(send_telegram_notification(applicant_data, cv_filepath))
+        except RuntimeError as e:
+            # This can happen if asyncio.run() is called when an event loop is already running
+            # (less common with Flask's dev server but good to be aware of for other contexts)
+            print(f"Asyncio RuntimeError (possibly nested event loops): {e}. Trying to get existing loop.")
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # This is a more complex scenario, often requires contextvars or different async handling
+                    print("Event loop is already running. Telegram notification might not work as expected from sync Flask route without further async management.")
+                    # For now, we'll let it fail to the general error or succeed if get_event_loop + run_until_complete works
+                    # This part is tricky and might need library-specific solutions if python-telegram-bot v13 doesn't play well here.
+                    # A simpler approach if this becomes an issue is to make send_telegram_notification fully synchronous
+                    # using a synchronous HTTP client like 'requests' instead of the async 'python-telegram-bot' methods directly.
+                    # For now, let's see if the simple asyncio.run() works with Flask's dev server.
+                    pass # Fall through to the response logic
+                else: # Should not happen if RuntimeError was for already running loop
+                     telegram_success = loop.run_until_complete(send_telegram_notification(applicant_data, cv_filepath))
+
+            except Exception as async_e:
+                print(f"Error during advanced asyncio handling for Telegram: {async_e}")
+
+
+        if telegram_success:
+            # Optionally, delete the CV from local server after sending
+            # if cv_filepath and os.path.exists(cv_filepath):
+            #     try:
+            #         os.remove(cv_filepath)
+            #         print(f"Removed temporary CV: {cv_filepath}")
+            #     except Exception as e:
+            #         print(f"Error removing temporary CV {cv_filepath}: {e}")
+
+            return jsonify({
+                'message': 'Application received successfully and notification sent!',
+                'filename': filename
+            }), 200
+        else:
+            return jsonify({
+                'message': 'Application received, but failed to send Telegram notification. Please contact admin.',
+                'filename': filename
+            }), 500
+    else: # Should not be reached if methods are POST, OPTIONS
+        return jsonify({'error': 'Method not allowed'}), 405
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

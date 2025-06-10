@@ -294,7 +294,7 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
 
 # --- End Command Handlers ---
 
-async def main():
+def main(): # Changed from async def
     if not TELEGRAM_BOT_TOKEN:
         logger.error("TELEGRAM_BOT_TOKEN not found in environment variables.")
         return
@@ -311,39 +311,11 @@ async def main():
     application.add_handler(CallbackQueryHandler(button_callback_handler))
 
     logger.info("HR Bot starting...")
-    await application.run_polling()
+    application.run_polling() # Changed from await application.run_polling()
     logger.info("HR Bot has stopped.")
 
 if __name__ == '__main__':
-    # The platform-specific policy setting (WindowsSelectorEventLoopPolicy)
-    # should remain at the TOP of the script if it was added.
-
-    loop = None  # Initialize loop to None
-    try:
-        loop = asyncio.get_event_loop()
-        # If the loop is closed, try to create a new one.
-        # This can be necessary in some environments or after previous runs.
-        if loop.is_closed():
-            logger.info("Default event loop was closed, creating a new one.")
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
-        logger.info("Running main coroutine in the event loop.")
-        loop.run_until_complete(main())
-    except KeyboardInterrupt:
-        logger.info("HR Bot stopped by user.")
-    except RuntimeError as e: # Catch runtime errors specifically
-        logger.error(f"RuntimeError in main execution: {e}", exc_info=True)
-        if "Cannot close a running event loop" in str(e) or "Event loop is already running" in str(e):
-            logger.error("This might indicate an environment-specific asyncio conflict.")
-    except Exception as e:
-        logger.error(f"HR Bot crashed with an unexpected error: {e}", exc_info=True)
-    finally:
-        # Optional: clean up the loop if it was explicitly created and is not Proactor.
-        # For ProactorEventLoop, close() can also raise "Cannot close a running event loop".
-        # Given run_polling is indefinite, explicit closing here is often problematic
-        # and best handled by the application's shutdown sequence within run_polling.
-        # if loop and not loop.is_running() and not isinstance(loop, asyncio.ProactorEventLoop):
-        #    logger.info("Closing event loop.")
-        #    loop.close()
-        logger.info("HR Bot script execution finished or was interrupted.")
+    # The platform-specific asyncio policy setting for Windows,
+    # if present (e.g., asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())),
+    # should remain at the very top of the script (after imports).
+    main()

@@ -473,7 +473,7 @@
               const formData = new FormData(applicationForm);
 
               try {
-                const response = await fetch('/api/submit-application', {
+                const response = await fetch('http://127.0.0.1:5000/api/submit-application', {
                   method: 'POST',
                   body: formData,
                   // Headers are not typically needed for FormData with fetch,

@@ -246,12 +246,28 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
     total_apps = len(review_list)
     total_pages = (total_apps + APPS_PER_PAGE - 1) // APPS_PER_PAGE
 
-    page_summary_text = f"Displaying page {page_num + 1} of {total_pages} ({APPS_PER_PAGE} per page)\. Applications {start_index + 1}-{min(end_index, total_apps)} of {total_apps} total 'new' applications\."
-    await context.bot.send_message(
-        chat_id=chat_id,
-        text=page_summary_text,
-        parse_mode='MarkdownV2'
-    )
+    page_summary_content = f"Displaying page {page_num + 1} of {total_pages} ({APPS_PER_PAGE} per page). Applications {start_index + 1}-{min(end_index, total_apps)} of {total_apps} total 'new' applications."
+    final_page_summary_text = escape_markdown_v2(page_summary_content)
+    try:
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text=final_page_summary_text,
+            parse_mode='MarkdownV2'
+        )
+    except telegram.error.BadRequest as e:
+        logger.error(f"Error sending page summary text due to BadRequest: {e}. Text was: {final_page_summary_text}", exc_info=True)
+        # Send a non-markdown version or a simpler message as fallback
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text="Error displaying page summary. Continuing to applications..."
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error sending page summary text: {e}. Text was: {final_page_summary_text}", exc_info=True)
+        # Send a non-markdown version or a simpler message as fallback
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text="An unexpected error occurred displaying page summary. Continuing..."
+        )
 
     for app_data in apps_on_page:
         cv_filename = app_data.get('cv_filename', 'N/A')
@@ -291,12 +307,14 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
             )
         except telegram.error.BadRequest as e:
             logger.error(f"Error sending application details for {cv_filename} due to BadRequest: {e}. Text was: {message_text}", exc_info=True)
-            error_display_text = f"Error displaying application for {escape_markdown_v2(cv_filename)}\. Some special characters might still be causing issues\. Please check logs\. Raw details: Name: {escape_markdown_v2(app_data.get('full_name', 'N/A'))}, CV: {escape_markdown_v2(cv_filename)}"
-            await context.bot.send_message(chat_id=chat_id, text=error_display_text, parse_mode='MarkdownV2')
+            error_content = f"Error displaying application for {app_data.get('full_name', 'N/A')} (CV: {cv_filename}). Some special characters might have caused an issue with the detailed display. Please check server logs."
+            escaped_error_content = escape_markdown_v2(error_content)
+            await context.bot.send_message(chat_id=chat_id, text=escaped_error_content, parse_mode='MarkdownV2')
         except Exception as e:
             logger.error(f"Unexpected error sending application details for {cv_filename}: {e}. Text was: {message_text}", exc_info=True)
-            error_display_text_unexpected = f"An unexpected error occurred while trying to display application: {escape_markdown_v2(cv_filename)}\."
-            await context.bot.send_message(chat_id=chat_id, text=error_display_text_unexpected, parse_mode='MarkdownV2')
+            unexpected_error_content = f"An unexpected error occurred while trying to display application: {app_data.get('full_name', 'N/A')} (CV: {cv_filename})."
+            escaped_unexpected_error_content = escape_markdown_v2(unexpected_error_content)
+            await context.bot.send_message(chat_id=chat_id, text=escaped_unexpected_error_content, parse_mode='MarkdownV2')
 
     logger.info(f"Displayed {len(apps_on_page)} applications on page {page_num + 1} for chat_id {chat_id}.")
 
@@ -401,7 +419,9 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
                     )
             except telegram.error.BadRequest as e:
                 logger.error(f"Error editing message for {cv_filename} after status update: {e}. Text was: {updated_text}", exc_info=True)
-                await context.bot.send_message(chat_id=query.effective_chat.id, text=f"Application {escape_markdown_v2(cv_filename)} status updated to {status_message_display}\. (Could not update original message)")
+                fallback_content = f"Application {cv_filename} status updated to {status_message_display}. (Could not update original message)"
+                escaped_fallback_content = escape_markdown_v2(fallback_content)
+                await context.bot.send_message(chat_id=query.effective_chat.id, text=escaped_fallback_content, parse_mode='MarkdownV2')
             except Exception as e: # Catch other potential errors during edit
                 logger.error(f"Unexpected error editing message for {cv_filename}: {e}", exc_info=True)
 
@@ -425,10 +445,14 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
                 logger.info(f"Sent CV {cv_filename} to chat_id {query.effective_chat.id}")
             except Exception as e:
                 logger.error(f"Failed to send CV {cv_filename}: {e}", exc_info=True)
-                await context.bot.send_message(chat_id=query.effective_chat.id, text=f"Sorry, could not send CV {escape_markdown_v2(cv_filename)}\.")
+                error_content_send_fail = f"Sorry, could not send CV {cv_filename}."
+                escaped_error_content_send_fail = escape_markdown_v2(error_content_send_fail)
+                await context.bot.send_message(chat_id=query.effective_chat.id, text=escaped_error_content_send_fail, parse_mode='MarkdownV2')
         else:
             logger.warning(f"CV file {cv_filename} not found at path {cv_path} for get_cv action.")
-            await context.bot.send_message(chat_id=query.effective_chat.id, text=f"Sorry, CV file {escape_markdown_v2(cv_filename)} not found on server\.")
+            error_content_not_found = f"Sorry, CV file {cv_filename} not found on server."
+            escaped_error_content_not_found = escape_markdown_v2(error_content_not_found)
+            await context.bot.send_message(chat_id=query.effective_chat.id, text=escaped_error_content_not_found, parse_mode='MarkdownV2')
 
     else:
         logger.warning(f"Unknown callback action_type: {action_type} for cv_filename: {cv_filename}")

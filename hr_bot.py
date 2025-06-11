@@ -52,6 +52,7 @@ logger = logging.getLogger(__name__)
 # --- Keyboards ---
 main_menu_keyboard_layout = [
     ["Review New Applications"],
+    ["View Accepted Apps", "View Rejected Apps"], # New row with two buttons
     ["Help"]
 ]
 main_menu_keyboard = ReplyKeyboardMarkup(
@@ -206,6 +207,72 @@ async def start_review_session(update: Update, context: ContextTypes.DEFAULT_TYP
 
     await display_application_page(update, context) # display_application_page will be defined next
 
+async def start_view_specific_status_session(update: Update, context: ContextTypes.DEFAULT_TYPE, target_status: str):
+    # Access check should be done by the calling command/message handler if it's the first point of user interaction.
+    # Or, if this can be called from various places, ensure access is checked appropriately.
+    # The wrapper commands view_accepted_apps_command and view_rejected_apps_command don't do it,
+    # so this function should.
+    if not await restricted_access(update, context):
+        return
+
+    logger.info(f"Starting specific status view session for status '{target_status}', chat_id: {update.effective_chat.id}")
+    all_applications = load_applications()
+
+    # Filter for the target_status
+    # Also, handle potential job title filter if context.args exist (e.g. from a future /view_accepted <job_title> command)
+    # For now, the MessageHandlers for buttons won't pass context.args.
+    job_title_filter = None
+    if context.args: # Check if there are any arguments passed (e.g. from a command)
+        job_title_filter = " ".join(context.args).strip().lower()
+        if job_title_filter: # Log only if a filter is actually applied
+             logger.info(f"Filtering specific status view for job title: '{escape_markdown_v2(job_title_filter)}'")
+
+    apps_with_target_status = []
+    for app in all_applications:
+        if app.get('status') == target_status:
+            if job_title_filter:
+                if str(app.get('job_title', '')).lower() == job_title_filter: # Ensure job_title is str
+                    apps_with_target_status.append(app)
+            else:
+                apps_with_target_status.append(app)
+
+    reply_target = update.effective_message or update.message # Ensure we can reply
+    if not reply_target: # Should ideally not happen if restricted_access passed and called from msg/cmd
+        logger.error(f"start_view_specific_status_session: No message context for reply. Chat ID: {update.effective_chat.id}")
+        # Cannot reply if we don't have a message to reply to, could send new message to chat_id
+        # await context.bot.send_message(chat_id=update.effective_chat.id, text="An error occurred: No message context.")
+        return
+
+    if not apps_with_target_status:
+        status_display_name = target_status.replace("reviewed_", "").replace("_", " ").capitalize()
+        message_text = f"No applications found with status: {status_display_name}."
+        if job_title_filter:
+            message_text = f"No applications found for job title '{escape_markdown_v2(job_title_filter)}' with status: {status_display_name}."
+
+        await reply_target.reply_text(message_text, reply_markup=main_menu_keyboard)
+        # Clear any old review state
+        context.user_data.pop('review_list', None)
+        context.user_data.pop('review_page_num', None)
+        context.user_data.pop('current_view_status', None) # Clear this specific status view flag
+        return
+
+    context.user_data['review_list'] = apps_with_target_status
+    context.user_data['review_page_num'] = 0
+    context.user_data['current_view_status'] = target_status # Store what status we are viewing
+
+    status_display_name = target_status.replace("reviewed_", "").replace("_", " ").capitalize()
+    logger.info(f"Found {len(apps_with_target_status)} applications with status '{target_status}'. Starting specific view session for chat_id {update.effective_chat.id}.")
+
+    await reply_target.reply_text(
+        f"Viewing {len(apps_with_target_status)} application(s) with status: {status_display_name}. Use navigation buttons below.",
+        reply_markup=review_mode_keyboard
+    )
+
+    # Display the first page of these applications
+    # We need a new display function or to make display_application_page more generic
+    # For this plan, we decided on display_application_page_for_status_view
+    await display_application_page_for_status_view(update, context)
+
 async def display_application_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info("Attempting to display an application page.")
     review_list = context.user_data.get('review_list', [])
@@ -276,18 +343,15 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
         escaped_email = escape_markdown_v2(app_data.get('email', 'N/A'))
         escaped_job_title = escape_markdown_v2(str(app_data.get('job_title', 'N/A')))
 
-        # cv_filename is the full unique name from app_data.get('cv_filename', 'N/A')
-        # For display, we want the original name part.
-        parts = cv_filename.split('-', 1) # cv_filename here is cv_filename_stored
+        parts = cv_filename.split('-', 1)
         original_cv_name_for_display = parts[1] if len(parts) > 1 else cv_filename
         escaped_original_cv_name_display = escape_markdown_v2(original_cv_name_for_display)
 
         submission_timestamp = escape_markdown_v2(str(app_data.get('timestamp', 'N/A')))
 
-        # Process cover letter
         cover_letter_raw = app_data.get('cover_letter', '')
         escaped_cover_letter_snippet = ""
-        if cover_letter_raw and cover_letter_raw.strip(): # Check if it's not empty or just whitespace
+        if cover_letter_raw and cover_letter_raw.strip():
             snippet_length = 200
             cover_letter_snippet_text = cover_letter_raw[:snippet_length]
             if len(cover_letter_raw) > snippet_length:
@@ -309,8 +373,6 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
             f"*Submitted:* {submission_timestamp}\n"
         )
 
-        # Using distinct callback prefixes for actions originating from paged review
-        # vs. actions from initial single notifications (if those were kept).
         keyboard = [
             [
                 InlineKeyboardButton("Accept", callback_data=f"review_accept:{cv_filename}"),
@@ -340,6 +402,133 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
 
     logger.info(f"Displayed {len(apps_on_page)} applications on page {page_num + 1} for chat_id {chat_id}.")
 
+async def display_application_page_for_status_view(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger.info("Attempting to display a page for status view.")
+    review_list = context.user_data.get('review_list', [])
+    page_num = context.user_data.get('review_page_num', 0)
+    current_view_status = context.user_data.get('current_view_status', 'N/A')
+
+    chat_id = update.effective_chat.id
+    reply_target = update.effective_message
+    if not reply_target and update.callback_query:
+        reply_target = update.callback_query.message
+
+    if not review_list:
+        logger.info(f"display_application_page_for_status_view called with no review_list for status {current_view_status} in chat {chat_id}.")
+        msg_content = f"No applications to display for status: {current_view_status.replace('reviewed_', '').capitalize()}."
+        if reply_target:
+            await reply_target.reply_text(msg_content, reply_markup=main_menu_keyboard)
+        else:
+            await context.bot.send_message(chat_id=chat_id, text=msg_content, reply_markup=main_menu_keyboard)
+        return
+
+    start_index = page_num * APPS_PER_PAGE
+    end_index = start_index + APPS_PER_PAGE
+    apps_on_page = review_list[start_index:end_index]
+
+    if not apps_on_page:
+        logger.info(f"No applications found for page {page_num} in status view {current_view_status} for chat {chat_id}.")
+        no_apps_message = "No more applications to display on this page."
+        if page_num > 0:
+             no_apps_message = "You've reached the end of the list for this status."
+        if reply_target:
+            await reply_target.reply_text(no_apps_message, reply_markup=review_mode_keyboard)
+        else:
+            await context.bot.send_message(chat_id=chat_id, text=no_apps_message, reply_markup=review_mode_keyboard)
+        return
+
+    total_apps = len(review_list)
+    total_pages = (total_apps + APPS_PER_PAGE - 1) // APPS_PER_PAGE
+
+    status_display_name = current_view_status.replace("reviewed_", "").replace("_", " ").capitalize()
+    page_summary_content = f"Displaying page {page_num + 1} of {total_pages} for '{status_display_name}' applications. ({start_index + 1}-{min(end_index, total_apps)} of {total_apps} total)."
+    final_page_summary_text = escape_markdown_v2(page_summary_content)
+
+    try:
+        await context.bot.send_message(chat_id=chat_id, text=final_page_summary_text, parse_mode='MarkdownV2')
+    except telegram.error.BadRequest as e:
+        logger.error(f"Error sending page summary for status view: {e}. Text: {final_page_summary_text}", exc_info=True)
+        await context.bot.send_message(chat_id=chat_id, text="Error displaying page summary. Continuing...")
+    except Exception as e:
+        logger.error(f"Unexpected error sending page summary for status view: {e}. Text: {final_page_summary_text}", exc_info=True)
+        await context.bot.send_message(chat_id=chat_id, text="An error occurred displaying page summary. Continuing...")
+
+    for app_data in apps_on_page:
+        cv_filename = app_data.get('cv_filename', 'N/A')
+
+        escaped_full_name = escape_markdown_v2(app_data.get('full_name', 'N/A'))
+        escaped_email = escape_markdown_v2(app_data.get('email', 'N/A'))
+        escaped_job_title = escape_markdown_v2(str(app_data.get('job_title', 'N/A')))
+
+        parts = cv_filename.split('-', 1)
+        original_cv_name_for_display = parts[1] if len(parts) > 1 else cv_filename
+        escaped_original_cv_name_display = escape_markdown_v2(original_cv_name_for_display)
+
+        submission_timestamp = escape_markdown_v2(str(app_data.get('timestamp', 'N/A')))
+        reviewed_timestamp_raw = app_data.get('reviewed_timestamp')
+        reviewed_by_raw = app_data.get('reviewed_by')
+
+        message_text = (
+            f"*Status: {escape_markdown_v2(status_display_name)}*\n\n"
+            f"*Name:* {escaped_full_name}\n"
+            f"*Email:* {escaped_email}\n"
+            f"*Job Title:* {escaped_job_title}\n"
+        )
+
+        cover_letter_raw = app_data.get('cover_letter', '')
+        if cover_letter_raw and cover_letter_raw.strip():
+            snippet_length = 200
+            cover_letter_snippet_text = cover_letter_raw[:snippet_length]
+            if len(cover_letter_raw) > snippet_length:
+                cover_letter_snippet_text += "..."
+            escaped_cover_letter_snippet = escape_markdown_v2(cover_letter_snippet_text)
+            message_text += f"*Cover Letter Snippet:*\n{escaped_cover_letter_snippet}\n\n"
+
+        message_text += (
+            f"*Original CV Name:* {escaped_original_cv_name_display}\n"
+            f"*Submitted:* {submission_timestamp}\n"
+        )
+        if reviewed_timestamp_raw:
+            message_text += f"*Reviewed:* {escape_markdown_v2(str(reviewed_timestamp_raw))} by UserID: {escape_markdown_v2(str(reviewed_by_raw))}\n"
+
+        inline_keyboard_buttons = []
+        if current_view_status == "reviewed_accepted":
+            inline_keyboard_buttons = [
+                [InlineKeyboardButton("Mark as Rejected", callback_data=f"change_status:declined:{cv_filename}")],
+                [InlineKeyboardButton("Set as New", callback_data=f"change_status:new:{cv_filename}")],
+                [InlineKeyboardButton("Get CV", callback_data=f"get_cv:{cv_filename}")]
+            ]
+        elif current_view_status == "reviewed_declined":
+            inline_keyboard_buttons = [
+                [InlineKeyboardButton("Mark as Accepted", callback_data=f"change_status:accepted:{cv_filename}")],
+                [InlineKeyboardButton("Set as New", callback_data=f"change_status:new:{cv_filename}")],
+                [InlineKeyboardButton("Get CV", callback_data=f"get_cv:{cv_filename}")]
+            ]
+        else:
+             inline_keyboard_buttons.append([InlineKeyboardButton("Get CV", callback_data=f"get_cv:{cv_filename}")])
+
+        reply_markup = InlineKeyboardMarkup(inline_keyboard_buttons) if inline_keyboard_buttons else None
+
+        try:
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=message_text,
+                reply_markup=reply_markup,
+                parse_mode='MarkdownV2'
+            )
+        except telegram.error.BadRequest as e:
+            logger.error(f"Error sending status view details for {cv_filename} (Status: {current_view_status}) due to BadRequest: {e}. Text was: {message_text}", exc_info=True)
+            error_content = f"Error displaying application: {app_data.get('full_name', 'N/A')} (CV: {cv_filename}) for status '{status_display_name}'. Check logs."
+            escaped_error_content = escape_markdown_v2(error_content)
+            await context.bot.send_message(chat_id=chat_id, text=escaped_error_content, parse_mode='MarkdownV2')
+        except Exception as e:
+            logger.error(f"Unexpected error sending status view details for {cv_filename} (Status: {current_view_status}): {e}. Text was: {message_text}", exc_info=True)
+            error_content_unexpected = f"An error occurred displaying: {app_data.get('full_name', 'N/A')} (CV: {cv_filename})."
+            escaped_error_content_unexpected = escape_markdown_v2(error_content_unexpected)
+            await context.bot.send_message(chat_id=chat_id, text=escaped_error_content_unexpected, parse_mode='MarkdownV2')
+
+    logger.info(f"Displayed {len(apps_on_page)} applications on page {page_num + 1} in status view '{current_view_status}' for chat {chat_id}.")
+
 async def review_applications_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Command to start reviewing applications. Wrapper for start_review_session."""
     if not await restricted_access(update, context):
@@ -353,6 +542,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     context.user_data.pop('review_list', None)
     context.user_data.pop('review_page_num', None)
+    context.user_data.pop('current_view_status', None) # Also clear this on /start
 
     await update.message.reply_text(
         "Welcome to the HR Bot! Please use the menu below or type commands.",
@@ -367,6 +557,7 @@ async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     context.user_data.pop('review_list', None)
     context.user_data.pop('review_page_num', None)
+    context.user_data.pop('current_view_status', None) # Also clear this on /stop
 
     await update.message.reply_text(
         "Custom keyboard removed. Send /start to show it again.",
@@ -374,121 +565,180 @@ async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     logger.info(f"Custom keyboard removed, review state cleared for chat_id: {update.effective_chat.id}")
 
-# button_callback_handler should remain unchanged by this diff
+async def view_accepted_apps_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handles the 'View Accepted Apps' button."""
+    if not await restricted_access(update, context): # Added restricted_access
+        return
+    logger.info(f"'View Accepted Apps' triggered by chat_id: {update.effective_chat.id}")
+    await start_view_specific_status_session(update, context, "reviewed_accepted")
+
+async def view_rejected_apps_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handles the 'View Rejected Apps' button."""
+    if not await restricted_access(update, context): # Added restricted_access
+        return
+    logger.info(f"'View Rejected Apps' triggered by chat_id: {update.effective_chat.id}")
+    await start_view_specific_status_session(update, context, "reviewed_declined")
+
 async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    await query.answer() # Acknowledge callback
+    await query.answer()
 
-    try:
-        action_type, cv_filename = query.data.split(":", 1)
-    except ValueError:
-        logger.error(f"Invalid callback_data format: {query.data}")
-        # Try to edit the message if possible, otherwise log and move on
-        if query.message:
-            await query.edit_message_text("Error processing action. Invalid data format.", reply_markup=None)
+    callback_parts = query.data.split(":", 2) # Max split 2 for change_status
+    action_prefix = callback_parts[0]
+    cv_filename_from_callback = None
+    new_short_status_from_callback = None
+
+    if not callback_parts:
+        logger.error(f"Empty callback_data received.")
+        if query.message: await query.edit_message_text("Error: Empty callback data.")
         return
 
-    logger.info(f"Callback received: action_type='{action_type}', cv_filename='{cv_filename}' from user {query.from_user.id}")
+    logger.info(f"Callback received: data='{query.data}' by user {query.from_user.id}")
 
-    all_applications = load_applications() # Load fresh data for modification
+    # Parse callback data
+    if action_prefix in ["review_accept", "review_reject", "get_cv"]:
+        if len(callback_parts) >= 2:
+            cv_filename_from_callback = callback_parts[1]
+        else:
+            logger.error(f"Invalid format for {action_prefix}: {query.data} - missing CV filename.")
+            if query.message: await query.edit_message_text("Error: Invalid action data (missing CV filename).")
+            return
+    elif action_prefix == "change_status":
+        if len(callback_parts) == 3:
+            new_short_status_from_callback = callback_parts[1]
+            cv_filename_from_callback = callback_parts[2]
+        else:
+            logger.error(f"Invalid format for {action_prefix}: {query.data} - missing status or CV filename.")
+            if query.message: await query.edit_message_text("Error: Invalid action data (missing status or CV filename).")
+            return
+    else:
+        logger.warning(f"Unknown callback action_prefix: {action_prefix} from data: {query.data}")
+        if query.message: await query.edit_message_text("Unknown action.", reply_markup=None)
+        return
+
+    if not cv_filename_from_callback: # Safeguard, should be caught by parsing logic
+        logger.error(f"CV filename could not be parsed from callback data: {query.data}")
+        if query.message: await query.edit_message_text("Error processing action: CV filename missing.")
+        return
+
+    # Common logic: Load applications and find the target application
+    all_applications = load_applications()
     target_app_index = -1
     target_app_obj = None
-
     for i, app in enumerate(all_applications):
-        if app.get('cv_filename') == cv_filename:
+        if app.get('cv_filename') == cv_filename_from_callback:
             target_app_index = i
             target_app_obj = app
             break
 
     if not target_app_obj:
-        logger.warning(f"Application with cv_filename '{cv_filename}' not found in main log for callback action '{action_type}'.")
-        if query.message: # Check if there's a message to edit
-            await query.edit_message_text(text="Error: Application not found or already processed.", reply_markup=None)
+        logger.warning(f"App with cv_filename '{cv_filename_from_callback}' not found for action '{action_prefix}'.")
+        if query.message: await query.edit_message_text(text="Error: Application not found.", reply_markup=None) # Simplified error
         return
 
-    if action_type == "review_accept" or action_type == "review_reject":
-        new_status = "reviewed_accepted" if action_type == "review_accept" else "reviewed_declined"
+    # --- Action Handling ---
+    if action_prefix == "review_accept" or action_prefix == "review_reject":
+        new_status = "reviewed_accepted" if action_prefix == "review_accept" else "reviewed_declined"
 
         all_applications[target_app_index]['status'] = new_status
         all_applications[target_app_index]['reviewed_timestamp'] = datetime.utcnow().isoformat() + 'Z'
         all_applications[target_app_index]['reviewed_by'] = str(query.from_user.id)
 
         if save_applications(all_applications):
-            logger.info(f"Application {cv_filename} status updated to {new_status} in JSON log.")
+            logger.info(f"Application {cv_filename_from_callback} status updated to {new_status} by user {query.from_user.id}.")
 
             status_message_display = "Accepted" if new_status == "reviewed_accepted" else "Rejected"
             reviewer_name_escaped = escape_markdown_v2(query.from_user.first_name or "Unknown User")
-
-            # Use query.message.text_markdown_v2 to preserve original entities/formatting
-            # Ensure query.message and query.message.text_markdown_v2 are not None
-            base_text = ""
-            if query.message and query.message.text_markdown_v2:
-                base_text = query.message.text_markdown_v2
-            elif query.message and query.message.text: # Fallback to plain text if markdown_v2 is not available
-                base_text = escape_markdown_v2(query.message.text) # Escape it if it was plain
-
-            # Append status information
-            # Ensure the timestamp is also escaped if it contains special characters, though strftime usually doesn't.
             review_time_str = escape_markdown_v2(datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC'))
+
+            base_text = ""
+            if query.message and query.message.text_markdown_v2: base_text = query.message.text_markdown_v2
+            elif query.message and query.message.text: base_text = escape_markdown_v2(query.message.text) # Escape if it was plain
+
             updated_text = f"{base_text}\n\n*Status:* {status_message_display} by {reviewer_name_escaped} on {review_time_str}"
 
             try:
-                if query.message: # Can only edit if there was an original message
-                    await query.edit_message_text(
-                        text=updated_text,
-                        reply_markup=None,
-                        parse_mode='MarkdownV2'
-                    )
+                if query.message: await query.edit_message_text(text=updated_text, reply_markup=None, parse_mode='MarkdownV2')
             except telegram.error.BadRequest as e:
-                logger.error(f"Error editing message for {cv_filename} after status update: {e}. Text was: {updated_text}", exc_info=True)
-                fallback_content = f"Application {cv_filename} status updated to {status_message_display}. (Could not update original message)"
-                escaped_fallback_content = escape_markdown_v2(fallback_content)
-                await context.bot.send_message(chat_id=query.effective_chat.id, text=escaped_fallback_content, parse_mode='MarkdownV2')
+                logger.error(f"Error editing message for {cv_filename_from_callback} (review action): {e}. Text: {updated_text}", exc_info=True)
+                fallback_content = f"Application {escape_markdown_v2(cv_filename_from_callback)} status updated to {status_message_display}."
+                await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(fallback_content), parse_mode='MarkdownV2')
             except Exception as e: # Catch other potential errors during edit
-                logger.error(f"Unexpected error editing message for {cv_filename}: {e}", exc_info=True)
+                 logger.error(f"Unexpected error editing message for {cv_filename_from_callback} (review action): {e}", exc_info=True)
 
-            # Remove from current review session's list in user_data if it exists
-            if 'review_list' in context.user_data and isinstance(context.user_data['review_list'], list):
-                context.user_data['review_list'] = [
-                    app for app in context.user_data['review_list'] if app.get('cv_filename') != cv_filename
-                ]
-                logger.info(f"Removed {cv_filename} from current review session list for user {query.from_user.id}.")
+
+            # Remove from current 'new' review session's list in user_data
+            # Only remove if the current view is for 'new' apps, which is implied by review_accept/reject action existing
+            if 'review_list' in context.user_data and context.user_data.get('current_view_status', 'new') == 'new': # Check if it's the 'new' app list
+                context.user_data['review_list'] = [app for app in context.user_data['review_list'] if app.get('cv_filename') != cv_filename_from_callback]
+                logger.info(f"Removed {cv_filename_from_callback} from 'new' review session list for user {query.from_user.id}.")
         else:
-            logger.error(f"Failed to save application status update for {cv_filename}.")
-            if query.message:
-                 await query.edit_message_text("Error updating application status in the log. Please try again.", reply_markup=query.message.reply_markup)
+            logger.error(f"Failed to save application status update for {cv_filename_from_callback} (review action).")
+            if query.message: await query.edit_message_text("Error updating application status in log.", reply_markup=query.message.reply_markup if query.message else None)
 
-    elif action_type == "get_cv":
-        cv_path = os.path.join(UPLOAD_FOLDER, cv_filename)
+    elif action_prefix == "change_status":
+        final_new_status = ""
+        if new_short_status_from_callback == "accepted": final_new_status = "reviewed_accepted"
+        elif new_short_status_from_callback == "declined": final_new_status = "reviewed_declined"
+        elif new_short_status_from_callback == "new": final_new_status = "new"
+        else:
+            logger.error(f"Unknown new_short_status '{new_short_status_from_callback}' for change_status action on CV {cv_filename_from_callback}.")
+            if query.message: await query.edit_message_text("Error: Invalid status change value.", reply_markup=None)
+            return
+
+        all_applications[target_app_index]['status'] = final_new_status
+        if final_new_status == "new":
+            all_applications[target_app_index].pop('reviewed_timestamp', None)
+            all_applications[target_app_index].pop('reviewed_by', None)
+        else: # For "reviewed_accepted" or "reviewed_declined"
+            all_applications[target_app_index]['reviewed_timestamp'] = datetime.utcnow().isoformat() + 'Z'
+            all_applications[target_app_index]['reviewed_by'] = str(query.from_user.id)
+
+        if save_applications(all_applications):
+            logger.info(f"Application {cv_filename_from_callback} status changed to {final_new_status} by user {query.from_user.id}.")
+            status_display_name = final_new_status.replace("reviewed_", "").replace("_", " ").capitalize()
+
+            # Extract original CV name for display in confirmation message
+            parts = cv_filename_from_callback.split('-', 1)
+            original_cv_name_for_display = parts[1] if len(parts) > 1 else cv_filename_from_callback
+
+            confirm_message_content = f"Status for {escape_markdown_v2(target_app_obj.get('full_name', 'N/A'))} (CV: {escape_markdown_v2(original_cv_name_for_display)}) changed to: *{escape_markdown_v2(status_display_name)}*."
+
+            try:
+                if query.message:
+                    await query.edit_message_text(text=confirm_message_content, reply_markup=None, parse_mode='MarkdownV2')
+            except telegram.error.BadRequest as e:
+                logger.error(f"Error editing message for {cv_filename_from_callback} (change_status): {e}. Text: {confirm_message_content}", exc_info=True)
+                # If edit fails, send as a new message
+                await context.bot.send_message(chat_id=query.message.chat.id, text=confirm_message_content, parse_mode='MarkdownV2')
+            except Exception as e: # Catch other potential errors during edit
+                 logger.error(f"Unexpected error editing message for {cv_filename_from_callback} (change_status): {e}", exc_info=True)
+
+            # Remove from current review session's list in user_data because its status has changed
+            if 'review_list' in context.user_data and isinstance(context.user_data.get('review_list'), list):
+                context.user_data['review_list'] = [app for app in context.user_data['review_list'] if app.get('cv_filename') != cv_filename_from_callback]
+                logger.info(f"Removed {cv_filename_from_callback} from current status view list for user {query.from_user.id}.")
+        else:
+            logger.error(f"Failed to save application status update for {cv_filename_from_callback} (change_status).")
+            if query.message: await query.edit_message_text("Error updating application status in log.", reply_markup=query.message.reply_markup if query.message else None)
+
+    elif action_prefix == "get_cv":
+        cv_path = os.path.join(UPLOAD_FOLDER, cv_filename_from_callback)
         if os.path.exists(cv_path):
             try:
                 with open(cv_path, 'rb') as cv_doc:
-                    # Extract original filename for display
-                    parts = cv_filename.split('-', 1)
-                    original_display_name = parts[1] if len(parts) > 1 else cv_filename
-                    logger.info(f"Extracted original filename '{original_display_name}' from '{cv_filename}' for display.")
-
-                    await context.bot.send_document(
-                        chat_id=query.message.chat.id,
-                        document=cv_doc,
-                        filename=original_display_name # Use the extracted name here
-                    )
-                logger.info(f"Sent CV {cv_filename} as {original_display_name} to chat_id {query.message.chat.id}")
+                    parts = cv_filename_from_callback.split('-', 1)
+                    original_display_name = parts[1] if len(parts) > 1 else cv_filename_from_callback
+                    await context.bot.send_document(chat_id=query.message.chat.id, document=cv_doc, filename=original_display_name)
+                logger.info(f"Sent CV {cv_filename_from_callback} as {original_display_name} to chat_id {query.message.chat.id}")
             except Exception as e:
-                logger.error(f"Failed to send CV {cv_filename} as {original_display_name}: {e}", exc_info=True)
-                error_content_send_fail = f"Sorry, could not send CV {cv_filename}."
-                escaped_error_content_send_fail = escape_markdown_v2(error_content_send_fail)
-                await context.bot.send_message(chat_id=query.message.chat.id, text=escaped_error_content_send_fail, parse_mode='MarkdownV2')
+                logger.error(f"Failed to send CV {cv_filename_from_callback}: {e}", exc_info=True)
+                error_content = f"Sorry, could not send CV {cv_filename_from_callback}."
+                await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(error_content), parse_mode='MarkdownV2')
         else:
-            logger.warning(f"CV file {cv_filename} not found at path {cv_path} for get_cv action.")
-            error_content_not_found = f"Sorry, CV file {cv_filename} not found on server."
-            escaped_error_content_not_found = escape_markdown_v2(error_content_not_found)
-            await context.bot.send_message(chat_id=query.message.chat.id, text=escaped_error_content_not_found, parse_mode='MarkdownV2')
-
-    else:
-        logger.warning(f"Unknown callback action_type: {action_type} for cv_filename: {cv_filename}")
-        if query.message:
-            await query.edit_message_text("Unknown action. Please try again.", reply_markup=None)
+            logger.warning(f"CV file {cv_filename_from_callback} not found at path {cv_path} for get_cv action.")
+            error_content = f"Sorry, CV file {cv_filename_from_callback} not found on server."
+            await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(error_content), parse_mode='MarkdownV2')
 
 async def handle_next_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await restricted_access(update, context):
@@ -567,6 +817,14 @@ def main(): # Changed from async def
     application.add_handler(MessageHandler(
         filters.TEXT & filters.Regex("^Back to Main Menu$"),
         go_to_main_menu
+    ))
+    application.add_handler(MessageHandler(
+        filters.TEXT & filters.Regex("^View Accepted Apps$"),
+        view_accepted_apps_command  # New function to be created in the next step
+    ))
+    application.add_handler(MessageHandler(
+        filters.TEXT & filters.Regex("^View Rejected Apps$"),
+        view_rejected_apps_command  # New function to be created in the next step
     ))
 
     logger.info("HR Bot starting...")

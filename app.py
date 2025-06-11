@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin # Make sure cross_origin is imported
 import os
 import asyncio # Added asyncio
-import uuid # Import uuid module
+# import uuid # Import uuid module - no longer needed
 import json # Import json module
 from datetime import datetime # Import datetime
 from dotenv import load_dotenv
@@ -157,8 +157,9 @@ def submit_application(): # Synchronous route
 
         if cv_file and allowed_file(cv_file.filename):
             original_filename = secure_filename(cv_file.filename)
-            # Generate a unique filename
-            unique_filename = f"{uuid.uuid4()}-{original_filename}"
+            # New timestamp-based unique filename:
+            timestamp_ms = int(datetime.utcnow().timestamp() * 1000)
+            unique_filename = f"{timestamp_ms}-{original_filename}"
             filename = unique_filename
 
             # Ensure uploads folder exists (Flask often runs from project root in dev)

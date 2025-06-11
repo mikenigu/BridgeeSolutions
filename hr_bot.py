@@ -59,7 +59,7 @@ main_menu_keyboard = ReplyKeyboardMarkup(
 )
 
 review_mode_keyboard_layout = [
-    ["Next Page", "Previous Page"],
+    ["Previous Page", "Next Page"], # Swapped order
     ["Back to Main Menu"]
 ]
 review_mode_keyboard = ReplyKeyboardMarkup(
@@ -275,7 +275,13 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
         escaped_full_name = escape_markdown_v2(app_data.get('full_name', 'N/A'))
         escaped_email = escape_markdown_v2(app_data.get('email', 'N/A'))
         escaped_job_title = escape_markdown_v2(str(app_data.get('job_title', 'N/A')))
-        escaped_cv_filename_display = escape_markdown_v2(cv_filename)
+
+        # cv_filename is the full unique name from app_data.get('cv_filename', 'N/A')
+        # For display, we want the original name part.
+        parts = cv_filename.split('-', 1) # cv_filename here is cv_filename_stored
+        original_cv_name_for_display = parts[1] if len(parts) > 1 else cv_filename
+        escaped_original_cv_name_display = escape_markdown_v2(original_cv_name_for_display)
+
         submission_timestamp = escape_markdown_v2(str(app_data.get('timestamp', 'N/A')))
 
         # Process cover letter
@@ -299,7 +305,7 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
             message_text += f"*Cover Letter Snippet:*\n{escaped_cover_letter_snippet}\n\n"
 
         message_text += (
-            f"*CV Filename:* {escaped_cv_filename_display}\n" # Markdown fix: No backticks here
+            f"*Original CV Name:* {escaped_original_cv_name_display}\n"
             f"*Submitted:* {submission_timestamp}\n"
         )
 

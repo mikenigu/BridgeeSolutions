@@ -19,7 +19,7 @@ if platform.system() == "Windows":
 
 from dotenv import load_dotenv
 import telegram # Added for telegram.error.BadRequest
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import (
     Application,
     ApplicationBuilder, # For v20+
@@ -217,6 +217,17 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
+async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Removes the custom reply keyboard."""
+    if not await restricted_access(update, context):
+        return
+
+    await update.message.reply_text(
+        "Custom keyboard removed. Send /start to show it again.",
+        reply_markup=ReplyKeyboardRemove()
+    )
+    logger.info(f"Custom keyboard removed for chat_id: {update.effective_chat.id}")
+
 async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handles button presses from inline keyboards."""
     query = update.callback_query
@@ -334,6 +345,7 @@ def main(): # Changed from async def
     application.add_handler(CommandHandler("review_applications", review_applications_command))
     application.add_handler(CallbackQueryHandler(button_callback_handler))
     application.add_handler(CommandHandler("start", start_command))
+    application.add_handler(CommandHandler("stop", stop_command))
 
     logger.info("HR Bot starting...")
     application.run_polling() # Changed from await application.run_polling()

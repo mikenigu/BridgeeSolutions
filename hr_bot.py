@@ -27,6 +27,8 @@ from telegram.ext import (
     CallbackQueryHandler,
     ContextTypes,
     PicklePersistence, # Optional: for simple persistence if needed later
+    MessageHandler, # Added MessageHandler
+    filters # Added filters
 )
 
 # Load environment variables from .env file
@@ -346,6 +348,12 @@ def main(): # Changed from async def
     application.add_handler(CallbackQueryHandler(button_callback_handler))
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("stop", stop_command))
+
+    # Add MessageHandler for the "Review New Applications" button
+    application.add_handler(MessageHandler(
+        filters.TEXT & filters.Regex("^Review New Applications$"),
+        review_applications_command  # Point to the existing command function
+    ))
 
     logger.info("HR Bot starting...")
     application.run_polling() # Changed from await application.run_polling()

@@ -337,14 +337,16 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
         )
 
     for app_data in apps_on_page:
-        cv_filename = app_data.get('cv_filename', 'N/A')
+        cv_filename_stored = app_data.get('cv_filename', 'N/A') # Full unique name
+        app_id_for_callback = cv_filename_stored.split('-', 1)[0] if isinstance(cv_filename_stored, str) and '-' in cv_filename_stored else cv_filename_stored # Use only ID part for callback, ensure it's a string
 
         escaped_full_name = escape_markdown_v2(app_data.get('full_name', 'N/A'))
         escaped_email = escape_markdown_v2(app_data.get('email', 'N/A'))
         escaped_job_title = escape_markdown_v2(str(app_data.get('job_title', 'N/A')))
 
-        parts = cv_filename.split('-', 1)
-        original_cv_name_for_display = parts[1] if len(parts) > 1 else cv_filename
+        # Use cv_filename_stored for display logic as well
+        parts = cv_filename_stored.split('-', 1) if isinstance(cv_filename_stored, str) else []
+        original_cv_name_for_display = parts[1] if len(parts) > 1 else cv_filename_stored
         escaped_original_cv_name_display = escape_markdown_v2(original_cv_name_for_display)
 
         submission_timestamp = escape_markdown_v2(str(app_data.get('timestamp', 'N/A')))
@@ -375,10 +377,10 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
 
         keyboard = [
             [
-                InlineKeyboardButton("Accept", callback_data=f"review_accept:{cv_filename}"),
-                InlineKeyboardButton("Reject", callback_data=f"review_reject:{cv_filename}")
+                InlineKeyboardButton("Accept", callback_data=f"review_accept:{app_id_for_callback}"),
+                InlineKeyboardButton("Reject", callback_data=f"review_reject:{app_id_for_callback}")
             ],
-            [InlineKeyboardButton("Get CV", callback_data=f"get_cv:{cv_filename}")]
+            [InlineKeyboardButton("Get CV", callback_data=f"get_cv:{app_id_for_callback}")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -390,13 +392,13 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
                 parse_mode='MarkdownV2'
             )
         except telegram.error.BadRequest as e:
-            logger.error(f"Error sending application details for {cv_filename} due to BadRequest: {e}. Text was: {message_text}", exc_info=True)
-            error_content = f"Error displaying application for {app_data.get('full_name', 'N/A')} (CV: {cv_filename}). Some special characters might have caused an issue with the detailed display. Please check server logs."
+            logger.error(f"Error sending application details for {cv_filename_stored} due to BadRequest: {e}. Text was: {message_text}", exc_info=True) # Logging with full stored name
+            error_content = f"Error displaying application for {app_data.get('full_name', 'N/A')} (CV: {cv_filename_stored}). Some special characters might have caused an issue with the detailed display. Please check server logs."
             escaped_error_content = escape_markdown_v2(error_content)
             await context.bot.send_message(chat_id=chat_id, text=escaped_error_content, parse_mode='MarkdownV2')
         except Exception as e:
-            logger.error(f"Unexpected error sending application details for {cv_filename}: {e}. Text was: {message_text}", exc_info=True)
-            unexpected_error_content = f"An unexpected error occurred while trying to display application: {app_data.get('full_name', 'N/A')} (CV: {cv_filename})."
+            logger.error(f"Unexpected error sending application details for {cv_filename_stored}: {e}. Text was: {message_text}", exc_info=True) # Logging with full stored name
+            unexpected_error_content = f"An unexpected error occurred while trying to display application: {app_data.get('full_name', 'N/A')} (CV: {cv_filename_stored})."
             escaped_unexpected_error_content = escape_markdown_v2(unexpected_error_content)
             await context.bot.send_message(chat_id=chat_id, text=escaped_unexpected_error_content, parse_mode='MarkdownV2')
 
@@ -454,14 +456,16 @@ async def display_application_page_for_status_view(update: Update, context: Cont
         await context.bot.send_message(chat_id=chat_id, text="An error occurred displaying page summary. Continuing...")
 
     for app_data in apps_on_page:
-        cv_filename = app_data.get('cv_filename', 'N/A')
+        cv_filename_stored = app_data.get('cv_filename', 'N/A') # Full unique name
+        app_id_for_callback = cv_filename_stored.split('-', 1)[0] if isinstance(cv_filename_stored, str) and '-' in cv_filename_stored else cv_filename_stored
 
         escaped_full_name = escape_markdown_v2(app_data.get('full_name', 'N/A'))
         escaped_email = escape_markdown_v2(app_data.get('email', 'N/A'))
         escaped_job_title = escape_markdown_v2(str(app_data.get('job_title', 'N/A')))
 
-        parts = cv_filename.split('-', 1)
-        original_cv_name_for_display = parts[1] if len(parts) > 1 else cv_filename
+        # Use cv_filename_stored for display logic
+        parts = cv_filename_stored.split('-', 1) if isinstance(cv_filename_stored, str) else []
+        original_cv_name_for_display = parts[1] if len(parts) > 1 else cv_filename_stored
         escaped_original_cv_name_display = escape_markdown_v2(original_cv_name_for_display)
 
         submission_timestamp = escape_markdown_v2(str(app_data.get('timestamp', 'N/A')))
@@ -494,18 +498,18 @@ async def display_application_page_for_status_view(update: Update, context: Cont
         inline_keyboard_buttons = []
         if current_view_status == "reviewed_accepted":
             inline_keyboard_buttons = [
-                [InlineKeyboardButton("Mark as Rejected", callback_data=f"change_status:declined:{cv_filename}")],
-                [InlineKeyboardButton("Set as New", callback_data=f"change_status:new:{cv_filename}")],
-                [InlineKeyboardButton("Get CV", callback_data=f"get_cv:{cv_filename}")]
+                [InlineKeyboardButton("Mark as Rejected", callback_data=f"change_status:declined:{app_id_for_callback}")],
+                [InlineKeyboardButton("Set as New", callback_data=f"change_status:new:{app_id_for_callback}")],
+                [InlineKeyboardButton("Get CV", callback_data=f"get_cv:{app_id_for_callback}")]
             ]
         elif current_view_status == "reviewed_declined":
             inline_keyboard_buttons = [
-                [InlineKeyboardButton("Mark as Accepted", callback_data=f"change_status:accepted:{cv_filename}")],
-                [InlineKeyboardButton("Set as New", callback_data=f"change_status:new:{cv_filename}")],
-                [InlineKeyboardButton("Get CV", callback_data=f"get_cv:{cv_filename}")]
+                [InlineKeyboardButton("Mark as Accepted", callback_data=f"change_status:accepted:{app_id_for_callback}")],
+                [InlineKeyboardButton("Set as New", callback_data=f"change_status:new:{app_id_for_callback}")],
+                [InlineKeyboardButton("Get CV", callback_data=f"get_cv:{app_id_for_callback}")]
             ]
         else:
-             inline_keyboard_buttons.append([InlineKeyboardButton("Get CV", callback_data=f"get_cv:{cv_filename}")])
+             inline_keyboard_buttons.append([InlineKeyboardButton("Get CV", callback_data=f"get_cv:{app_id_for_callback}")])
 
         reply_markup = InlineKeyboardMarkup(inline_keyboard_buttons) if inline_keyboard_buttons else None
 
@@ -517,13 +521,13 @@ async def display_application_page_for_status_view(update: Update, context: Cont
                 parse_mode='MarkdownV2'
             )
         except telegram.error.BadRequest as e:
-            logger.error(f"Error sending status view details for {cv_filename} (Status: {current_view_status}) due to BadRequest: {e}. Text was: {message_text}", exc_info=True)
-            error_content = f"Error displaying application: {app_data.get('full_name', 'N/A')} (CV: {cv_filename}) for status '{status_display_name}'. Check logs."
+            logger.error(f"Error sending status view details for {cv_filename_stored} (Status: {current_view_status}) due to BadRequest: {e}. Text was: {message_text}", exc_info=True) # Use cv_filename_stored
+            error_content = f"Error displaying application: {app_data.get('full_name', 'N/A')} (CV: {cv_filename_stored}) for status '{status_display_name}'. Check logs."
             escaped_error_content = escape_markdown_v2(error_content)
             await context.bot.send_message(chat_id=chat_id, text=escaped_error_content, parse_mode='MarkdownV2')
         except Exception as e:
-            logger.error(f"Unexpected error sending status view details for {cv_filename} (Status: {current_view_status}): {e}. Text was: {message_text}", exc_info=True)
-            error_content_unexpected = f"An error occurred displaying: {app_data.get('full_name', 'N/A')} (CV: {cv_filename})."
+            logger.error(f"Unexpected error sending status view details for {cv_filename_stored} (Status: {current_view_status}): {e}. Text was: {message_text}", exc_info=True) # Use cv_filename_stored
+            error_content_unexpected = f"An error occurred displaying: {app_data.get('full_name', 'N/A')} (CV: {cv_filename_stored})."
             escaped_error_content_unexpected = escape_markdown_v2(error_content_unexpected)
             await context.bot.send_message(chat_id=chat_id, text=escaped_error_content_unexpected, parse_mode='MarkdownV2')
 

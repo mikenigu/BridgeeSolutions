@@ -278,11 +278,27 @@ async def display_application_page(update: Update, context: ContextTypes.DEFAULT
         escaped_cv_filename_display = escape_markdown_v2(cv_filename)
         submission_timestamp = escape_markdown_v2(str(app_data.get('timestamp', 'N/A')))
 
+        # Process cover letter
+        cover_letter_raw = app_data.get('cover_letter', '')
+        escaped_cover_letter_snippet = ""
+        if cover_letter_raw and cover_letter_raw.strip(): # Check if it's not empty or just whitespace
+            snippet_length = 200
+            cover_letter_snippet_text = cover_letter_raw[:snippet_length]
+            if len(cover_letter_raw) > snippet_length:
+                cover_letter_snippet_text += "..."
+            escaped_cover_letter_snippet = escape_markdown_v2(cover_letter_snippet_text)
+
         message_text = (
             f"*New Application*\n\n"
             f"*Name:* {escaped_full_name}\n"
             f"*Email:* {escaped_email}\n"
             f"*Job Title:* {escaped_job_title}\n"
+        )
+
+        if escaped_cover_letter_snippet:
+            message_text += f"*Cover Letter Snippet:*\n{escaped_cover_letter_snippet}\n\n"
+
+        message_text += (
             f"*CV Filename:* {escaped_cv_filename_display}\n" # Markdown fix: No backticks here
             f"*Submitted:* {submission_timestamp}\n"
         )
@@ -441,18 +457,27 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
         if os.path.exists(cv_path):
             try:
                 with open(cv_path, 'rb') as cv_doc:
-                    await context.bot.send_document(chat_id=query.effective_chat.id, document=cv_doc)
-                logger.info(f"Sent CV {cv_filename} to chat_id {query.effective_chat.id}")
+                    # Extract original filename for display
+                    parts = cv_filename.split('-', 1)
+                    original_display_name = parts[1] if len(parts) > 1 else cv_filename
+                    logger.info(f"Extracted original filename '{original_display_name}' from '{cv_filename}' for display.")
+
+                    await context.bot.send_document(
+                        chat_id=query.message.chat.id,
+                        document=cv_doc,
+                        filename=original_display_name # Use the extracted name here
+                    )
+                logger.info(f"Sent CV {cv_filename} as {original_display_name} to chat_id {query.message.chat.id}")
             except Exception as e:
-                logger.error(f"Failed to send CV {cv_filename}: {e}", exc_info=True)
+                logger.error(f"Failed to send CV {cv_filename} as {original_display_name}: {e}", exc_info=True)
                 error_content_send_fail = f"Sorry, could not send CV {cv_filename}."
                 escaped_error_content_send_fail = escape_markdown_v2(error_content_send_fail)
-                await context.bot.send_message(chat_id=query.effective_chat.id, text=escaped_error_content_send_fail, parse_mode='MarkdownV2')
+                await context.bot.send_message(chat_id=query.message.chat.id, text=escaped_error_content_send_fail, parse_mode='MarkdownV2')
         else:
             logger.warning(f"CV file {cv_filename} not found at path {cv_path} for get_cv action.")
             error_content_not_found = f"Sorry, CV file {cv_filename} not found on server."
             escaped_error_content_not_found = escape_markdown_v2(error_content_not_found)
-            await context.bot.send_message(chat_id=query.effective_chat.id, text=escaped_error_content_not_found, parse_mode='MarkdownV2')
+            await context.bot.send_message(chat_id=query.message.chat.id, text=escaped_error_content_not_found, parse_mode='MarkdownV2')
 
     else:
         logger.warning(f"Unknown callback action_type: {action_type} for cv_filename: {cv_filename}")

@@ -197,6 +197,7 @@ def submit_application(): # Synchronous route
             'full_name': full_name,
             'phone_number': form_data.get('phone_number', ''),
             'cv_filename': filename, # This is the unique filename
+            'cover_letter': form_data.get('cover_letter', ''), # ADD THIS LINE
             'status': 'new' # New field
         }
         applications_log.append(new_application_entry)

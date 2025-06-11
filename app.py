@@ -209,51 +209,43 @@ def submit_application(): # Synchronous route
             print(f"Error: Could not write to {APPLICATION_LOG_FILE}: {e}. Application for {full_name} was processed but not logged.")
         # --- End Log Application ---
 
-        # Send notification using asyncio.run() to call the async Telegram function
-        print(f"Preparing to send Telegram notification for {full_name}...")
-        telegram_success = False # Initialize
-        try:
-            telegram_success = asyncio.run(send_telegram_notification(applicant_data, cv_filepath))
-        except RuntimeError as e:
-            # This can happen if asyncio.run() is called when an event loop is already running
-            # (less common with Flask's dev server but good to be aware of for other contexts)
-            print(f"Asyncio RuntimeError (possibly nested event loops): {e}. Trying to get existing loop.")
-            try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    # This is a more complex scenario, often requires contextvars or different async handling
-                    print("Event loop is already running. Telegram notification might not work as expected from sync Flask route without further async management.")
-                    # For now, we'll let it fail to the general error or succeed if get_event_loop + run_until_complete works
-                    # This part is tricky and might need library-specific solutions if python-telegram-bot v13 doesn't play well here.
-                    # A simpler approach if this becomes an issue is to make send_telegram_notification fully synchronous
-                    # using a synchronous HTTP client like 'requests' instead of the async 'python-telegram-bot' methods directly.
-                    # For now, let's see if the simple asyncio.run() works with Flask's dev server.
-                    pass # Fall through to the response logic
-                else: # Should not happen if RuntimeError was for already running loop
-                     telegram_success = loop.run_until_complete(send_telegram_notification(applicant_data, cv_filepath))
+        # Telegram notification is now handled by the HR bot, so we remove the direct call here.
+        # print(f"Preparing to send Telegram notification for {full_name}...")
+        # telegram_success = False # Initialize
+        # try:
+        #     telegram_success = asyncio.run(send_telegram_notification(applicant_data, cv_filepath))
+        # except RuntimeError as e:
+        #     # This can happen if asyncio.run() is called when an event loop is already running
+        #     # (less common with Flask's dev server but good to be aware of for other contexts)
+        #     print(f"Asyncio RuntimeError (possibly nested event loops): {e}. Trying to get existing loop.")
+        #     try:
+        #         loop = asyncio.get_event_loop()
+        #         if loop.is_running():
+        #             # This is a more complex scenario, often requires contextvars or different async handling
+        #             print("Event loop is already running. Telegram notification might not work as expected from sync Flask route without further async management.")
+        #             pass
+        #         else:
+        #              telegram_success = loop.run_until_complete(send_telegram_notification(applicant_data, cv_filepath))
+        #     except Exception as async_e:
+        #         print(f"Error during advanced asyncio handling for Telegram: {async_e}")
 
-            except Exception as async_e:
-                print(f"Error during advanced asyncio handling for Telegram: {async_e}")
+        # The function will now unconditionally return success if all prior steps (CV save, logging) are fine.
+        # The logging to submitted_applications.log.json which includes 'status': 'new' happens before this.
 
+        # Optionally, delete the CV from local server if it's only needed for the (now removed) direct Telegram upload.
+        # However, the HR bot will need access to this file via "Get CV" button, so we should NOT delete it here.
+        # if cv_filepath and os.path.exists(cv_filepath):
+        #     try:
+        #         os.remove(cv_filepath)
+        #         print(f"Removed temporary CV: {cv_filepath}") # This might be premature if HR bot needs it later
+        #     except Exception as e:
+        #         print(f"Error removing temporary CV {cv_filepath}: {e}")
 
-        if telegram_success:
-            # Optionally, delete the CV from local server after sending
-            # if cv_filepath and os.path.exists(cv_filepath):
-            #     try:
-            #         os.remove(cv_filepath)
-            #         print(f"Removed temporary CV: {cv_filepath}")
-            #     except Exception as e:
-            #         print(f"Error removing temporary CV {cv_filepath}: {e}")
+        return jsonify({
+            'message': 'Application received successfully and logged.',
+            'filename': filename # The unique CV filename
+        }), 200
 
-            return jsonify({
-                'message': 'Application received successfully and notification sent!',
-                'filename': filename
-            }), 200
-        else:
-            return jsonify({
-                'message': 'Application received, but failed to send Telegram notification. Please contact admin.',
-                'filename': filename
-            }), 500
     else: # Should not be reached if methods are POST, OPTIONS
         return jsonify({'error': 'Method not allowed'}), 405
 

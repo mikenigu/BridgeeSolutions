@@ -587,9 +587,9 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
     query = update.callback_query
     await query.answer()
 
-    callback_parts = query.data.split(":", 2) # Max split 2 for change_status
+    callback_parts = query.data.split(":", 2)
     action_prefix = callback_parts[0]
-    cv_filename_from_callback = None
+    app_id_from_callback = None # Renamed from cv_filename_from_callback
     new_short_status_from_callback = None
 
     if not callback_parts:
@@ -597,50 +597,75 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
         if query.message: await query.edit_message_text("Error: Empty callback data.")
         return
 
-    logger.info(f"Callback received: data='{query.data}' by user {query.from_user.id}")
+    # Initial detailed logging
+    logger.info(f"Callback received. Raw data: '{query.data}' by user {query.from_user.id}")
+    # Assign parsed parts for logging clarity before validation
+    parsed_app_id_for_log = callback_parts[1] if len(callback_parts) > 1 else "N/A"
+    parsed_new_status_for_log = callback_parts[2] if len(callback_parts) == 3 and action_prefix == "change_status" else "N/A"
+    if action_prefix != "change_status" and len(callback_parts) == 3: # If not change_status, 3rd part is unexpected
+        parsed_new_status_for_log = "N/A (unexpected 3rd part)"
+
+    logger.info(f"Pre-validation Parsed: action_prefix='{action_prefix}', potential_app_id='{parsed_app_id_for_log}', potential_new_status='{parsed_new_status_for_log}'")
 
     # Parse callback data
     if action_prefix in ["review_accept", "review_reject", "get_cv"]:
-        if len(callback_parts) >= 2:
-            cv_filename_from_callback = callback_parts[1]
+        if len(callback_parts) == 2:
+            app_id_from_callback = callback_parts[1]
         else:
-            logger.error(f"Invalid format for {action_prefix}: {query.data} - missing CV filename.")
-            if query.message: await query.edit_message_text("Error: Invalid action data (missing CV filename).")
+            logger.error(f"Invalid format for {action_prefix}: {query.data} - expected 2 parts.")
+            if query.message: await query.edit_message_text("Error: Invalid action data format.")
             return
     elif action_prefix == "change_status":
         if len(callback_parts) == 3:
             new_short_status_from_callback = callback_parts[1]
-            cv_filename_from_callback = callback_parts[2]
+            app_id_from_callback = callback_parts[2]
         else:
-            logger.error(f"Invalid format for {action_prefix}: {query.data} - missing status or CV filename.")
-            if query.message: await query.edit_message_text("Error: Invalid action data (missing status or CV filename).")
+            logger.error(f"Invalid format for {action_prefix}: {query.data} - expected 3 parts.")
+            if query.message: await query.edit_message_text("Error: Invalid action data format.")
             return
     else:
         logger.warning(f"Unknown callback action_prefix: {action_prefix} from data: {query.data}")
         if query.message: await query.edit_message_text("Unknown action.", reply_markup=None)
         return
 
-    if not cv_filename_from_callback: # Safeguard, should be caught by parsing logic
-        logger.error(f"CV filename could not be parsed from callback data: {query.data}")
-        if query.message: await query.edit_message_text("Error processing action: CV filename missing.")
+    if not app_id_from_callback:
+        logger.error(f"App ID could not be parsed from callback data: {query.data}")
+        if query.message: await query.edit_message_text("Error processing action: App ID missing.")
         return
+
+    logger.info(f"Post-validation Parsed: action_prefix='{action_prefix}', app_id='{app_id_from_callback}', new_status='{new_short_status_from_callback if new_short_status_from_callback else 'N/A'}'")
+
 
     # Common logic: Load applications and find the target application
     all_applications = load_applications()
     target_app_index = -1
     target_app_obj = None
+
+    search_prefix_for_loop = app_id_from_callback + '-' # Prepare search prefix once
+
     for i, app in enumerate(all_applications):
-        if app.get('cv_filename') == cv_filename_from_callback:
+        stored_cv_filename = app.get('cv_filename', '')
+        is_match = stored_cv_filename.startswith(search_prefix_for_loop)
+
+        # More detailed logging inside the loop (can be very verbose)
+        # logger.info(f"Searching... Checking stored_cv: '{stored_cv_filename}', against app_id_prefix: '{search_prefix_for_loop}'. Match: {is_match}")
+
+        if is_match:
             target_app_index = i
             target_app_obj = app
-            break
+            logger.info(f"Match found! Stored CV: '{stored_cv_filename}', App ID: '{app_id_from_callback}'")
+            break # Found the app, exit loop
 
     if not target_app_obj:
-        logger.warning(f"App with cv_filename '{cv_filename_from_callback}' not found for action '{action_prefix}'.")
-        if query.message: await query.edit_message_text(text="Error: Application not found.", reply_markup=None) # Simplified error
+        logger.warning(f"Application NOT FOUND. App_id from callback: '{app_id_from_callback}'. Search prefix used: '{search_prefix_for_loop}'.")
+        available_cv_filenames = [a.get('cv_filename', 'MISSING_CV_FILENAME_KEY') for a in all_applications]
+        logger.info(f"Available cv_filenames in log for comparison: {available_cv_filenames}")
+        if query.message: await query.edit_message_text(text="Error: Application not found (diag_v2).", reply_markup=None)
         return
 
-    # --- Action Handling ---
+    # --- Action Handling (using app_id_from_callback and target_app_obj.get('cv_filename') for the full name) ---
+    full_cv_filename = target_app_obj.get('cv_filename') # This is the full name like 'timestamp-original.ext'
+
     if action_prefix == "review_accept" or action_prefix == "review_reject":
         new_status = "reviewed_accepted" if action_prefix == "review_accept" else "reviewed_declined"
 
@@ -649,35 +674,31 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
         all_applications[target_app_index]['reviewed_by'] = str(query.from_user.id)
 
         if save_applications(all_applications):
-            logger.info(f"Application {cv_filename_from_callback} status updated to {new_status} by user {query.from_user.id}.")
-
+            logger.info(f"Application {full_cv_filename} status updated to {new_status} by user {query.from_user.id}.")
             status_message_display = "Accepted" if new_status == "reviewed_accepted" else "Rejected"
             reviewer_name_escaped = escape_markdown_v2(query.from_user.first_name or "Unknown User")
             review_time_str = escape_markdown_v2(datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC'))
 
             base_text = ""
             if query.message and query.message.text_markdown_v2: base_text = query.message.text_markdown_v2
-            elif query.message and query.message.text: base_text = escape_markdown_v2(query.message.text) # Escape if it was plain
+            elif query.message and query.message.text: base_text = escape_markdown_v2(query.message.text)
 
             updated_text = f"{base_text}\n\n*Status:* {status_message_display} by {reviewer_name_escaped} on {review_time_str}"
 
             try:
                 if query.message: await query.edit_message_text(text=updated_text, reply_markup=None, parse_mode='MarkdownV2')
             except telegram.error.BadRequest as e:
-                logger.error(f"Error editing message for {cv_filename_from_callback} (review action): {e}. Text: {updated_text}", exc_info=True)
-                fallback_content = f"Application {escape_markdown_v2(cv_filename_from_callback)} status updated to {status_message_display}."
+                logger.error(f"Error editing message for {full_cv_filename} (review action): {e}. Text: {updated_text}", exc_info=True)
+                fallback_content = f"Application {escape_markdown_v2(full_cv_filename)} status updated to {status_message_display}."
                 await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(fallback_content), parse_mode='MarkdownV2')
-            except Exception as e: # Catch other potential errors during edit
-                 logger.error(f"Unexpected error editing message for {cv_filename_from_callback} (review action): {e}", exc_info=True)
+            except Exception as e:
+                 logger.error(f"Unexpected error editing message for {full_cv_filename} (review action): {e}", exc_info=True)
 
-
-            # Remove from current 'new' review session's list in user_data
-            # Only remove if the current view is for 'new' apps, which is implied by review_accept/reject action existing
-            if 'review_list' in context.user_data and context.user_data.get('current_view_status', 'new') == 'new': # Check if it's the 'new' app list
-                context.user_data['review_list'] = [app for app in context.user_data['review_list'] if app.get('cv_filename') != cv_filename_from_callback]
-                logger.info(f"Removed {cv_filename_from_callback} from 'new' review session list for user {query.from_user.id}.")
+            if 'review_list' in context.user_data and context.user_data.get('current_view_status', 'new') == 'new':
+                context.user_data['review_list'] = [app for app in context.user_data['review_list'] if app.get('cv_filename') != full_cv_filename]
+                logger.info(f"Removed {full_cv_filename} from 'new' review session list for user {query.from_user.id}.")
         else:
-            logger.error(f"Failed to save application status update for {cv_filename_from_callback} (review action).")
+            logger.error(f"Failed to save application status update for {full_cv_filename} (review action).")
             if query.message: await query.edit_message_text("Error updating application status in log.", reply_markup=query.message.reply_markup if query.message else None)
 
     elif action_prefix == "change_status":
@@ -686,7 +707,7 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
         elif new_short_status_from_callback == "declined": final_new_status = "reviewed_declined"
         elif new_short_status_from_callback == "new": final_new_status = "new"
         else:
-            logger.error(f"Unknown new_short_status '{new_short_status_from_callback}' for change_status action on CV {cv_filename_from_callback}.")
+            logger.error(f"Unknown new_short_status '{new_short_status_from_callback}' for change_status action on CV ID {app_id_from_callback} (Filename: {full_cv_filename}).")
             if query.message: await query.edit_message_text("Error: Invalid status change value.", reply_markup=None)
             return
 
@@ -694,17 +715,16 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
         if final_new_status == "new":
             all_applications[target_app_index].pop('reviewed_timestamp', None)
             all_applications[target_app_index].pop('reviewed_by', None)
-        else: # For "reviewed_accepted" or "reviewed_declined"
+        else:
             all_applications[target_app_index]['reviewed_timestamp'] = datetime.utcnow().isoformat() + 'Z'
             all_applications[target_app_index]['reviewed_by'] = str(query.from_user.id)
 
         if save_applications(all_applications):
-            logger.info(f"Application {cv_filename_from_callback} status changed to {final_new_status} by user {query.from_user.id}.")
+            logger.info(f"Application {full_cv_filename} status changed to {final_new_status} by user {query.from_user.id}.")
             status_display_name = final_new_status.replace("reviewed_", "").replace("_", " ").capitalize()
 
-            # Extract original CV name for display in confirmation message
-            parts = cv_filename_from_callback.split('-', 1)
-            original_cv_name_for_display = parts[1] if len(parts) > 1 else cv_filename_from_callback
+            parts = full_cv_filename.split('-', 1)
+            original_cv_name_for_display = parts[1] if len(parts) > 1 else full_cv_filename
 
             confirm_message_content = f"Status for {escape_markdown_v2(target_app_obj.get('full_name', 'N/A'))} (CV: {escape_markdown_v2(original_cv_name_for_display)}) changed to: *{escape_markdown_v2(status_display_name)}*."
 
@@ -712,36 +732,34 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
                 if query.message:
                     await query.edit_message_text(text=confirm_message_content, reply_markup=None, parse_mode='MarkdownV2')
             except telegram.error.BadRequest as e:
-                logger.error(f"Error editing message for {cv_filename_from_callback} (change_status): {e}. Text: {confirm_message_content}", exc_info=True)
-                # If edit fails, send as a new message
+                logger.error(f"Error editing message for {full_cv_filename} (change_status): {e}. Text: {confirm_message_content}", exc_info=True)
                 await context.bot.send_message(chat_id=query.message.chat.id, text=confirm_message_content, parse_mode='MarkdownV2')
-            except Exception as e: # Catch other potential errors during edit
-                 logger.error(f"Unexpected error editing message for {cv_filename_from_callback} (change_status): {e}", exc_info=True)
+            except Exception as e:
+                 logger.error(f"Unexpected error editing message for {full_cv_filename} (change_status): {e}", exc_info=True)
 
-            # Remove from current review session's list in user_data because its status has changed
             if 'review_list' in context.user_data and isinstance(context.user_data.get('review_list'), list):
-                context.user_data['review_list'] = [app for app in context.user_data['review_list'] if app.get('cv_filename') != cv_filename_from_callback]
-                logger.info(f"Removed {cv_filename_from_callback} from current status view list for user {query.from_user.id}.")
+                context.user_data['review_list'] = [app for app in context.user_data['review_list'] if app.get('cv_filename') != full_cv_filename]
+                logger.info(f"Removed {full_cv_filename} from current status view list for user {query.from_user.id}.")
         else:
-            logger.error(f"Failed to save application status update for {cv_filename_from_callback} (change_status).")
+            logger.error(f"Failed to save application status update for {full_cv_filename} (change_status).")
             if query.message: await query.edit_message_text("Error updating application status in log.", reply_markup=query.message.reply_markup if query.message else None)
 
     elif action_prefix == "get_cv":
-        cv_path = os.path.join(UPLOAD_FOLDER, cv_filename_from_callback)
+        cv_path = os.path.join(UPLOAD_FOLDER, full_cv_filename) # Use full_cv_filename here
         if os.path.exists(cv_path):
             try:
                 with open(cv_path, 'rb') as cv_doc:
-                    parts = cv_filename_from_callback.split('-', 1)
-                    original_display_name = parts[1] if len(parts) > 1 else cv_filename_from_callback
+                    parts = full_cv_filename.split('-', 1)
+                    original_display_name = parts[1] if len(parts) > 1 else full_cv_filename
                     await context.bot.send_document(chat_id=query.message.chat.id, document=cv_doc, filename=original_display_name)
-                logger.info(f"Sent CV {cv_filename_from_callback} as {original_display_name} to chat_id {query.message.chat.id}")
+                logger.info(f"Sent CV {full_cv_filename} as {original_display_name} to chat_id {query.message.chat.id}")
             except Exception as e:
-                logger.error(f"Failed to send CV {cv_filename_from_callback}: {e}", exc_info=True)
-                error_content = f"Sorry, could not send CV {cv_filename_from_callback}."
+                logger.error(f"Failed to send CV {full_cv_filename}: {e}", exc_info=True)
+                error_content = f"Sorry, could not send CV {full_cv_filename}."
                 await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(error_content), parse_mode='MarkdownV2')
         else:
-            logger.warning(f"CV file {cv_filename_from_callback} not found at path {cv_path} for get_cv action.")
-            error_content = f"Sorry, CV file {cv_filename_from_callback} not found on server."
+            logger.warning(f"CV file {full_cv_filename} not found at path {cv_path} for get_cv action.")
+            error_content = f"Sorry, CV file {full_cv_filename} not found on server."
             await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(error_content), parse_mode='MarkdownV2')
 
 async def handle_next_page(update: Update, context: ContextTypes.DEFAULT_TYPE):

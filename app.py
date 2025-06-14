@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, abort
 from flask_cors import CORS, cross_origin # Make sure cross_origin is imported
 import os
 import asyncio # Added asyncio
@@ -119,8 +119,18 @@ def load_blog_posts():
 
 # --- Routes ---
 @app.route('/')
-def hello_world():
-    return 'Hello, Bridgee Solutions Backend!'
+@cross_origin() # Add if CORS is applied globally, for consistency
+def serve_index():
+    return send_from_directory('.', 'Index.html')
+
+@app.route('/<path:filename>')
+@cross_origin() # For consistency
+def serve_static_files(filename):
+    # Basic security: prevent access to .py files or other sensitive files
+    # This is a simple check; more robust validation might be needed for production.
+    if filename.endswith('.py') or filename == '.env' or '.git' in filename:
+        return abort(404)
+    return send_from_directory('.', filename)
 
 @app.route('/api/blog-posts', methods=['GET'])
 @cross_origin()

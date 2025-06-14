@@ -785,27 +785,7 @@
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">Stay updated with our latest insights, news, and articles on outsourcing, technology, and business growth.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                <!-- Blog Post 1 Placeholder -->
-                <div class="bg-white rounded-xl p-8 shadow-lg" data-aos="fade-up" data-aos-duration="600" data-aos-offset="100" data-aos-easing="ease-out-cubic">
-                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Blog post placeholder image 1" class="rounded-lg mb-4 w-full h-48 object-cover">
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Blog Post Title 1</h3>
-                    <p class="text-base text-gray-600 mb-4 leading-relaxed">A short snippet of the blog post content goes here, engaging the reader to learn more...</p>
-                    <a href="#" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Read More <i class="fas fa-arrow-right ml-2"></i></a>
-                </div>
-                <!-- Blog Post 2 Placeholder -->
-                <div class="bg-white rounded-xl p-8 shadow-lg" data-aos="fade-up" data-aos-duration="700" data-aos-offset="100" data-aos-easing="ease-out-cubic">
-                    <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Blog post placeholder image 2" class="rounded-lg mb-4 w-full h-48 object-cover">
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Blog Post Title 2</h3>
-                    <p class="text-base text-gray-600 mb-4 leading-relaxed">Another interesting topic discussed in this blog post, designed to attract clicks...</p>
-                    <a href="#" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Read More <i class="fas fa-arrow-right ml-2"></i></a>
-                </div>
-                <!-- Blog Post 3 Placeholder -->
-                <div class="bg-white rounded-xl p-8 shadow-lg" data-aos="fade-up" data-aos-duration="800" data-aos-offset="100" data-aos-easing="ease-out-cubic">
-                    <img src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Blog post placeholder image 3" class="rounded-lg mb-4 w-full h-48 object-cover">
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Blog Post Title 3</h3>
-                    <p class="text-base text-gray-600 mb-4 leading-relaxed">This post covers a crucial aspect of our industry, providing valuable insights...</p>
-                    <a href="#" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Read More <i class="fas fa-arrow-right ml-2"></i></a>
-                </div>
+                <!-- Blog posts will be dynamically inserted here -->
             </div>
         </div>
     </section>
@@ -1026,6 +1006,88 @@
     //   document.getElementById('hero-text')?.classList.remove('opacity-0', 'translate-y-6');
     //   document.getElementById('hero-image')?.classList.remove('opacity-0', 'translate-y-6');
     // });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const blogPostsContainer = document.querySelector('#blog .grid'); // Target the grid
+
+        if (!blogPostsContainer) {
+            console.error('Blog posts container not found!');
+            return;
+        }
+
+        fetch('/api/blog-posts')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(posts => {
+                blogPostsContainer.innerHTML = ''; // Clear any residual static content or loading message
+
+                if (!Array.isArray(posts) || posts.length === 0) {
+                    blogPostsContainer.innerHTML = '<p class="text-center text-gray-600 col-span-full">No blog posts available at the moment. Please check back later!</p>';
+                    return;
+                }
+
+                posts.forEach(post => {
+                    const postElement = document.createElement('div');
+                    postElement.className = 'bg-white rounded-xl p-8 shadow-lg flex flex-col'; // Added flex flex-col for layout
+                    // Add AOS attributes if desired, e.g., postElement.setAttribute('data-aos', 'fade-up');
+
+                    let imageHtml = '';
+                    if (post.image_url) {
+                        // Default image if post.image_url is present but maybe broken, or a placeholder
+                        imageHtml = `<img src="${post.image_url}" alt="${post.title || 'Blog post image'}" class="rounded-lg mb-4 w-full h-48 object-cover">`;
+                    } else {
+                        // Optional: Placeholder if no image_url provided
+                        imageHtml = `<img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Default blog image" class="rounded-lg mb-4 w-full h-48 object-cover">`;
+                    }
+
+                    // Ensure content exists and is a string before trying to snippet it
+                    let contentSnippet = 'No content available.';
+                    if (post.content && typeof post.content === 'string') {
+                        contentSnippet = post.content.substring(0, 100) + (post.content.length > 100 ? '...' : '');
+                    } else if (post.content) { // If content exists but not a string, display a placeholder
+                        contentSnippet = 'Content available but in unexpected format.';
+                    }
+
+                    // Safely access author and date with defaults
+                    const author = post.author || 'Anonymous';
+                    let datePublished = 'Date not specified';
+                    if (post.date_published) {
+                        try {
+                            datePublished = new Date(post.date_published).toLocaleDateString('en-US', {
+                                year: 'numeric', month: 'long', day: 'numeric'
+                            });
+                        } catch (e) {
+                            console.warn('Could not parse date_published:', post.date_published);
+                            datePublished = post.date_published; // Show raw if parsing fails
+                        }
+                    }
+
+                    postElement.innerHTML = `
+                        ${imageHtml}
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">${post.title || 'Untitled Post'}</h3>
+                        <p class="text-sm text-gray-500 mb-2">By ${author} on ${datePublished}</p>
+                        <p class="text-base text-gray-600 mb-4 leading-relaxed flex-grow">${contentSnippet}</p>
+                        <a href="blog-post.html?id=${post.id || ''}" class="text-blue-600 font-medium inline-flex items-center self-start focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Read More <i class="fas fa-arrow-right ml-2"></i></a>
+                    `;
+                    blogPostsContainer.appendChild(postElement);
+                });
+
+                // If AOS is used, you might need to re-initialize it after adding dynamic content
+                // if (typeof AOS !== 'undefined') {
+                //     AOS.refresh();
+                // }
+            })
+            .catch(error => {
+                console.error('Error fetching blog posts:', error);
+                blogPostsContainer.innerHTML = '<p class="text-center text-red-500 col-span-full">Could not load blog posts. Please try again later.</p>';
+            });
+    });
   </script>
 </body>
 </html>

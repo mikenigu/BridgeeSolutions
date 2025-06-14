@@ -19,6 +19,7 @@ CORS(app) # Initialize CORS globally
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', 'YOUR_TELEGRAM_BOT_TOKEN_PLACEHOLDER')
 HR_CHAT_ID = os.environ.get('HR_CHAT_ID', 'YOUR_HR_CHAT_ID_PLACEHOLDER') # Can be a user ID or group/channel ID
 APPLICATION_LOG_FILE = 'submitted_applications.log.json' # Log file for submitted applications
+BLOG_POSTS_FILE = 'blog_posts.json'
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
@@ -93,10 +94,49 @@ async def send_telegram_notification(applicant_data, cv_filepath):
         print(f"An unexpected error occurred in send_telegram_notification: {e}")
         return False
 
+def load_blog_posts():
+    if not os.path.exists(BLOG_POSTS_FILE):
+        # Using print for now, as app.logger might not be configured for this context
+        print(f"INFO: {BLOG_POSTS_FILE} not found. Returning empty list.")
+        return []
+    try:
+        with open(BLOG_POSTS_FILE, 'r') as f:
+            content = f.read()
+            if not content:
+                print(f"INFO: {BLOG_POSTS_FILE} is empty. Returning empty list.")
+                return []
+            posts_data = json.loads(content)
+            if not isinstance(posts_data, list):
+                print(f"WARNING: Data in {BLOG_POSTS_FILE} is not a list. Returning empty list.")
+                return []
+            return posts_data
+    except json.JSONDecodeError:
+        print(f"ERROR: Error decoding JSON from {BLOG_POSTS_FILE}. Returning empty list.")
+        return []
+    except IOError as e:
+        print(f"ERROR: IOError reading {BLOG_POSTS_FILE}: {e}. Returning empty list.")
+        return []
+
 # --- Routes ---
 @app.route('/')
 def hello_world():
     return 'Hello, Bridgee Solutions Backend!'
+
+@app.route('/api/blog-posts', methods=['GET'])
+@cross_origin()
+def get_blog_posts():
+    posts = load_blog_posts()
+    return jsonify(posts), 200
+
+@app.route('/api/blog-posts/<string:post_id>', methods=['GET'])
+@cross_origin()
+def get_blog_post(post_id):
+    posts = load_blog_posts()
+    post = next((p for p in posts if p.get('id') == post_id), None)
+    if post:
+        return jsonify(post), 200
+    else:
+        return jsonify({'error': 'Post not found'}), 404
 
 @app.route('/api/submit-application', methods=['POST', 'OPTIONS'])
 @cross_origin() # Keep CORS decorator

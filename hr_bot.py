@@ -26,7 +26,7 @@ from telegram.ext import (
 
 load_dotenv()
 
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+HR_BOT_TOKEN = os.getenv('HR_BOT_TOKEN')
 HR_CHAT_ID = os.getenv('HR_CHAT_ID')
 
 APPLICATION_LOG_FILE = 'submitted_applications.log.json'
@@ -563,8 +563,8 @@ async def go_to_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- End Command Handlers ---
 
 def main(): # Changed from async def
-    if not TELEGRAM_BOT_TOKEN:
-        logger.error("TELEGRAM_BOT_TOKEN not found in environment variables.")
+    if not HR_BOT_TOKEN:
+        logger.error("HR_BOT_TOKEN not found in environment variables.")
         return
     if not HR_CHAT_ID:
         logger.error("HR_CHAT_ID not found in environment variables. Bot commands will not be restricted.")
@@ -572,7 +572,7 @@ def main(): # Changed from async def
 
     # Using ApplicationBuilder for python-telegram-bot v20+
     # You can add persistence here if needed, e.g., PicklePersistence(filepath='./bot_persistence')
-    application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+    application = ApplicationBuilder().token(HR_BOT_TOKEN).build()
 
     # ---- HANDLERS ----
     application.add_handler(CommandHandler("review_applications", review_applications_command))

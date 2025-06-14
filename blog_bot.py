@@ -29,7 +29,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # --- Configuration Variables ---
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+BLOG_BOT_TOKEN = os.getenv('BLOG_BOT_TOKEN')
 # IMPORTANT: User must set this in their .env file
 BLOG_ADMIN_CHAT_ID = os.getenv('BLOG_ADMIN_CHAT_ID')
 BLOG_POSTS_FILE = 'blog_posts.json'
@@ -190,8 +190,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 # --- Main Bot Setup (main() function) ---
 def main() -> None:
-    if not TELEGRAM_BOT_TOKEN:
-        logger.error("FATAL: TELEGRAM_BOT_TOKEN not found in environment variables.")
+    if not BLOG_BOT_TOKEN:
+        logger.error("FATAL: BLOG_BOT_TOKEN not found in environment variables.")
         return
     if not BLOG_ADMIN_CHAT_ID:
         logger.warning("WARNING: BLOG_ADMIN_CHAT_ID not found. The bot will be usable by anyone. Please set this in your .env file for security.")
@@ -201,9 +201,9 @@ def main() -> None:
 
     # Optional: Persistence for bot data (e.g., user_data across restarts)
     # persistence = PicklePersistence(filepath='./blog_bot_persistence')
-    # application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).persistence(persistence).build()
+    # application = ApplicationBuilder().token(BLOG_BOT_TOKEN).persistence(persistence).build()
 
-    application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+    application = ApplicationBuilder().token(BLOG_BOT_TOKEN).build()
 
     # Conversation handler for /newpost
     newpost_conv_handler = ConversationHandler(

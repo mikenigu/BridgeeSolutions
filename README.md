@@ -21,7 +21,7 @@ Each component needs to be run in a separate terminal:
     ```bash
     python app.py
     ```
-    This will typically start the server on `http://127.0.0.1:5000/`.
+    This will typically start the server on `http://127.0.0.1:5000/`. You can access the main page (`Index.html`) by navigating to this root URL in your browser.
 
 2.  **HR Telegram Bot (`hr_bot.py`):**
     ```bash

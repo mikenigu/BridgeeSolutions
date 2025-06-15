@@ -175,8 +175,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.effective_message.reply_text( # Use effective_message
-        "Welcome, Blog Admin! This is the Blog Management Menu.\n"
-        "Please choose an option:",
+        "Welcome, Blog Admin! I'm here to help you manage your website's blog posts. Use the menu below to get started or type /help for a list of commands.",
         reply_markup=reply_markup
     )
 
@@ -184,15 +183,16 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if not await is_admin(update, context):
         return
     help_text = (
-        "Available commands:\n\n"
-        "*/newpost* - Start a conversation to create a new blog post. The bot will guide you through providing a title, content, author, and an optional image URL.\n\n"
-        "*/listposts* - Displays a list of all current blog posts with their unique IDs and titles. Useful for finding the ID needed for editing or deleting.\n\n"
+        "I can help you manage your blog posts. Here are the available commands:\n\n"
+        "*/start* - Shows the main menu.\n\n"
+        "*/newpost* - Start a conversation to create a new blog post. I'll guide you through providing a title, content, author, and an optional image URL.\n\n"
+        "*/listposts* - Displays a list of all current blog posts with their unique IDs and titles. This is useful for finding the ID needed for editing or deleting.\n\n"
         "*/editpost [post_id]* - Allows you to edit an existing blog post. \n"
-        "  - If you provide a `post_id` (e.g., `/editpost 123e4567-e89b-12d3-a456-426614174000`), editing will start for that post.\n"
-        "  - If you use `/editpost` without an ID, the bot will list posts and ask you to provide an ID.\n"
+        "  - If you provide a `post_id` (e.g., `/editpost your-post-id`), editing will start for that post.\n"
+        "  - If you use `/editpost` without an ID, I will list recent posts and ask you to provide an ID. You can also use `/listposts` first to find the ID.\n"
         "  You can then choose to edit the title, content, author, or image URL.\n\n"
-        "*/deletepost <post_id>* - Deletes a blog post. You must provide the `post_id` of the post you want to delete (e.g., `/deletepost 123e4567-e89b-12d3-a456-426614174000`). You will be asked for confirmation before deletion.\n\n"
-        "*/cancel* - Use this during any multi-step operation (like `/newpost` or `/editpost`) to stop the current process."
+        "*/deletepost <post_id>* - Deletes a blog post. You must provide the `post_id` (e.g., `/deletepost your-post-id`). You can use `/listposts` to find the ID. You will be asked for confirmation before deletion.\n\n"
+        "*/cancel* - During any multi-step operation (like `/newpost` or `/editpost`), use this command to stop the current process and return to the main state."
     )
     await update.effective_message.reply_text(help_text) # Use effective_message
 
@@ -209,6 +209,8 @@ async def listposts_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         post_id = post.get('id', 'N/A')
         title = post.get('title', 'No Title')
         message += f"ID: {str(post_id)}\nTitle: {str(title)}\n--------------------\n"
+    if posts: # Only add hint if there are posts
+        message += "\n\nTip: Use these IDs with `/editpost <ID>` or `/deletepost <ID>`."
     if len(message) > 4096:
         await update.effective_message.reply_text("The list of posts is very long and might be truncated by Telegram.")
     await update.effective_message.reply_text(message) # Use effective_message
@@ -365,7 +367,8 @@ async def handle_field_selection_callback(update: Update, context: ContextTypes.
         return await prompt_select_field_to_edit(update, context) # Re-show options
     selected_field = field_map[field_choice]
     context.user_data['edit_post_data']['field_to_edit'] = selected_field['name']
-    await query.edit_message_text(text=selected_field['prompt'] + "\nOr /cancel to return to field selection.")
+    prompt_message = selected_field['prompt'] + "\n\nOr type /cancel (or /cancel_editing) to stop editing this post."
+    await query.edit_message_text(text=prompt_message)
     return GET_NEW_FIELD_VALUE
 
 async def receive_new_field_value(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:

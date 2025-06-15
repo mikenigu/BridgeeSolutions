@@ -16,8 +16,10 @@ from telegram.ext import (
     ConversationHandler,
     MessageHandler,
     filters,
-    PicklePersistence # Optional: for persisting bot data across restarts
+    PicklePersistence, # Optional: for persisting bot data across restarts
+    Defaults
 )
+import asyncio
 
 # Load environment variables from .env file
 load_dotenv()
@@ -478,7 +480,7 @@ async def cancel_editing(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     return ConversationHandler.END
 
 # --- Main Bot Setup (main() function) ---
-def main() -> None:
+async def main() -> None:
     if not BLOG_BOT_TOKEN:
         logger.error("FATAL: BLOG_BOT_TOKEN not found in environment variables.")
         return
@@ -492,7 +494,20 @@ def main() -> None:
     # persistence = PicklePersistence(filepath='./blog_bot_persistence')
     # application = ApplicationBuilder().token(BLOG_BOT_TOKEN).persistence(persistence).build()
 
-    application = ApplicationBuilder().token(BLOG_BOT_TOKEN).build()
+    defaults = Defaults(connect_timeout=20, read_timeout=20, pool_timeout=20)
+    application = ApplicationBuilder().token(BLOG_BOT_TOKEN).defaults(defaults).build()
+
+    logger.info("Attempting to initialize application for get_me()...")
+    await application.initialize() # Explicitly initialize before direct bot calls
+
+    try:
+        logger.info("Attempting to call get_me()...")
+        bot_info = await application.bot.get_me()
+        logger.info(f"Bot info received: {bot_info.username} (ID: {bot_info.id})")
+    except Exception as e:
+        logger.error(f"Error during get_me(): {e}", exc_info=True)
+        # Decide if to return or continue to run_polling
+        # For diagnostics, we'll let it try to run_polling anyway for now.
 
     # Conversation handler for /newpost
     newpost_conv_handler = ConversationHandler(
@@ -541,4 +556,4 @@ def main() -> None:
     logger.info("Blog Bot has stopped.")
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

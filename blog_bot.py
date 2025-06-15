@@ -209,7 +209,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if not await is_admin(update, context):
         return
     help_text = (
-        "I'm here to help you manage your website's blog posts! "
+        "I'm here to help you manage your website's blog posts\\! "
         "Use the main menu buttons (shown with /start) to perform actions.\n\n"
         "Here's how to use the main menu options:\n\n"
         "🔹 *Main Menu Navigation:*\n"
@@ -220,11 +220,11 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "   - *📄 List All Posts*: Shows a paginated view of all your blog posts with their titles and publication dates for quick reference.\n\n"
         "   - *✏️ Edit a Post*: Allows you to modify an existing blog post.\n"
         "     1. I'll show you a paginated list of your posts.\n"
-        "     2. Press '[Select]' next to the post you want to edit.\n"
-        "     3. Confirm your choice, then select which part of the post (title, content, etc.) you want to change using the buttons provided.\n\n"
+        "     2. Press '\\[Select\\]' next to the post you want to edit.\n"
+        "     3. Confirm your choice, then select which part of the post \\(title, content, etc\\.\\) you want to change using the buttons provided.\n\n"
         "   - *🗑️ Delete a Post*: Lets you remove a blog post.\n"
         "     1. I'll show you a paginated list of your posts.\n"
-        "     2. Press '[Select]' next to the post you want to delete.\n"
+        "     2. Press '\\[Select\\]' next to the post you want to delete.\n"
         "     3. You'll be asked to confirm the deletion before the post is permanently removed.\n\n"
         "🔹 *Cancelling an Operation:*\n"
         "   - If you start an operation (like adding or editing a post) and want to stop, type /cancel. This will take you back to the main menu.\n\n"

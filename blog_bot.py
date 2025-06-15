@@ -16,8 +16,7 @@ from telegram.ext import (
     ConversationHandler,
     MessageHandler,
     filters,
-    PicklePersistence, # Optional: for persisting bot data across restarts
-    Defaults
+    PicklePersistence # Optional: for persisting bot data across restarts
 )
 import asyncio
 
@@ -494,8 +493,7 @@ async def main() -> None:
     # persistence = PicklePersistence(filepath='./blog_bot_persistence')
     # application = ApplicationBuilder().token(BLOG_BOT_TOKEN).persistence(persistence).build()
 
-    defaults = Defaults(connect_timeout=20, read_timeout=20, pool_timeout=20)
-    application = ApplicationBuilder().token(BLOG_BOT_TOKEN).defaults(defaults).build()
+    application = ApplicationBuilder().token(BLOG_BOT_TOKEN).connect_timeout(20).read_timeout(20).build()
 
     logger.info("Attempting to initialize application for get_me()...")
     await application.initialize() # Explicitly initialize before direct bot calls

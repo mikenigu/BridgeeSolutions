@@ -18,7 +18,7 @@ from telegram.ext import (
     filters,
     PicklePersistence
 )
-# import asyncio # No longer explicitly needed here as run_polling manages its own loop
+import asyncio # Ensure asyncio is imported
 
 # Load environment variables from .env file
 load_dotenv()
@@ -1052,7 +1052,7 @@ async def handle_show_main_menu_callback(update: Update, context: ContextTypes.D
     await start_command(update, context)
 
 # --- Main Bot Setup (main() function) ---
-def main() -> None:
+async def main() -> None: # Changed to async def
     if not BLOG_BOT_TOKEN:
         logger.error("FATAL: BLOG_BOT_TOKEN not found in environment variables.")
         return
@@ -1060,6 +1060,7 @@ def main() -> None:
         logger.warning("WARNING: BLOG_ADMIN_CHAT_ID not found. Bot will be usable by anyone.")
 
     application = ApplicationBuilder().token(BLOG_BOT_TOKEN).connect_timeout(20).read_timeout(20).build()
+    await application.initialize() # Added initialize
 
     newpost_conv_handler = ConversationHandler(
         entry_points=[
@@ -1129,8 +1130,8 @@ def main() -> None:
     application.add_handler(CommandHandler("cancel", cancel_newpost))
 
     logger.info("Blog Bot starting...")
-    application.run_polling()
+    application.run_polling() # run_polling itself is not awaited
     logger.info("Blog Bot has stopped.")
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main()) # Changed to asyncio.run

@@ -190,6 +190,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     # Clear relevant user_data when showing main menu, especially if coming from a callback
     if update.callback_query:
+        query = update.callback_query # Make sure query is defined
         context.user_data.pop('current_action_type', None)
         context.user_data.pop('paginated_posts_cache', None)
         context.user_data.pop('current_page_num', None)
@@ -1135,3 +1136,5 @@ async def main() -> None: # Changed to async def
 
 if __name__ == '__main__':
     asyncio.run(main()) # Changed to asyncio.run
+
+[end of blog_bot.py]

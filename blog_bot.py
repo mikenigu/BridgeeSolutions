@@ -1139,7 +1139,7 @@ async def main() -> None: # Changed to async def
     logger.info("Blog Bot starting...")
     await application.start()
     await application.updater.start_polling()
-    await application.idle()
+    await application.updater.idle() # Changed from application.idle()
     logger.info("Blog Bot has stopped.")
 
 if __name__ == '__main__':

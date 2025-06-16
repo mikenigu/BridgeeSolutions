@@ -125,7 +125,7 @@ async def receive_title(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        f"Great! Title set to: '{escape_markdown_v2(str(title))}'\.\n\nHow would you like to provide the content for your post? \(Max 1MB for files, UTF\-8 format preferred for files\)",
+        f"Great! Title set to: '{escape_markdown_v2(str(title))}'\\.\n\nHow would you like to provide the content for your post? \\(Max 1MB for files, UTF\\-8 format preferred for files\\)",
         reply_markup=reply_markup,
         parse_mode='MarkdownV2'
     )
@@ -135,7 +135,7 @@ async def handle_content_type_direct_callback(update: Update, context: ContextTy
     query = update.callback_query
     await query.answer()
     await query.edit_message_text(
-        text="Okay, please send the full content of the blog post as a text message\. Remember Telegram has a character limit for messages\. \(Or type /cancel\)",
+        text="Okay, please send the full content of the blog post as a text message\\. Remember Telegram has a character limit for messages\\. \\(Or type /cancel\\)",
         parse_mode='MarkdownV2'
     )
     return RECEIVE_TYPED_CONTENT
@@ -144,7 +144,7 @@ async def handle_content_type_file_callback(update: Update, context: ContextType
     query = update.callback_query
     await query.answer()
     await query.edit_message_text(
-        text="Please upload a plain text file \(\.txt\) or a Markdown file \(\.md\) containing the blog content\. Max file size: 1MB, UTF\-8 encoded\. \(Or type /cancel\)",
+        text="Please upload a plain text file \\(\\.txt\\) or a Markdown file \\(\\.md\\) containing the blog content\\. Max file size: 1MB, UTF\\-8 encoded\\. \\(Or type /cancel\\)",
         parse_mode='MarkdownV2'
     )
     return RECEIVE_CONTENT_FILE
@@ -152,13 +152,13 @@ async def handle_content_type_file_callback(update: Update, context: ContextType
 async def receive_typed_content_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     content = update.message.text
     context.user_data['new_post']['content'] = content
-    await update.message.reply_text("Content received\. Who is the author? \(Type 'skip' or /cancel\)", parse_mode='MarkdownV2')
+    await update.message.reply_text("Content received\\. Who is the author? \\(Type 'skip' or /cancel\\)", parse_mode='MarkdownV2')
     return AUTHOR
 
 async def receive_content_file_upload(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     doc = update.message.document
     if doc.file_size > 1 * 1024 * 1024: # Max 1MB
-        await update.message.reply_text("File is too large \(max 1MB\)\. Please upload a smaller file or type /cancel\.", parse_mode='MarkdownV2')
+        await update.message.reply_text("File is too large \\(max 1MB\\)\\. Please upload a smaller file or type /cancel\\.", parse_mode='MarkdownV2')
         return RECEIVE_CONTENT_FILE
 
     try:
@@ -166,22 +166,22 @@ async def receive_content_file_upload(update: Update, context: ContextTypes.DEFA
         file_content_bytes = await file.download_as_bytearray()
         file_content_text = file_content_bytes.decode('utf-8')
         context.user_data['new_post']['content'] = file_content_text
-        await update.message.reply_text("Content file received and processed successfully\. Who is the author? \(Type 'skip' or /cancel\)", parse_mode='MarkdownV2')
+        await update.message.reply_text("Content file received and processed successfully\\. Who is the author? \\(Type 'skip' or /cancel\\)", parse_mode='MarkdownV2')
         return AUTHOR
     except UnicodeDecodeError:
-        await update.message.reply_text("Error: Could not decode the file\. Please ensure it is a UTF\-8 encoded text file\. Upload again or type /cancel\.", parse_mode='MarkdownV2')
+        await update.message.reply_text("Error: Could not decode the file\\. Please ensure it is a UTF\\-8 encoded text file\\. Upload again or type /cancel\\.", parse_mode='MarkdownV2')
         return RECEIVE_CONTENT_FILE
     except Exception as e:
         logger.error(f"Error processing uploaded file: {e}", exc_info=True)
-        await update.message.reply_text("An error occurred while processing your file\. Please try again or type /cancel\.", parse_mode='MarkdownV2')
+        await update.message.reply_text("An error occurred while processing your file\\. Please try again or type /cancel\\.", parse_mode='MarkdownV2')
         return RECEIVE_CONTENT_FILE
 
 async def handle_unexpected_message_in_file_state(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    await update.message.reply_text("Please upload a content file as requested, or type /cancel to exit\.")
+    await update.message.reply_text("Please upload a content file as requested, or type /cancel to exit\\.")
     return RECEIVE_CONTENT_FILE
 
 async def unexpected_text_in_content_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    await update.message.reply_text("Please choose an option by clicking one of the buttons above, or type /cancel\.")
+    await update.message.reply_text("Please choose an option by clicking one of the buttons above, or type /cancel\\.")
     return CONTENT_CHOICE
 
 async def receive_author(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -190,7 +190,7 @@ async def receive_author(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         context.user_data['new_post']['author'] = author
     else:
         context.user_data['new_post']['author'] = None
-    await update.message.reply_text("Author noted\.\n\nPlease provide a URL for the post's image\. \(Type 'skip' if no image\)", parse_mode='MarkdownV2')
+    await update.message.reply_text("Author noted\\.\n\nPlease provide a URL for the post's image\\. \\(Type 'skip' if no image\\)", parse_mode='MarkdownV2')
     return IMAGE_URL
 
 async def receive_image_url_and_save(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -405,7 +405,7 @@ async def display_post_selection_page(update: Update, context: ContextTypes.DEFA
     posts_on_page = cached_posts[start_index:end_index]
 
     # Updated prompt for "manage" action
-    message_text = f"Select a post to manage \(Page {page_num + 1}/{total_pages}\)\:\n\n"
+    message_text = f"Select a post to manage \\(Page {page_num + 1}/{total_pages}\\):\n\n"
     keyboard_buttons = []
 
     for post in posts_on_page:
@@ -418,7 +418,7 @@ async def display_post_selection_page(update: Update, context: ContextTypes.DEFA
             try:
                 date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
                 escaped_formatted_date = escape_markdown_v2(str(date_obj.strftime("%Y-%m-%d")))
-                display_title = f"{escaped_post_title} \({escaped_formatted_date}\)"
+                display_title = f"{escaped_post_title} \\({escaped_formatted_date}\\)"
             except ValueError:
                 pass
 
@@ -628,7 +628,7 @@ async def display_readonly_posts_page(update: Update, context: ContextTypes.DEFA
                     pass
             escaped_formatted_date = escape_markdown_v2(formatted_date)
 
-            snippet_text = content_str[:100] + ('\.\.\.' if len(content_str) > 100 else '')
+            snippet_text = content_str[:100] + ('...' if len(content_str) > 100 else '')
             escaped_snippet = escape_markdown_v2(str(snippet_text))
 
             new_cached_posts.append({
@@ -662,7 +662,7 @@ async def display_readonly_posts_page(update: Update, context: ContextTypes.DEFA
     end_index = start_index + POSTS_PER_PAGE
     posts_on_page = cached_posts[start_index:end_index]
 
-    message_text = f"📝 *Blog Posts* \(Page {page_num + 1}/{total_pages}\)\:\n\n"
+    message_text = f"📝 *Blog Posts* \\(Page {page_num + 1}/{total_pages}\\):\n\n"
     keyboard_buttons = []
 
     for post_data_cache_entry in posts_on_page: # Renamed post to avoid conflict
@@ -801,7 +801,7 @@ async def handle_do_delete_post_prompt_callback(update: Update, context: Context
     escaped_title = escape_markdown_v2(str(post_title_to_delete))
     escaped_uuid = escape_markdown_v2(str(post_uuid))
 
-    message_text = f"Are you sure you want to delete the post titled '{escaped_title}' \\(ID: {escaped_uuid}\\)\\?"
+    message_text = f"Are you sure you want to delete the post titled '{escaped_title}' \\(ID: {escaped_uuid}\\)?"
 
     keyboard = [[
         InlineKeyboardButton("Yes, Delete It", callback_data=f"do_delete_post_confirm:{post_uuid}"),
@@ -914,7 +914,7 @@ async def main() -> None:
             CallbackQueryHandler(handle_do_edit_post_init_callback, pattern='^do_edit_post_init:')
         ],
         states={
-            SELECT_FIELD_TO_EDIT: [CallbackQueryHandler(handle_field_selection_callback, pattern='^editfield_')],
+            SELECT_FIELD_TO_EDIT: [CallbackQueryHandler(handle_post_selection_callback, pattern='^editfield_')],
             GET_NEW_FIELD_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_new_field_value)],
         },
         fallbacks=[

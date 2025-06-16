@@ -899,7 +899,7 @@ async def main() -> None:
             ],
             RECEIVE_TYPED_CONTENT: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_typed_content_message)],
             RECEIVE_CONTENT_FILE: [
-                MessageHandler(filters.Document.TEXT | filters.Document.MARKDOWN, receive_content_file_upload),
+                MessageHandler(filters.Document.TEXT | filters.Document.FileExtension('md'), receive_content_file_upload),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_unexpected_message_in_file_state)
             ],
             AUTHOR: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_author)],

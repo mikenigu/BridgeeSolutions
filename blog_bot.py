@@ -1139,8 +1139,44 @@ async def main() -> None: # Changed to async def
     logger.info("Blog Bot starting...")
     await application.start()
     await application.updater.start_polling()
-    await application.running.wait() # Changed from application.updater.idle()
-    logger.info("Blog Bot has stopped.")
+    try:
+        while application.running:  # Loop as long as the application is supposed to be running
+            await asyncio.sleep(0.1) # Pause briefly, let other tasks run
+    except KeyboardInterrupt:
+        # This an explicit handling of KeyboardInterrupt,
+        # PTB's default signal handlers also call application.stop_running()
+        # which would make application.running False.
+        logger.info("Bot process interrupted by user (KeyboardInterrupt).")
+    except Exception as e:
+        # Catch any other unexpected error during this idle phase
+        logger.error(f"Unexpected error during main loop: {e}", exc_info=True)
+    finally:
+        # Ensure updater is stopped first if it's polling
+        if hasattr(application.updater, 'is_polling') and application.updater.is_polling():
+            logger.info("Stopping updater...")
+            await application.updater.stop()
+
+        # Ensure application itself is stopped
+        # application.running should be False if shutdown was triggered by PTB signals
+        # but calling stop() ensures cleanup if loop exited for other reasons or if running is not False yet.
+        if application.running: # Check if it's still True, e.g. if loop exited due to an error
+             logger.info("Application still marked as running, initiating stop sequence...")
+             await application.stop() # This should set application.running to False and clean up.
+        else:
+             logger.info("Application already stopped or stopping.")
+
+        # It's generally good practice to also await a final shutdown of the application object
+        # if the library version supports it and it's not causing issues.
+        # However, application.shutdown() was problematic before.
+        # For now, application.stop() should handle the necessary cleanup.
+        # If application.shutdown() is available and needed for full cleanup in this PTB version,
+        # it could be added here, but let's stick to what's known to be safe.
+        # Example:
+        # if hasattr(application, 'shutdown'):
+        #     logger.info("Shutting down application object...")
+        #     await application.shutdown()
+
+        logger.info("Bot shutdown process complete.")
 
 if __name__ == '__main__':
     asyncio.run(main()) # Changed to asyncio.run

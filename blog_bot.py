@@ -46,8 +46,9 @@ POSTS_PER_PAGE = 3
 # --- Helper Functions ---
 def escape_markdown_v2(text: str) -> str:
     """Escapes characters for Telegram MarkdownV2."""
-    if not text:
+    if text is None: # Ensure None is handled, return empty string or some placeholder
         return ""
+    text = str(text) # Ensure input is a string
     # Chars to escape: _ * [ ] ( ) ~ ` > # + - = | { } . !
     escape_chars = r'_*[]()~`>#+-=|{}.!'
     return "".join(f'\\{char}' if char in escape_chars else char for char in text)
@@ -114,7 +115,6 @@ async def newpost_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         await update.message.reply_text(message_text, reply_markup=ReplyKeyboardRemove())
     return TITLE
 
-# ... (receive_title, receive_content, receive_author, receive_image_url_and_save remain unchanged) ...
 async def receive_title(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     title = update.message.text
     context.user_data['new_post']['title'] = title
@@ -525,7 +525,6 @@ async def initiate_post_selection_callback(update: Update, context: ContextTypes
 async def display_post_selection_page(update: Update, context: ContextTypes.DEFAULT_TYPE, page_num: int) -> None:
     """Displays a paginated list of posts for selection (edit/delete)."""
     query = update.callback_query
-    # query.answer() should have been called by the calling function
 
     action = context.user_data.get('current_action_type')
     if not action:
@@ -539,11 +538,10 @@ async def display_post_selection_page(update: Update, context: ContextTypes.DEFA
         if not all_posts:
             keyboard = [[InlineKeyboardButton("🏠 Main Menu", callback_data='show_main_menu')]]
             await query.edit_message_text(
-                text=f"There are no posts to {action}. Would you like to create one?",
+                text=f"There are no posts to {escape_markdown_v2(str(action))}. Would you like to create one?",
                 reply_markup=InlineKeyboardMarkup(keyboard)
             )
             return
-        # Cache only essential details, sorted by date descending
         context.user_data['paginated_posts_cache'] = sorted(
             [{'id': p['id'], 'title': p.get('title', 'No Title'), 'date_published': p.get('date_published', '')} for p in all_posts],
             key=lambda x: x.get('date_published', ''),
@@ -551,43 +549,44 @@ async def display_post_selection_page(update: Update, context: ContextTypes.DEFA
         )
 
     cached_posts = context.user_data.get('paginated_posts_cache', [])
-    if not cached_posts: # Should be caught above, but as a safeguard
+    if not cached_posts:
         keyboard = [[InlineKeyboardButton("🏠 Main Menu", callback_data='show_main_menu')]]
         await query.edit_message_text(
-            text=f"There are no posts to {action}. Would you like to create one?",
+            text=f"There are no posts to {escape_markdown_v2(str(action))}. Would you like to create one?",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
         return
 
     total_posts = len(cached_posts)
     total_pages = (total_posts + POSTS_PER_PAGE - 1) // POSTS_PER_PAGE
-    page_num = max(0, min(page_num, total_pages - 1)) # Ensure page_num is valid
+    page_num = max(0, min(page_num, total_pages - 1))
     context.user_data['current_page_num'] = page_num
 
     start_index = page_num * POSTS_PER_PAGE
     end_index = start_index + POSTS_PER_PAGE
     posts_on_page = cached_posts[start_index:end_index]
 
-    message_text = f"Please select a post to {escape_markdown_v2(action)} (Page {page_num + 1}/{total_pages}):\n\n"
+    message_text = f"Please select a post to {escape_markdown_v2(str(action))} \(Page {page_num + 1}/{total_pages}\)\:\n\n"
     keyboard_buttons = []
 
     for post in posts_on_page:
-        title = escape_markdown_v2(post.get('title', 'No Title'))
-        # Safely format date if present
+        escaped_post_title = escape_markdown_v2(str(post.get('title', 'No Title')))
+        escaped_post_id = escape_markdown_v2(str(post['id']))
+        display_title = escaped_post_title
+
         date_str = post.get('date_published', '')
         if date_str:
             try:
                 date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                formatted_date = escape_markdown_v2(date_obj.strftime("%Y-%m-%d"))
-                display_title = f"{title} ({formatted_date})"
+                escaped_formatted_date = escape_markdown_v2(str(date_obj.strftime("%Y-%m-%d")))
+                display_title = f"{escaped_post_title} \({escaped_formatted_date}\)"
             except ValueError:
-                formatted_date = "Unknown Date"
-                display_title = f"{title} ({formatted_date})"
-        else:
-            display_title = title
+                 # Keep display_title as just escaped_post_title if date is invalid
+                pass
 
-        message_text += f"*{display_title}*\nID: `{escape_markdown_v2(post['id'])}`\n\n"
-        keyboard_buttons.append([InlineKeyboardButton(f"Select: {title[:30]}...", callback_data=f"post_selected:{post['id']}:{action}")])
+        message_text += f"*{display_title}*\nID: `{escaped_post_id}`\n\n"
+        # Button text should be short and not escaped for Markdown
+        keyboard_buttons.append([InlineKeyboardButton(f"Select: {str(post.get('title', 'No Title'))[:30]}...", callback_data=f"post_selected:{post['id']}:{action}")])
 
     pagination_row = []
     if page_num > 0:
@@ -604,23 +603,21 @@ async def display_post_selection_page(update: Update, context: ContextTypes.DEFA
         await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
     except Exception as e:
         logger.error(f"Error sending paginated message (MarkdownV2 failed, trying plain): {e}")
-        # Fallback to plain text if MarkdownV2 fails (e.g. due to unforeseen char)
         plain_message_text = f"Please select a post to {action} (Page {page_num + 1}/{total_pages}):\n\n"
-        for post in posts_on_page:
-            title = post.get('title', 'No Title')
-            date_str = post.get('date_published', '')
-            if date_str:
+        for post_item in posts_on_page: # Renamed to avoid conflict with outer 'post'
+            title = str(post_item.get('title', 'No Title'))
+            date_str_plain = post_item.get('date_published', '')
+            display_title_plain = title
+            if date_str_plain:
                 try:
-                    date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                    formatted_date = date_obj.strftime("%Y-%m-%d")
-                    display_title = f"{title} ({formatted_date})"
+                    date_obj_plain = datetime.fromisoformat(date_str_plain.replace('Z', '+00:00'))
+                    formatted_date_plain = date_obj_plain.strftime("%Y-%m-%d")
+                    display_title_plain = f"{title} ({formatted_date_plain})"
                 except ValueError:
-                    formatted_date = "Unknown Date"
-                    display_title = f"{title} ({formatted_date})"
-            else:
-                display_title = title
-            plain_message_text += f"{display_title}\nID: {post['id']}\n\n"
+                    pass
+            plain_message_text += f"{display_title_plain}\nID: {str(post_item['id'])}\n\n"
         await query.edit_message_text(text=plain_message_text, reply_markup=reply_markup)
+
 
 async def handle_select_post_page_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handles pagination for post selection list."""
@@ -641,26 +638,17 @@ async def handle_select_post_page_callback(update: Update, context: ContextTypes
         await start_command(update, context)
         return
 
-    # Ensure action is still in context, if not, it might be an old inline keyboard
     if 'current_action_type' not in context.user_data or context.user_data['current_action_type'] != action:
         logger.warning(f"Action mismatch or missing in handle_select_post_page_callback. Expected {action}, got {context.user_data.get('current_action_type')}")
         await query.edit_message_text(text="Error: Session context mismatch. Please restart the action from the main menu.")
-        # Don't show main menu directly, let user click if they want to
-        # await start_command(update, context)
-        # Instead, just inform. Or, could be more aggressive & force main menu.
-        # For now, let's assume the user might realize and click main menu themselves.
-        # If paginated_posts_cache is also missing, then it's safer to go to main menu.
         if 'paginated_posts_cache' not in context.user_data:
             await start_command(update, context)
         return
 
-
     context.user_data['current_page_num'] = page_num
-    # paginated_posts_cache should already be populated
     if 'paginated_posts_cache' not in context.user_data:
         logger.info("paginated_posts_cache is missing in handle_select_post_page_callback. Re-initializing.")
-        # This implies a fresh start for this action if cache is gone
-        await initiate_post_selection_callback(update, context) # This will re-parse query.data
+        await initiate_post_selection_callback(update, context)
         return
 
     await display_post_selection_page(update, context, page_num)
@@ -676,7 +664,7 @@ async def handle_post_selection_callback(update: Update, context: ContextTypes.D
         return
 
     try:
-        _, post_uuid, action = query.data.split(':', 2) # action can be part of uuid if not careful, ensure maxsplit
+        _, post_uuid, action = query.data.split(':', 2)
     except ValueError:
         logger.error(f"Invalid callback data for handle_post_selection_callback: {query.data}")
         await query.edit_message_text(text="Error: Invalid selection parameters. Returning to main menu.")
@@ -689,27 +677,24 @@ async def handle_post_selection_callback(update: Update, context: ContextTypes.D
     if not selected_post_obj:
         logger.error(f"Post with UUID {post_uuid} not found during selection.")
         await query.edit_message_text(text="Error: Selected post not found. It might have been deleted. Returning to post selection.")
-        # Restart selection for the original action, from page 0
-        context.user_data.pop('paginated_posts_cache', None) # Clear cache
-        original_action = context.user_data.get('current_action_type', 'edit') # default to edit if somehow lost
-        # Need to ensure current_action_type is set correctly before calling display
-        context.user_data['current_action_type'] = original_action # Reset it just in case
+        context.user_data.pop('paginated_posts_cache', None)
+        original_action = context.user_data.get('current_action_type', 'edit')
+        context.user_data['current_action_type'] = original_action
         await display_post_selection_page(update, context, page_num=0)
         return
 
     context.user_data['selected_post_uuid'] = post_uuid
-    context.user_data['selected_post_full_data'] = dict(selected_post_obj) # Store a copy
-    context.user_data['current_action_type'] = action # Ensure this is the action from the button
+    context.user_data['selected_post_full_data'] = dict(selected_post_obj)
+    context.user_data['current_action_type'] = action
 
     await prompt_action_for_selected_post(update, context)
 
 async def prompt_action_for_selected_post(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Asks user for next step after a post has been selected (e.g., proceed to edit/delete)."""
     query = update.callback_query
-    # await query.answer() # Answered by caller typically
 
     selected_post_data = context.user_data.get('selected_post_full_data')
-    original_action = context.user_data.get('current_action_type') # This should be 'edit' or 'delete'
+    original_action = context.user_data.get('current_action_type')
 
     if not selected_post_data or not original_action:
         logger.error("prompt_action_for_selected_post called without selected_post_data or original_action.")
@@ -717,20 +702,18 @@ async def prompt_action_for_selected_post(update: Update, context: ContextTypes.
         await start_command(update, context)
         return
 
-    post_title = escape_markdown_v2(selected_post_data.get('title', "N/A"))
-    post_id = selected_post_data['id']
+    escaped_post_title = escape_markdown_v2(str(selected_post_data.get('title', "N/A")))
+    escaped_post_id = escape_markdown_v2(str(selected_post_data['id']))
 
-    message_text = f"You selected post: *{post_title}*\nID: `{escape_markdown_v2(post_id)}`\n\nWhat would you like to do?"
+    message_text = f"You selected post: *{escaped_post_title}*\nID: `{escaped_post_id}`\n\nWhat would you like to do\?"
 
     keyboard = []
     if original_action == 'edit':
-        keyboard.append([InlineKeyboardButton(f"✏️ Edit This Post", callback_data=f"do_edit_post_init:{post_id}")])
-        # Option to delete instead, if they chose edit initially
-        keyboard.append([InlineKeyboardButton(f"🗑️ Delete This Post", callback_data=f"do_delete_post_prompt:{post_id}")])
+        keyboard.append([InlineKeyboardButton(f"✏️ Edit This Post", callback_data=f"do_edit_post_init:{selected_post_data['id']}")])
+        keyboard.append([InlineKeyboardButton(f"🗑️ Delete This Post", callback_data=f"do_delete_post_prompt:{selected_post_data['id']}")])
     elif original_action == 'delete':
-        keyboard.append([InlineKeyboardButton(f"🗑️ Delete This Post", callback_data=f"do_delete_post_prompt:{post_id}")])
-        # Option to edit instead, if they chose delete initially
-        keyboard.append([InlineKeyboardButton(f"✏️ Edit This Post", callback_data=f"do_edit_post_init:{post_id}")])
+        keyboard.append([InlineKeyboardButton(f"🗑️ Delete This Post", callback_data=f"do_delete_post_prompt:{selected_post_data['id']}")])
+        keyboard.append([InlineKeyboardButton(f"✏️ Edit This Post", callback_data=f"do_edit_post_init:{selected_post_data['id']}")])
 
     keyboard.append([InlineKeyboardButton("↩️ Choose Different Post", callback_data=f"select_post_init:{original_action}:0")])
     keyboard.append([InlineKeyboardButton("🏠 Main Menu", callback_data='show_main_menu')])
@@ -740,7 +723,7 @@ async def prompt_action_for_selected_post(update: Update, context: ContextTypes.
         await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
     except Exception as e:
         logger.error(f"MarkdownV2 failed in prompt_action_for_selected_post: {e}. Sending plain.")
-        plain_text = f"You selected post: {selected_post_data.get('title', 'N/A')}\nID: {post_id}\n\nWhat would you like to do?"
+        plain_text = f"You selected post: {selected_post_data.get('title', 'N/A')}\nID: {selected_post_data['id']}\n\nWhat would you like to do?"
         await query.edit_message_text(text=plain_text, reply_markup=reply_markup)
 
 # --- Read-Only Post Listing Functions ---
@@ -764,11 +747,10 @@ async def handle_readonly_list_posts_callback(update: Update, context: ContextTy
         await start_command(update, context)
         return
 
-    if page_num == 0: # Clear cache only on initial call from main menu
+    if page_num == 0:
         context.user_data.pop('paginated_posts_cache', None)
 
     context.user_data['current_page_num'] = page_num
-    # current_action_type should not be relevant here, or set to 'view'
     context.user_data.pop('current_action_type', None)
 
     await display_readonly_posts_page(update, context, page_num)
@@ -776,9 +758,7 @@ async def handle_readonly_list_posts_callback(update: Update, context: ContextTy
 async def display_readonly_posts_page(update: Update, context: ContextTypes.DEFAULT_TYPE, page_num: int) -> None:
     """Displays a paginated list of posts in read-only mode."""
     query = update.callback_query
-    # query.answer() should have been called by the calling function
 
-    # If cache is empty (e.g. direct call or after clearing), load posts
     if 'paginated_posts_cache' not in context.user_data:
         all_posts = load_blog_posts()
         if not all_posts:
@@ -795,7 +775,7 @@ async def display_readonly_posts_page(update: Update, context: ContextTypes.DEFA
         )
 
     cached_posts = context.user_data.get('paginated_posts_cache', [])
-    if not cached_posts: # Safeguard
+    if not cached_posts:
         keyboard = [[InlineKeyboardButton("🏠 Main Menu", callback_data='show_main_menu')]]
         await query.edit_message_text(
             text="There are no blog posts to display. Would you like to create one?",
@@ -812,22 +792,24 @@ async def display_readonly_posts_page(update: Update, context: ContextTypes.DEFA
     end_index = start_index + POSTS_PER_PAGE
     posts_on_page = cached_posts[start_index:end_index]
 
-    message_text = f"📝 *Blog Posts* (Page {page_num + 1}/{total_pages}):\n\n"
+    message_text = f"📝 *Blog Posts* \(Page {page_num + 1}/{total_pages}\)\:\n\n"
     keyboard_buttons = []
 
     for post in posts_on_page:
-        title = escape_markdown_v2(post.get('title', 'No Title'))
+        escaped_title = escape_markdown_v2(str(post.get('title', 'No Title')))
+        escaped_post_id = escape_markdown_v2(str(post['id']))
+        display_text_line = f"*{escaped_title}*"
+
         date_str = post.get('date_published', '')
         if date_str:
             try:
                 date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                formatted_date = escape_markdown_v2(date_obj.strftime("%Y-%m-%d"))
-                message_text += f"*{title}* ({formatted_date})\nID: `{escape_markdown_v2(post['id'])}`\n\n"
+                escaped_formatted_date = escape_markdown_v2(str(date_obj.strftime("%Y-%m-%d")))
+                display_text_line += f" \({escaped_formatted_date}\)"
             except ValueError:
-                message_text += f"*{title}* (Unknown Date)\nID: `{escape_markdown_v2(post['id'])}`\n\n"
-        else:
-            message_text += f"*{title}*\nID: `{escape_markdown_v2(post['id'])}`\n\n"
-        # No "Select" button for read-only view
+                pass # Keep simple title if date is invalid
+
+        message_text += f"{display_text_line}\nID: `{escaped_post_id}`\n\n"
 
     pagination_row = []
     if page_num > 0:
@@ -845,19 +827,20 @@ async def display_readonly_posts_page(update: Update, context: ContextTypes.DEFA
     except Exception as e:
         logger.error(f"MarkdownV2 failed in display_readonly_posts_page: {e}. Sending plain.")
         plain_text = f"Blog Posts (Page {page_num + 1}/{total_pages}):\n\n"
-        for post in posts_on_page:
-            title = post.get('title', 'No Title')
-            date_str = post.get('date_published', '')
-            if date_str:
+        for post_item in posts_on_page: # Renamed to avoid conflict
+            title = str(post_item.get('title', 'No Title'))
+            date_str_plain = post_item.get('date_published', '')
+            display_title_plain = title
+            if date_str_plain:
                 try:
-                    date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                    formatted_date = date_obj.strftime("%Y-%m-%d")
-                    plain_text += f"{title} ({formatted_date})\nID: {post['id']}\n\n"
+                    date_obj_plain = datetime.fromisoformat(date_str_plain.replace('Z', '+00:00'))
+                    formatted_date_plain = date_obj_plain.strftime("%Y-%m-%d")
+                    display_title_plain = f"{title} ({formatted_date_plain})"
                 except ValueError:
-                    plain_text += f"{title} (Unknown Date)\nID: {post['id']}\n\n"
-            else:
-                plain_text += f"{title}\nID: {post['id']}\n\n"
+                    pass
+            plain_text += f"{display_title_plain}\nID: {str(post_item['id'])}\n\n"
         await query.edit_message_text(text=plain_text, reply_markup=reply_markup)
+
 
 async def handle_readonly_pagination_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handles pagination for the read-only post list."""
@@ -881,9 +864,8 @@ async def handle_readonly_pagination_callback(update: Update, context: ContextTy
     context.user_data['current_page_num'] = page_num
     if 'paginated_posts_cache' not in context.user_data:
         logger.info("paginated_posts_cache missing in handle_readonly_pagination_callback. Re-initializing readonly list from page 0.")
-        # If cache is gone, restart the readonly list from page 0 to rebuild cache
-        context.user_data.pop('paginated_posts_cache', None) # Ensure it's clear
-        await display_readonly_posts_page(update, context, page_num=0) # Display page 0
+        context.user_data.pop('paginated_posts_cache', None)
+        await display_readonly_posts_page(update, context, page_num=0)
         return
 
     await display_readonly_posts_page(update, context, page_num)
@@ -898,7 +880,7 @@ async def handle_do_edit_post_init_callback(update: Update, context: ContextType
     if not await is_admin(update, context):
         await query.edit_message_text(text="Unauthorized. Returning to main menu.")
         await start_command(update, context)
-        return ConversationHandler.END # End if unauthorized
+        return ConversationHandler.END
 
     try:
         _, post_uuid = query.data.split(':')
@@ -906,32 +888,29 @@ async def handle_do_edit_post_init_callback(update: Update, context: ContextType
         logger.error(f"Invalid callback data for handle_do_edit_post_init_callback: {query.data}")
         await query.edit_message_text(text="Error: Invalid edit parameters. Returning to main menu.")
         await start_command(update, context)
-        return ConversationHandler.END # End on error
+        return ConversationHandler.END
 
     all_posts = load_blog_posts()
     post_to_edit = next((post for post in all_posts if post.get('id') == post_uuid), None)
 
     if not post_to_edit:
         logger.warning(f"Post UUID {post_uuid} for editing not found. Potentially deleted.")
-        await query.edit_message_text(text=f"Error: Post with ID '{escape_markdown_v2(post_uuid)}' not found. It might have been deleted. Returning to main menu.", parse_mode='MarkdownV2')
+        # Message sent as plain text
+        await query.edit_message_text(text=f"Error: Post with ID '{post_uuid}' not found. It might have been deleted. Returning to main menu.")
         await start_command(update, context)
-        return ConversationHandler.END # End if post not found
+        return ConversationHandler.END
 
-    # Prepare context for the editpost_conv_handler
     context.user_data['edit_post_data'] = {
         'post_id': post_uuid,
-        'original_post': dict(post_to_edit) # Store a copy
+        'original_post': dict(post_to_edit)
     }
 
-    # Clean up selection-specific context data
     context.user_data.pop('selected_post_uuid', None)
     context.user_data.pop('selected_post_full_data', None)
     context.user_data.pop('paginated_posts_cache', None)
     context.user_data.pop('current_page_num', None)
-    context.user_data.pop('current_action_type', None) # Clear as edit action is now confirmed
+    context.user_data.pop('current_action_type', None)
 
-    # This function will send the message asking which field to edit
-    # and returns the next state for the conversation handler.
     return await prompt_select_field_to_edit(update, context)
 
 async def handle_do_delete_post_prompt_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -952,30 +931,29 @@ async def handle_do_delete_post_prompt_callback(update: Update, context: Context
         await start_command(update, context)
         return
 
-    # Load only title for confirmation to save resources if post is large
-    # However, selected_post_full_data might still be in context if coming from prompt_action_for_selected_post
-    post_title = "N/A"
+    post_title_to_delete = "N/A" # Renamed variable
     if context.user_data.get('selected_post_uuid') == post_uuid and context.user_data.get('selected_post_full_data'):
-        post_title = context.user_data['selected_post_full_data'].get('title', 'N/A')
-    else: # Fallback if context was lost or direct entry
+        post_title_to_delete = context.user_data['selected_post_full_data'].get('title', 'N/A')
+    else:
         all_posts = load_blog_posts()
         post_to_confirm = next((post for post in all_posts if post.get('id') == post_uuid), None)
         if post_to_confirm:
-            post_title = post_to_confirm.get('title', 'N/A')
+            post_title_to_delete = post_to_confirm.get('title', 'N/A')
         else:
             logger.warning(f"Post UUID {post_uuid} for delete confirmation not found.")
-            await query.edit_message_text(text=f"Error: Post with ID '{escape_markdown_v2(post_uuid)}' not found. Returning to main menu.", parse_mode='MarkdownV2')
+            # Message sent as plain text
+            await query.edit_message_text(text=f"Error: Post with ID '{post_uuid}' not found. Returning to main menu.")
             await start_command(update, context)
             return
 
-    escaped_title = escape_markdown_v2(str(post_title)) # Ensure title is a string
-    escaped_uuid = escape_markdown_v2(str(post_uuid))     # Ensure uuid is a string
+    escaped_title = escape_markdown_v2(str(post_title_to_delete))
+    escaped_uuid = escape_markdown_v2(str(post_uuid))
 
     message_text = f"Are you sure you want to delete the post titled '{escaped_title}' \\(ID: {escaped_uuid}\\)\\?"
 
     keyboard = [[
         InlineKeyboardButton("Yes, Delete It", callback_data=f"do_delete_post_confirm:{post_uuid}"),
-        InlineKeyboardButton("No, Cancel", callback_data="show_main_menu") # Or back to post selection? Main menu is safer.
+        InlineKeyboardButton("No, Cancel", callback_data="show_main_menu")
     ]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
@@ -986,7 +964,6 @@ async def handle_do_delete_post_confirm_callback(update: Update, context: Contex
     await query.answer()
 
     if not await is_admin(update, context):
-        # No message edit here as start_command will handle it
         await start_command(update, context)
         return
 
@@ -1000,29 +977,30 @@ async def handle_do_delete_post_confirm_callback(update: Update, context: Contex
 
     posts = load_blog_posts()
     post_index_to_delete = -1
-    deleted_post_title = "N/A"
+    deleted_post_title_val = "N/A" # Renamed variable
 
     for i, post in enumerate(posts):
         if post.get('id') == post_uuid:
             post_index_to_delete = i
-            deleted_post_title = post.get('title', 'N/A')
+            deleted_post_title_val = post.get('title', 'N/A')
             break
 
     message_to_user = ""
+    escaped_post_uuid = escape_markdown_v2(str(post_uuid)) # Escape once
 
     if post_index_to_delete != -1:
         del posts[post_index_to_delete]
         if save_blog_posts(posts):
-            message_to_user = f"Post '*{escape_markdown_v2(deleted_post_title)}*' (ID: `{escape_markdown_v2(post_uuid)}`) has been deleted\\."
+            escaped_deleted_post_title = escape_markdown_v2(str(deleted_post_title_val))
+            message_to_user = f"Post '*{escaped_deleted_post_title}*' \\(ID: `{escaped_post_uuid}`\\) has been deleted\\."
             logger.info(f"Post {post_uuid} deleted by {query.from_user.id}")
         else:
             message_to_user = "Error: Could not save changes after deleting post\\. Please check logs\\."
             logger.error(f"Failed to save posts after deleting {post_uuid}")
     else:
-        message_to_user = f"Error: Post with ID `{escape_markdown_v2(post_uuid)}` not found (maybe already deleted)\\."
+        message_to_user = f"Error: Post with ID `{escaped_post_uuid}` not found \\(maybe already deleted\\)\\."
         logger.warning(f"Post {post_uuid} for deletion not found by {query.from_user.id}")
 
-    # Clean up context data related to selection/action
     context.user_data.pop('selected_post_uuid', None)
     context.user_data.pop('selected_post_full_data', None)
     context.user_data.pop('paginated_posts_cache', None)
@@ -1030,31 +1008,18 @@ async def handle_do_delete_post_confirm_callback(update: Update, context: Contex
     context.user_data.pop('current_action_type', None)
 
     await query.edit_message_text(text=message_to_user, parse_mode='MarkdownV2')
-    # Wait a bit before showing main menu to let user read message (optional)
-    # await asyncio.sleep(2) # Requires import asyncio
-
-    # Regardless of outcome for the delete operation, show main menu.
-    # Create a new message for main menu or edit the existing one.
-    # For simplicity, let start_command create a new message or edit the current one.
-    # The user will see the confirmation/error, then the menu will appear.
-    # If we want the menu to replace the confirmation message, we'd call start_command with query.
-
-    # To make it cleaner, let's make start_command always edit if query is present.
-    # The current message text will be the delete confirmation.
-    # We want the next action to be on this message.
-    await start_command(update, context) # This should edit the message to show the main menu.
+    await start_command(update, context)
 
 
 async def handle_show_main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handles 'show_main_menu' callback to display the main menu."""
     query = update.callback_query
-    if query: # Should always be true for a callback
+    if query:
         await query.answer()
-    # start_command will handle clearing data and editing the message
     await start_command(update, context)
 
 # --- Main Bot Setup (main() function) ---
-async def main() -> None: # Changed to async def
+async def main() -> None:
     if not BLOG_BOT_TOKEN:
         logger.error("FATAL: BLOG_BOT_TOKEN not found in environment variables.")
         return
@@ -1064,8 +1029,8 @@ async def main() -> None: # Changed to async def
     application = (
         ApplicationBuilder()
         .token(BLOG_BOT_TOKEN)
-        .connect_timeout(20)  # Set connect timeout to 20 seconds
-        .read_timeout(30)     # Set read timeout to 30 seconds
+        .connect_timeout(20)
+        .read_timeout(30)
         .build()
     )
     await application.initialize()
@@ -1090,31 +1055,21 @@ async def main() -> None: # Changed to async def
             CallbackQueryHandler(handle_do_edit_post_init_callback, pattern='^do_edit_post_init:')
         ],
         states={
-            # SELECT_POST_TO_EDIT is no longer needed here as selection happens before conversation starts.
-            # The first state entered will be SELECT_FIELD_TO_EDIT,
-            # returned by handle_do_edit_post_init_callback via prompt_select_field_to_edit.
             SELECT_FIELD_TO_EDIT: [CallbackQueryHandler(handle_field_selection_callback, pattern='^editfield_')],
             GET_NEW_FIELD_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_new_field_value)],
         },
         fallbacks=[
             CommandHandler('cancel_editing', cancel_editing),
-            CommandHandler('cancel', cancel_editing), # General cancel
-            CallbackQueryHandler(cancel_editing, pattern='^editfield_cancel_current_edit$') # Ensure this specific cancel also works correctly
+            CommandHandler('cancel', cancel_editing),
+            CallbackQueryHandler(cancel_editing, pattern='^editfield_cancel_current_edit$')
         ],
     )
     application.add_handler(editpost_conv_handler)
 
     application.add_handler(CommandHandler("start", start_command))
-    application.add_handler(CommandHandler("help", help_command)) # Keep direct /help command
-    # application.add_handler(CommandHandler("listposts", listposts_command)) # Superseded by list_posts_page:0 button
-    # application.add_handler(CommandHandler("deletepost", deletepost_command)) # Superseded by select_post_init:delete:0 button
+    application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CallbackQueryHandler(handle_menu_help_callback, pattern='^menu_help$'))
 
-    # Handlers for other menu buttons not starting conversations
-    # application.add_handler(CallbackQueryHandler(handle_menu_list_posts_callback, pattern='^menu_list_posts$')) # Replaced by paginated
-    # application.add_handler(CallbackQueryHandler(handle_menu_delete_post_start_callback, pattern='^menu_delete_post_start$')) # Superseded by select_post_init:delete:0
-    application.add_handler(CallbackQueryHandler(handle_menu_help_callback, pattern='^menu_help$')) # Keep menu help
-
-    # --- New Paginated Post Selection & Listing Handlers ---
     application.add_handler(CallbackQueryHandler(handle_show_main_menu_callback, pattern='^show_main_menu$'))
     application.add_handler(CallbackQueryHandler(initiate_post_selection_callback, pattern='^select_post_init:'))
     application.add_handler(CallbackQueryHandler(handle_select_post_page_callback, pattern='^select_post_page:'))
@@ -1123,63 +1078,35 @@ async def main() -> None: # Changed to async def
     application.add_handler(CallbackQueryHandler(handle_readonly_list_posts_callback, pattern='^list_posts_page:'))
     application.add_handler(CallbackQueryHandler(handle_readonly_pagination_callback, pattern='^readonly_list_page:'))
 
-    # --- Callback Handlers for actions post-selection (Delete is direct, Edit enters conv) ---
     application.add_handler(CallbackQueryHandler(handle_do_delete_post_prompt_callback, pattern='^do_delete_post_prompt:'))
     application.add_handler(CallbackQueryHandler(handle_do_delete_post_confirm_callback, pattern='^do_delete_post_confirm:'))
-    # Note: handle_do_edit_post_init_callback is registered as an entry point to editpost_conv_handler
 
-
-    # Handler for OLD deletepost confirmation buttons (from /deletepost command) - consider removing/commenting out
-    # application.add_handler(CallbackQueryHandler(deletepost_callback_handler, pattern="^deletepost_confirm_")) # Superseded
-
-    # A global cancel command handler.
-    # It's important this doesn't interfere with conversation-specific cancels if they have different logic.
-    # cancel_newpost is relatively generic.
     application.add_handler(CommandHandler("cancel", cancel_newpost))
 
     logger.info("Blog Bot starting...")
     await application.start()
     await application.updater.start_polling()
     try:
-        while application.running:  # Loop as long as the application is supposed to be running
-            await asyncio.sleep(0.1) # Pause briefly, let other tasks run
+        while application.running:
+            await asyncio.sleep(0.1)
     except KeyboardInterrupt:
-        # This an explicit handling of KeyboardInterrupt,
-        # PTB's default signal handlers also call application.stop_running()
-        # which would make application.running False.
         logger.info("Bot process interrupted by user (KeyboardInterrupt).")
     except Exception as e:
-        # Catch any other unexpected error during this idle phase
         logger.error(f"Unexpected error during main loop: {e}", exc_info=True)
     finally:
-        # Ensure updater is stopped first if it's polling
         if hasattr(application.updater, 'is_polling') and application.updater.is_polling():
             logger.info("Stopping updater...")
             await application.updater.stop()
 
-        # Ensure application itself is stopped
-        # application.running should be False if shutdown was triggered by PTB signals
-        # but calling stop() ensures cleanup if loop exited for other reasons or if running is not False yet.
-        if application.running: # Check if it's still True, e.g. if loop exited due to an error
+        if application.running:
              logger.info("Application still marked as running, initiating stop sequence...")
-             await application.stop() # This should set application.running to False and clean up.
+             await application.stop()
         else:
              logger.info("Application already stopped or stopping.")
-
-        # It's generally good practice to also await a final shutdown of the application object
-        # if the library version supports it and it's not causing issues.
-        # However, application.shutdown() was problematic before.
-        # For now, application.stop() should handle the necessary cleanup.
-        # If application.shutdown() is available and needed for full cleanup in this PTB version,
-        # it could be added here, but let's stick to what's known to be safe.
-        # Example:
-        # if hasattr(application, 'shutdown'):
-        #     logger.info("Shutting down application object...")
-        #     await application.shutdown()
 
         logger.info("Bot shutdown process complete.")
 
 if __name__ == '__main__':
-    asyncio.run(main()) # Changed to asyncio.run
+    asyncio.run(main())
 
 [end of blog_bot.py]

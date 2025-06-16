@@ -135,7 +135,7 @@ async def handle_content_type_direct_callback(update: Update, context: ContextTy
     query = update.callback_query
     await query.answer()
     text_to_send = "Okay, please send the full content of the blog post as a text message\\. Remember Telegram has a character limit for messages\\. \\(Or type /cancel\\)"
-    logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{text_to_send}<<<")
+    # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{text_to_send}<<<")
     await query.edit_message_text(
         text=text_to_send,
         parse_mode='MarkdownV2'
@@ -146,7 +146,7 @@ async def handle_content_type_file_callback(update: Update, context: ContextType
     query = update.callback_query
     await query.answer()
     text_to_send = "Please upload a plain text file \\(\\.txt\\) or a Markdown file \\(\\.md\\) containing the blog content\\. Max file size: 1MB, UTF\\-8 encoded\\. \\(Or type /cancel\\)"
-    logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{text_to_send}<<<")
+    # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{text_to_send}<<<")
     await query.edit_message_text(
         text=text_to_send,
         parse_mode='MarkdownV2'
@@ -418,10 +418,11 @@ async def display_post_selection_page(update: Update, context: ContextTypes.DEFA
         all_posts = load_blog_posts()
         if not all_posts:
             keyboard = [[InlineKeyboardButton("🏠 Main Menu", callback_data='show_main_menu')]]
-            text_to_send = f"There are no posts to {escape_markdown_v2(str(action))}. Would you like to create one?"
-            logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{text_to_send}<<<")
+            raw_message_text = f"There are no posts to {str(action)}. Would you like to create one?"
+            message_text_escaped = escape_markdown_v2(raw_message_text)
+            # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text_escaped}<<<")
             await query.edit_message_text(
-                text=text_to_send,
+                text=message_text_escaped,
                 reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='MarkdownV2'
             )
             return
@@ -434,10 +435,11 @@ async def display_post_selection_page(update: Update, context: ContextTypes.DEFA
     cached_posts = context.user_data.get('paginated_posts_cache', [])
     if not cached_posts:
         keyboard = [[InlineKeyboardButton("🏠 Main Menu", callback_data='show_main_menu')]]
-        text_to_send = f"There are no posts to {escape_markdown_v2(str(action))}. Would you like to create one?"
-        logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{text_to_send}<<<")
+        raw_message_text = f"There are no posts to {str(action)}. Would you like to create one?"
+        message_text_escaped = escape_markdown_v2(raw_message_text)
+        # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text_escaped}<<<")
         await query.edit_message_text(
-            text=text_to_send,
+            text=message_text_escaped,
             reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='MarkdownV2'
         )
         return
@@ -486,7 +488,7 @@ async def display_post_selection_page(update: Update, context: ContextTypes.DEFA
 
     reply_markup = InlineKeyboardMarkup(keyboard_buttons)
     try:
-        logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
+        # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
         await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
     except Exception as e:
         logger.error(f"Error sending paginated message (MarkdownV2 failed, trying plain): {e}")
@@ -652,9 +654,15 @@ async def display_readonly_posts_page(update: Update, context: ContextTypes.DEFA
         all_posts = load_blog_posts()
         if not all_posts:
             keyboard = [[InlineKeyboardButton("🏠 Main Menu", callback_data='show_main_menu')]]
+            raw_message_text = "There are no blog posts to display. Would you like to create one?"
+            message_text_escaped = escape_markdown_v2(raw_message_text)
+            # Assuming this message should also be MarkdownV2 if it's a common pattern,
+            # though the original didn't specify parse_mode. Adding for consistency.
+            # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text_escaped}<<<")
             await query.edit_message_text(
-                text="There are no blog posts to display. Would you like to create one?",
-                reply_markup=InlineKeyboardMarkup(keyboard)
+                text=message_text_escaped,
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode='MarkdownV2' # Added parse_mode for consistency
             )
             return
 
@@ -695,9 +703,14 @@ async def display_readonly_posts_page(update: Update, context: ContextTypes.DEFA
     cached_posts = context.user_data.get('paginated_posts_cache', [])
     if not cached_posts:
         keyboard = [[InlineKeyboardButton("🏠 Main Menu", callback_data='show_main_menu')]]
+        raw_message_text = "There are no blog posts to display. Would you like to create one?"
+        message_text_escaped = escape_markdown_v2(raw_message_text)
+        # Assuming this message should also be MarkdownV2
+        # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text_escaped}<<<")
         await query.edit_message_text(
-            text="There are no blog posts to display. Would you like to create one?",
-            reply_markup=InlineKeyboardMarkup(keyboard)
+            text=message_text_escaped,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode='MarkdownV2' # Added parse_mode for consistency
         )
         return
 
@@ -733,7 +746,8 @@ async def display_readonly_posts_page(update: Update, context: ContextTypes.DEFA
 
     reply_markup = InlineKeyboardMarkup(keyboard_buttons)
     try:
-        logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
+        # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
+        # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
         await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
     except Exception as e:
         logger.error(f"MarkdownV2 failed in display_readonly_posts_page: {e}. Sending plain.")
@@ -832,7 +846,7 @@ async def prompt_select_field_to_edit(update: Update, context: ContextTypes.DEFA
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
+    # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
     await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
     return SELECT_FIELD_TO_EDIT
 
@@ -892,7 +906,7 @@ async def handle_field_selection_callback(update: Update, context: ContextTypes.
         f"Please send the new {escape_markdown_v2(user_friendly_field_name)} for the post\\. "
         f"\\(Or type /cancel_editing to abort this edit\\)"
     )
-    logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
+    # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
     await query.edit_message_text(text=message_text, parse_mode='MarkdownV2')
     return GET_NEW_FIELD_VALUE
 
@@ -998,7 +1012,7 @@ async def handle_do_delete_post_prompt_callback(update: Update, context: Context
         InlineKeyboardButton("No, Cancel", callback_data="show_main_menu")
     ]]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
+    # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
     await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
 
 async def handle_do_delete_post_confirm_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1049,7 +1063,7 @@ async def handle_do_delete_post_confirm_callback(update: Update, context: Contex
     context.user_data.pop('current_page_num', None)
     context.user_data.pop('current_action_type', None)
 
-    logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_to_user}<<<")
+    # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_to_user}<<<")
     await query.edit_message_text(text=message_to_user, parse_mode='MarkdownV2')
     await start_command(update, context)
 

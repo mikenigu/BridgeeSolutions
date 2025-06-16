@@ -478,6 +478,7 @@ async def display_post_selection_page(update: Update, context: ContextTypes.DEFA
 
     reply_markup = InlineKeyboardMarkup(keyboard_buttons)
     try:
+        logger.info(f"MarkdownV2 message content before sending: >>>{message_text}<<<")
         await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
     except Exception as e:
         logger.error(f"Error sending paginated message (MarkdownV2 failed, trying plain): {e}")

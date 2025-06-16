@@ -124,8 +124,10 @@ async def receive_title(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         [InlineKeyboardButton("Upload Content File (.txt, .md)", callback_data='content_type_file')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
+    raw_text = f"Great! Title set to: '{str(title)}'.\n\nHow would you like to provide the content for your post? (Max 1MB for files, UTF-8 format preferred for files)"
+    text_to_send = escape_markdown_v2(raw_text)
     await update.message.reply_text(
-        f"Great! Title set to: '{escape_markdown_v2(str(title))}'\\.\n\nHow would you like to provide the content for your post? \\(Max 1MB for files, UTF\\-8 format preferred for files\\)",
+        text_to_send,
         reply_markup=reply_markup,
         parse_mode='MarkdownV2'
     )
@@ -134,7 +136,8 @@ async def receive_title(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 async def handle_content_type_direct_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
-    text_to_send = "Okay, please send the full content of the blog post as a text message\\. Remember Telegram has a character limit for messages\\. \\(Or type /cancel\\)"
+    raw_text = "Okay, please send the full content of the blog post as a text message. Remember Telegram has a character limit for messages. (Or type /cancel)"
+    text_to_send = escape_markdown_v2(raw_text)
     # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{text_to_send}<<<")
     await query.edit_message_text(
         text=text_to_send,
@@ -145,7 +148,8 @@ async def handle_content_type_direct_callback(update: Update, context: ContextTy
 async def handle_content_type_file_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
-    text_to_send = "Please upload a plain text file \\(\\.txt\\) or a Markdown file \\(\\.md\\) containing the blog content\\. Max file size: 1MB, UTF\\-8 encoded\\. \\(Or type /cancel\\)"
+    raw_text = "Please upload a plain text file (.txt) or a Markdown file (.md) containing the blog content. Max file size: 1MB, UTF-8 encoded. (Or type /cancel)"
+    text_to_send = escape_markdown_v2(raw_text)
     # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{text_to_send}<<<")
     await query.edit_message_text(
         text=text_to_send,
@@ -156,13 +160,17 @@ async def handle_content_type_file_callback(update: Update, context: ContextType
 async def receive_typed_content_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     content = update.message.text
     context.user_data['new_post']['content'] = content
-    await update.message.reply_text("Content received\\. Who is the author? \\(Type 'skip' or /cancel\\)", parse_mode='MarkdownV2')
+    raw_text = "Content received. Who is the author? (Type 'skip' or /cancel)"
+    text_to_send = escape_markdown_v2(raw_text)
+    await update.message.reply_text(text_to_send, parse_mode='MarkdownV2')
     return AUTHOR
 
 async def receive_content_file_upload(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     doc = update.message.document
     if doc.file_size > 1 * 1024 * 1024: # Max 1MB
-        await update.message.reply_text("File is too large \\(max 1MB\\)\\. Please upload a smaller file or type /cancel\\.", parse_mode='MarkdownV2')
+        raw_text = "File is too large (max 1MB). Please upload a smaller file or type /cancel."
+        text_to_send = escape_markdown_v2(raw_text)
+        await update.message.reply_text(text_to_send, parse_mode='MarkdownV2')
         return RECEIVE_CONTENT_FILE
 
     try:
@@ -170,14 +178,20 @@ async def receive_content_file_upload(update: Update, context: ContextTypes.DEFA
         file_content_bytes = await file.download_as_bytearray()
         file_content_text = file_content_bytes.decode('utf-8')
         context.user_data['new_post']['content'] = file_content_text
-        await update.message.reply_text("Content file received and processed successfully\\. Who is the author? \\(Type 'skip' or /cancel\\)", parse_mode='MarkdownV2')
+        raw_text_success = "Content file received and processed successfully. Who is the author? (Type 'skip' or /cancel)"
+        text_to_send_success = escape_markdown_v2(raw_text_success)
+        await update.message.reply_text(text_to_send_success, parse_mode='MarkdownV2')
         return AUTHOR
     except UnicodeDecodeError:
-        await update.message.reply_text("Error: Could not decode the file\\. Please ensure it is a UTF\\-8 encoded text file\\. Upload again or type /cancel\\.", parse_mode='MarkdownV2')
+        raw_text_unicode_error = "Error: Could not decode the file. Please ensure it is a UTF-8 encoded text file. Upload again or type /cancel."
+        text_to_send_unicode_error = escape_markdown_v2(raw_text_unicode_error)
+        await update.message.reply_text(text_to_send_unicode_error, parse_mode='MarkdownV2')
         return RECEIVE_CONTENT_FILE
     except Exception as e:
         logger.error(f"Error processing uploaded file: {e}", exc_info=True)
-        await update.message.reply_text("An error occurred while processing your file\\. Please try again or type /cancel\\.", parse_mode='MarkdownV2')
+        raw_text_exception = "An error occurred while processing your file. Please try again or type /cancel."
+        text_to_send_exception = escape_markdown_v2(raw_text_exception)
+        await update.message.reply_text(text_to_send_exception, parse_mode='MarkdownV2')
         return RECEIVE_CONTENT_FILE
 
 async def handle_unexpected_message_in_file_state(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -194,7 +208,9 @@ async def receive_author(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         context.user_data['new_post']['author'] = author
     else:
         context.user_data['new_post']['author'] = None
-    await update.message.reply_text("Author noted\\.\n\nPlease provide a URL for the post's image\\. \\(Type 'skip' if no image\\)", parse_mode='MarkdownV2')
+    raw_text = "Author noted.\n\nPlease provide a URL for the post's image. (Type 'skip' if no image)"
+    text_to_send = escape_markdown_v2(raw_text)
+    await update.message.reply_text(text_to_send, parse_mode='MarkdownV2')
     return IMAGE_URL
 
 async def receive_image_url_and_save(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -216,7 +232,9 @@ async def receive_image_url_and_save(update: Update, context: ContextTypes.DEFAU
     posts.append(post_data)
 
     if save_blog_posts(posts):
-        await update.message.reply_text(f"Blog post '{escape_markdown_v2(str(post_data['title']))}' successfully saved with ID: {escape_markdown_v2(str(post_data['id']))}!", parse_mode='MarkdownV2')
+        raw_text = f"Blog post '{str(post_data['title'])}' successfully saved with ID: {str(post_data['id'])}!"
+        text_to_send = escape_markdown_v2(raw_text)
+        await update.message.reply_text(text_to_send, parse_mode='MarkdownV2')
     else:
         await update.message.reply_text("Error: Could not save the blog post to the file.")
 
@@ -847,7 +865,10 @@ async def prompt_select_field_to_edit(update: Update, context: ContextTypes.DEFA
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{message_text}<<<")
-    await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
+    # For simple static strings, using escape_markdown_v2 is safer.
+    raw_text_prompt = "Which part of the post would you like to edit?"
+    escaped_prompt_text = escape_markdown_v2(raw_text_prompt)
+    await query.edit_message_text(text=escaped_prompt_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
     return SELECT_FIELD_TO_EDIT
 
 async def handle_field_selection_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -917,7 +938,9 @@ async def receive_new_field_value(update: Update, context: ContextTypes.DEFAULT_
 
     if not edit_data or not edit_data.get('post_id') or not edit_data.get('field_to_edit'):
         logger.error("receive_new_field_value: Session data (post_id or field_to_edit) missing.")
-        await update.message.reply_text("Error: Critical session data is missing. Please start the edit process again.", parse_mode='MarkdownV2')
+        raw_text_error = "Error: Critical session data is missing. Please start the edit process again."
+        text_to_send_error = escape_markdown_v2(raw_text_error)
+        await update.message.reply_text(text_to_send_error, parse_mode='MarkdownV2')
         # Clean up potentially inconsistent state
         context.user_data.pop('edit_post_data', None)
         context.user_data.pop('selected_post_uuid', None)
@@ -940,7 +963,9 @@ async def receive_new_field_value(update: Update, context: ContextTypes.DEFAULT_
 
     if not post_to_update:
         logger.error(f"receive_new_field_value: Post with ID {post_id} not found for update.")
-        await update.message.reply_text("Error: The post you were editing could not be found. It might have been deleted. Please start over.", parse_mode='MarkdownV2')
+        raw_text_error = "Error: The post you were editing could not be found. It might have been deleted. Please start over."
+        text_to_send_error = escape_markdown_v2(raw_text_error)
+        await update.message.reply_text(text_to_send_error, parse_mode='MarkdownV2')
         await start_command(update, context)
         return ConversationHandler.END
 
@@ -950,10 +975,13 @@ async def receive_new_field_value(update: Update, context: ContextTypes.DEFAULT_
 
     if save_blog_posts(all_posts):
         user_friendly_field_name = field_to_edit.replace('_', ' ').capitalize()
-        success_message = f"Successfully updated the {escape_markdown_v2(user_friendly_field_name)} of the post!"
-        await update.message.reply_text(success_message, parse_mode='MarkdownV2')
+        raw_success_message = f"Successfully updated the {user_friendly_field_name} of the post!"
+        escaped_success_message = escape_markdown_v2(raw_success_message)
+        await update.message.reply_text(escaped_success_message, parse_mode='MarkdownV2')
     else:
-        await update.message.reply_text("Error: Could not save the updated post. Your changes have not been applied.", parse_mode='MarkdownV2')
+        raw_text_error = "Error: Could not save the updated post. Your changes have not been applied."
+        text_to_send_error = escape_markdown_v2(raw_text_error)
+        await update.message.reply_text(text_to_send_error, parse_mode='MarkdownV2')
         # Don't necessarily end the whole conversation, but the current edit attempt failed to save.
         # For robustness, returning to main menu.
         await start_command(update, context)
@@ -1051,7 +1079,8 @@ async def handle_do_delete_post_confirm_callback(update: Update, context: Contex
             message_to_user = f"Post '*{escaped_deleted_post_title}*' \\(ID: `{escaped_post_uuid}`\\) has been deleted\\."
             logger.info(f"Post {post_uuid} deleted by {query.from_user.id}")
         else:
-            message_to_user = "Error: Could not save changes after deleting post\\. Please check logs\\."
+            raw_text_error = "Error: Could not save changes after deleting post. Please check logs."
+            message_to_user = escape_markdown_v2(raw_text_error)
             logger.error(f"Failed to save posts after deleting {post_uuid}")
     else:
         message_to_user = f"Error: Post with ID `{escaped_post_uuid}` not found \\(maybe already deleted\\)\\."

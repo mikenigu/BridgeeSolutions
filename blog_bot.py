@@ -1060,7 +1060,13 @@ async def main() -> None: # Changed to async def
     if not BLOG_ADMIN_CHAT_ID:
         logger.warning("WARNING: BLOG_ADMIN_CHAT_ID not found. Bot will be usable by anyone.")
 
-    application = ApplicationBuilder().token(BLOG_BOT_TOKEN).connect_timeout(20).read_timeout(20).build()
+    application = (
+        ApplicationBuilder()
+        .token(BLOG_BOT_TOKEN)
+        .connect_timeout(20)  # Set connect timeout to 20 seconds
+        .read_timeout(30)     # Set read timeout to 30 seconds
+        .build()
+    )
     await application.initialize() # Added initialize
 
     newpost_conv_handler = ConversationHandler(

@@ -230,6 +230,45 @@ async def cancel_newpost(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     await start_command(update, context)
     return ConversationHandler.END
 
+async def cancel_editing(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Cancels the current post editing process and returns to the main menu."""
+    message_text = "Editing cancelled."
+
+    # Clear all session data related to post editing and selection
+    context.user_data.pop('edit_post_data', None)
+    context.user_data.pop('selected_post_uuid', None)
+    context.user_data.pop('selected_post_full_data', None)
+    # These might also be good to clear, similar to start_command
+    context.user_data.pop('paginated_posts_cache', None)
+    context.user_data.pop('current_page_num', None)
+    context.user_data.pop('current_action_type', None)
+
+    if update.callback_query:
+        await update.callback_query.answer() # Answer callback query
+        try:
+            # Try to edit the message the inline keyboard was attached to
+            await update.callback_query.edit_message_text(text=message_text, reply_markup=None)
+        except Exception as e:
+            logger.info(f"Could not edit message for cancel_editing, sending new one: {e}")
+            # Fallback: Send a new message if editing fails (e.g., message too old)
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=message_text, reply_markup=None)
+    elif update.message:
+        # If cancelled via a /command
+        await update.message.reply_text(text=message_text, reply_markup=ReplyKeyboardRemove())
+    else:
+        # Fallback if neither (should not typically happen in a ConversationHandler context)
+        # Ensure effective_chat.id is available
+        if update.effective_chat:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=message_text, reply_markup=ReplyKeyboardRemove())
+        else:
+            logger.warning("cancel_editing called without effective_chat_id")
+
+
+    # Navigate back to the main menu
+    # start_command itself will clean up most user_data and show the main menu
+    await start_command(update, context)
+    return ConversationHandler.END
+
 # --- Start and Help Commands (and their Callbacks) ---
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await is_admin(update, context):
@@ -766,6 +805,145 @@ async def handle_do_edit_post_init_callback(update: Update, context: ContextType
     context.user_data.pop('current_action_type', None)
 
     return await prompt_select_field_to_edit(update, context)
+
+async def prompt_select_field_to_edit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Asks the user which part of the post they want to edit."""
+    query = update.callback_query
+    await query.answer()
+
+    message_text = "Which part of the post would you like to edit?"
+    keyboard = [
+        [InlineKeyboardButton("Edit Title", callback_data='editfield_title')],
+        [InlineKeyboardButton("Edit Content", callback_data='editfield_content')],
+        [InlineKeyboardButton("Edit Author", callback_data='editfield_author')],
+        [InlineKeyboardButton("Edit Image URL", callback_data='editfield_image_url')],
+        [InlineKeyboardButton("Back to Post Actions", callback_data='editfield_back_to_actions')],
+        [InlineKeyboardButton("Cancel Editing", callback_data='editfield_cancel_current_edit')]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    await query.edit_message_text(text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
+    return SELECT_FIELD_TO_EDIT
+
+async def handle_field_selection_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handles the user's choice of which field to edit."""
+    query = update.callback_query
+    await query.answer()
+    callback_data = query.data
+
+    if 'edit_post_data' not in context.user_data or not context.user_data['edit_post_data'].get('post_id'):
+        logger.error("handle_field_selection_callback: edit_post_data or post_id missing from context.")
+        await query.edit_message_text("Error: Post editing session data is missing. Please start over.")
+        # Clean up potentially inconsistent state
+        context.user_data.pop('edit_post_data', None)
+        context.user_data.pop('selected_post_uuid', None)
+        context.user_data.pop('selected_post_full_data', None)
+        await start_command(update, context) # Send back to main menu
+        return ConversationHandler.END
+
+    if callback_data == 'editfield_back_to_actions':
+        post_id = context.user_data['edit_post_data'].get('post_id')
+        # No need to check post_id again here as it's checked above
+
+        # Restore context for prompt_action_for_selected_post
+        context.user_data['selected_post_uuid'] = post_id
+        all_posts = load_blog_posts()
+        selected_post_obj = next((post for post in all_posts if post.get('id') == post_id), None)
+
+        if not selected_post_obj:
+            logger.error(f"handle_field_selection_callback: Post with ID {post_id} not found when going back to actions.")
+            await query.edit_message_text("Error: Selected post seems to have been deleted. Returning to main menu.")
+            await start_command(update, context)
+            return ConversationHandler.END
+
+        context.user_data['selected_post_full_data'] = dict(selected_post_obj)
+        # prompt_action_for_selected_post is not part of this ConversationHandler's states.
+        # It typically shows a new message with its own inline keyboard.
+        # We need to ensure the current message is cleaned up or appropriately handled.
+        # For simplicity, we can edit the current message to indicate returning, then let prompt_action send a new one.
+        await query.edit_message_text("Returning to post actions...") # Placeholder, prompt_action_for_selected_post will replace this
+        await prompt_action_for_selected_post(update, context)
+        return ConversationHandler.END # End current edit conversation gracefully
+
+    # It's a field edit, e.g., 'editfield_title'
+    try:
+        field_to_edit = callback_data.split('_', 1)[1]
+    except IndexError:
+        logger.error(f"Invalid callback_data in handle_field_selection_callback: {callback_data}")
+        await query.edit_message_text("Error: Invalid selection. Please try again.")
+        return SELECT_FIELD_TO_EDIT # Ask again
+
+    context.user_data['edit_post_data']['field_to_edit'] = field_to_edit
+    user_friendly_field_name = field_to_edit.replace('_', ' ').capitalize()
+
+    message_text = (
+        f"You chose to edit: *{escape_markdown_v2(user_friendly_field_name)}*\\.\n\n"
+        f"Please send the new {escape_markdown_v2(user_friendly_field_name)} for the post\\. "
+        f"\(Or type /cancel_editing to abort this edit\)"
+    )
+    await query.edit_message_text(text=message_text, parse_mode='MarkdownV2')
+    return GET_NEW_FIELD_VALUE
+
+async def receive_new_field_value(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Receives the new value for the selected field and saves the post."""
+    new_value = update.message.text
+    edit_data = context.user_data.get('edit_post_data')
+
+    if not edit_data or not edit_data.get('post_id') or not edit_data.get('field_to_edit'):
+        logger.error("receive_new_field_value: Session data (post_id or field_to_edit) missing.")
+        await update.message.reply_text("Error: Critical session data is missing. Please start the edit process again.", parse_mode='MarkdownV2')
+        # Clean up potentially inconsistent state
+        context.user_data.pop('edit_post_data', None)
+        context.user_data.pop('selected_post_uuid', None)
+        context.user_data.pop('selected_post_full_data', None)
+        await start_command(update, context) # Send back to main menu
+        return ConversationHandler.END
+
+    post_id = edit_data['post_id']
+    field_to_edit = edit_data['field_to_edit']
+
+    all_posts = load_blog_posts()
+    post_to_update = None
+    post_index = -1
+
+    for i, post in enumerate(all_posts):
+        if post.get('id') == post_id:
+            post_to_update = post
+            post_index = i
+            break
+
+    if not post_to_update:
+        logger.error(f"receive_new_field_value: Post with ID {post_id} not found for update.")
+        await update.message.reply_text("Error: The post you were editing could not be found. It might have been deleted. Please start over.", parse_mode='MarkdownV2')
+        await start_command(update, context)
+        return ConversationHandler.END
+
+    # Update the field
+    post_to_update[field_to_edit] = new_value
+    all_posts[post_index] = post_to_update
+
+    if save_blog_posts(all_posts):
+        user_friendly_field_name = field_to_edit.replace('_', ' ').capitalize()
+        success_message = f"Successfully updated the {escape_markdown_v2(user_friendly_field_name)} of the post!"
+        await update.message.reply_text(success_message, parse_mode='MarkdownV2')
+    else:
+        await update.message.reply_text("Error: Could not save the updated post. Your changes have not been applied.", parse_mode='MarkdownV2')
+        # Don't necessarily end the whole conversation, but the current edit attempt failed to save.
+        # For robustness, returning to main menu.
+        await start_command(update, context)
+        return ConversationHandler.END
+
+    # Clear the specific field being edited, but keep 'post_id' and 'original_post' in 'edit_post_data' if further edits are desired
+    context.user_data['edit_post_data'].pop('field_to_edit', None)
+
+    # Restore context to allow further actions on the same post (like editing another field or deleting)
+    context.user_data['selected_post_uuid'] = post_id
+    # Update selected_post_full_data with the newly modified post
+    context.user_data['selected_post_full_data'] = dict(post_to_update)
+
+    # Send a new message with the post actions menu
+    await prompt_action_for_selected_post(update, context)
+    return ConversationHandler.END # End current edit conversation gracefully
 
 async def handle_do_delete_post_prompt_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query

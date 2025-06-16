@@ -1067,7 +1067,7 @@ async def main() -> None: # Changed to async def
         .read_timeout(30)     # Set read timeout to 30 seconds
         .build()
     )
-    await application.initialize() # Added initialize
+    await application.initialize()
 
     newpost_conv_handler = ConversationHandler(
         entry_points=[
@@ -1137,7 +1137,9 @@ async def main() -> None: # Changed to async def
     application.add_handler(CommandHandler("cancel", cancel_newpost))
 
     logger.info("Blog Bot starting...")
-    application.run_polling() # run_polling itself is not awaited
+    await application.start()
+    await application.updater.start_polling()
+    await application.idle()
     logger.info("Blog Bot has stopped.")
 
 if __name__ == '__main__':

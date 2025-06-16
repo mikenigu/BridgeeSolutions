@@ -548,7 +548,7 @@ async def prompt_action_for_selected_post(update: Update, context: ContextTypes.
     message_text = (
         f"You selected: *{escaped_post_title}*\n"
         f"ID: `{escaped_post_id_for_display}`\n\n"
-        f"What would you like to do with this post\?"
+        f"What would you like to do with this post?"
     )
 
     keyboard = [
@@ -914,7 +914,7 @@ async def main() -> None:
             CallbackQueryHandler(handle_do_edit_post_init_callback, pattern='^do_edit_post_init:')
         ],
         states={
-            SELECT_FIELD_TO_EDIT: [CallbackQueryHandler(handle_post_selection_callback, pattern='^editfield_')],
+            SELECT_FIELD_TO_EDIT: [CallbackQueryHandler(handle_field_selection_callback, pattern='^editfield_')],
             GET_NEW_FIELD_VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_new_field_value)],
         },
         fallbacks=[

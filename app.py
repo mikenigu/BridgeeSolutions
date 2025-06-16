@@ -100,7 +100,7 @@ def load_blog_posts():
         print(f"INFO: {BLOG_POSTS_FILE} not found. Returning empty list.")
         return []
     try:
-        with open(BLOG_POSTS_FILE, 'r') as f:
+        with open(BLOG_POSTS_FILE, 'r', encoding='utf-8') as f:
             content = f.read()
             if not content:
                 print(f"INFO: {BLOG_POSTS_FILE} is empty. Returning empty list.")

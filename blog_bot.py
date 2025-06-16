@@ -968,9 +968,10 @@ async def handle_do_delete_post_prompt_callback(update: Update, context: Context
             await start_command(update, context)
             return
 
-    escaped_title = escape_markdown_v2(post_title)
-    escaped_uuid = escape_markdown_v2(post_uuid)
-    message_text = f"Are you sure you want to delete the post titled '*{escaped_title}*' (ID: `{escaped_uuid}`)\\?"
+    escaped_title = escape_markdown_v2(str(post_title)) # Ensure title is a string
+    escaped_uuid = escape_markdown_v2(str(post_uuid))     # Ensure uuid is a string
+
+    message_text = f"Are you sure you want to delete the post titled '{escaped_title}' \\(ID: {escaped_uuid}\\)\\?"
 
     keyboard = [[
         InlineKeyboardButton("Yes, Delete It", callback_data=f"do_delete_post_confirm:{post_uuid}"),

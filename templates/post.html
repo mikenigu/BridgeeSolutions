@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title | escape }} - My Blog</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Basic inline styles for readability if no external CSS is present */
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; color: #333; background-color: #f4f4f4; }
+        header, footer { text-align: center; margin-bottom: 20px; padding: 10px 0; }
+        header { border-bottom: 1px solid #ddd; }
+        footer { border-top: 1px solid #ddd; margin-top: 40px; font-size: 0.9em; color: #555; }
+        main { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        img.post-image { max-width: 100%; height: auto; margin-bottom: 20px; border-radius: 4px; }
+        .post-meta { font-size: 0.9em; color: #555; margin-bottom: 20px; }
+        .post-meta .author { font-weight: bold; }
+        .post-meta .date { margin-left: 5px; }
+        .post-content { margin-top: 20px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{{ url_for('serve_index') }}" class="back-link">&larr; Back to Blog List</a>
+    </header>
+    <main>
+        <h1>{{ post.title | escape }}</h1>
+        <p class="post-meta">
+            {% if post.author %}
+                By: <span class="author">{{ post.author | escape }}</span>
+            {% else %}
+                By: <span class="author">Anonymous</span>
+            {% endif %}
+            {% if post.date_published %}
+                <span class="date"> | Published on: {{ post.date_published | escape }}</span> {# Consider date formatting filter if available #}
+            {% endif %}
+        </p>
+        {% if post.image_url %}
+            {# Check if image_url is an external URL or needs url_for #}
+            {% if post.image_url.startswith('http') or post.image_url.startswith('/') %}
+                <img src="{{ post.image_url }}" alt="{{ post.title | escape }}" class="post-image">
+            {% else %}
+                <img src="{{ url_for('static', filename=post.image_url) }}" alt="{{ post.title | escape }}" class="post-image">
+            {% endif %}
+        {% endif %}
+        <div class="post-content">
+            {# ** CRITICAL: Ensure post.content is SANITIZED before being passed to this template #}
+            {# or use a custom Jinja filter that sanitizes. Using |safe assumes pre-sanitized HTML. #}
+            {# If content_is_html flag is true, use |safe, otherwise escape #}
+            {% if post.content_is_html %}
+                {{ post.content | safe }}
+            {% else %}
+                {{ post.content | escape | nl2br }} {# nl2br might be useful if it's plain text #}
+            {% endif %}
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 My Blog</p>
+    </footer>
+</body>
+</html>

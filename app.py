@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, abort
+from flask import Flask, request, jsonify, send_from_directory, abort, render_template
 from flask_cors import CORS, cross_origin # Make sure cross_origin is imported
 import os
 import asyncio # Added asyncio
@@ -147,6 +147,16 @@ def get_blog_post(post_id):
         return jsonify(post), 200
     else:
         return jsonify({'error': 'Post not found'}), 404
+
+@app.route('/post/<string:post_id>')
+@cross_origin()
+def view_post(post_id):
+    posts = load_blog_posts()
+    found_post = next((p for p in posts if p.get('id') == post_id), None)
+    if found_post:
+        return render_template('post.html', post=found_post)
+    else:
+        abort(404)
 
 @app.route('/api/submit-application', methods=['POST', 'OPTIONS'])
 @cross_origin() # Keep CORS decorator

@@ -3,3 +3,4 @@ python-telegram-bot>=20.0
 python-dotenv>=0.10.0
 Flask-CORS>=4.0.0 # Or a more specific version if known, but this is a common way to add it
 # Using a reasonable base version for python-dotenv
+mammoth>=1.6.0

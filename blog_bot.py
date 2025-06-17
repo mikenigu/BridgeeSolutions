@@ -19,6 +19,7 @@ from telegram.ext import (
     PicklePersistence
 )
 import asyncio # Ensure asyncio is imported
+import mammoth
 
 # Load environment variables from .env file
 load_dotenv()
@@ -36,10 +37,10 @@ BLOG_ADMIN_CHAT_ID = os.getenv('BLOG_ADMIN_CHAT_ID')
 BLOG_POSTS_FILE = 'blog_posts.json'
 
 # Conversation states for /newpost
-TITLE, CONTENT_CHOICE, RECEIVE_TYPED_CONTENT, RECEIVE_CONTENT_FILE, AUTHOR, IMAGE_URL = range(6)
+TITLE, CONTENT_CHOICE, RECEIVE_TYPED_CONTENT, RECEIVE_CONTENT_FILE, AUTHOR, IMAGE_URL, RECEIVE_DOCX_FILE = range(7)
 
 # Conversation states for /editpost
-SELECT_POST_TO_EDIT, SELECT_FIELD_TO_EDIT, GET_NEW_FIELD_VALUE = range(6, 9)
+SELECT_POST_TO_EDIT, SELECT_FIELD_TO_EDIT, GET_NEW_FIELD_VALUE = range(7, 10) # Adjusted range due to new state above
 
 # --- Constants ---
 POSTS_PER_PAGE = 3
@@ -121,11 +122,12 @@ async def receive_title(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
     keyboard = [
         [InlineKeyboardButton("Type Content Directly", callback_data='content_type_direct')],
-        [InlineKeyboardButton("Upload Content File (.txt, .md)", callback_data='content_type_file')]
+        [InlineKeyboardButton("Upload Text/Markdown File (.txt, .md)", callback_data='content_type_file')],
+        [InlineKeyboardButton("Upload Word Document (.docx)", callback_data='content_type_docx')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     raw_text = f"Great! Title set to: '{str(title)}'.\n\nHow would you like to provide the content for your post? (Max 1MB for files, UTF-8 format preferred for files)"
-    text_to_send = escape_markdown_v2(raw_text)
+    text_to_send = escape_markdown_v2(raw_text) # The message text itself doesn't need to change yet, only the keyboard options.
     await update.message.reply_text(
         text_to_send,
         reply_markup=reply_markup,
@@ -156,6 +158,16 @@ async def handle_content_type_file_callback(update: Update, context: ContextType
         parse_mode='MarkdownV2'
     )
     return RECEIVE_CONTENT_FILE
+
+async def handle_content_type_docx_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handles the callback for when the user chooses to upload a .docx file."""
+    query = update.callback_query
+    await query.answer()
+    raw_message_text = "Please upload your .docx file for the blog content."
+    escaped_message_text = escape_markdown_v2(raw_message_text)
+    # logger.info(f"Attempting to edit message with MarkdownV2. Text: >>>{escaped_message_text}<<<") # Add if debugging needed
+    await query.edit_message_text(text=escaped_message_text, parse_mode='MarkdownV2')
+    return RECEIVE_DOCX_FILE # This state will be defined in the next step
 
 async def receive_typed_content_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     content = update.message.text
@@ -194,9 +206,67 @@ async def receive_content_file_upload(update: Update, context: ContextTypes.DEFA
         await update.message.reply_text(text_to_send_exception, parse_mode='MarkdownV2')
         return RECEIVE_CONTENT_FILE
 
+async def process_docx_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handles .docx file upload, converts to HTML, and proceeds to author input."""
+    doc = update.message.document
+
+    if doc.file_size > 1 * 1024 * 1024: # Max 1MB
+        raw_msg = "The Word document is too large (max 1MB). Please upload a smaller file or type /cancel."
+        escaped_msg = escape_markdown_v2(raw_msg)
+        await update.message.reply_text(escaped_msg, parse_mode='MarkdownV2')
+        return RECEIVE_DOCX_FILE
+
+    tg_file = await context.bot.get_file(doc.file_id)
+    temp_doc_path = f"temp_{uuid.uuid4().hex}.docx"
+
+    try:
+        await tg_file.download_to_drive(custom_path=temp_doc_path)
+    except Exception as e:
+        logger.error(f"Error downloading .docx file: {e}", exc_info=True)
+        raw_msg = "An error occurred while downloading your .docx file. Please try again or type /cancel."
+        escaped_msg = escape_markdown_v2(raw_msg)
+        await update.message.reply_text(escaped_msg, parse_mode='MarkdownV2')
+        if os.path.exists(temp_doc_path): # Attempt to clean up if file was partially created
+            os.remove(temp_doc_path)
+        return RECEIVE_DOCX_FILE
+
+    html_content = ""
+    try:
+        with open(temp_doc_path, "rb") as docx_file:
+            result = mammoth.convert_to_html(docx_file)
+            html_content = result.value # This is the HTML string
+            if result.messages: # Log any messages (warnings/errors) from mammoth conversion
+                logger.warning(f"Mammoth conversion messages for {temp_doc_path}: {result.messages}")
+    except Exception as e:
+        logger.error(f"Error converting .docx to HTML with mammoth: {e}", exc_info=True)
+        raw_msg = "An error occurred while processing your Word document. Please ensure it's a valid .docx file and try again, or type /cancel."
+        escaped_msg = escape_markdown_v2(raw_msg)
+        await update.message.reply_text(escaped_msg, parse_mode='MarkdownV2')
+        if os.path.exists(temp_doc_path): # Clean up
+            os.remove(temp_doc_path)
+        return RECEIVE_DOCX_FILE
+    finally:
+        if os.path.exists(temp_doc_path): # Ensure cleanup in all cases
+            os.remove(temp_doc_path)
+
+    context.user_data['new_post']['content'] = html_content
+    context.user_data['new_post']['content_is_html'] = True # Flag that content is HTML
+
+    raw_confirm_msg = "Word document processed successfully. Who is the author? (Type 'skip' or /cancel)"
+    escaped_confirm_msg = escape_markdown_v2(raw_confirm_msg)
+    await update.message.reply_text(escaped_confirm_msg, parse_mode='MarkdownV2')
+    return AUTHOR
+
 async def handle_unexpected_message_in_file_state(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await update.message.reply_text("Please upload a content file as requested, or type /cancel to exit\\.")
     return RECEIVE_CONTENT_FILE
+
+async def handle_unexpected_message_in_docx_state(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handles unexpected messages when waiting for a .docx file."""
+    raw_message_text = "Please upload a .docx file as requested, or type /cancel to exit."
+    escaped_message_text = escape_markdown_v2(raw_message_text)
+    await update.message.reply_text(escaped_message_text, parse_mode='MarkdownV2')
+    return RECEIVE_DOCX_FILE
 
 async def unexpected_text_in_content_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await update.message.reply_text("Please choose an option by clicking one of the buttons above, or type /cancel\\.")
@@ -418,8 +488,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "🔹 <b>Menu Options:</b>\n"
         "   - <b>➕ Add New Post</b>: Starts the process to create a new blog post.\n"
         "     1. I'll ask for the title first.\n"
-        "     2. Then, you can choose to <b>Type Content Directly</b> or <b>Upload a Content File</b>.\n"
-        "        (Accepted files: .txt, .md, UTF-8 encoded, max 1MB).\n"
+        "     2. Then, you can choose how to provide the content: <b>Type Directly</b>, <b>Upload a Text/Markdown File</b> (.txt, .md), or <b>Upload a Word Document</b> (.docx). Max file size is 1MB (UTF-8 preferred for .txt/.md).\n"
         "     3. Finally, I'll ask for an author (optional) and an image. For the image, you can <b>upload a photo directly</b>, provide a <b>URL</b>, or type 'skip' if no image is needed.\n\n"
 
         "   - <b>📄 List All Posts</b>: Shows a paginated view of all your blog posts, including their titles, dates, IDs, and short content snippets for quick reference.\n\n"
@@ -1212,12 +1281,17 @@ async def main() -> None:
             CONTENT_CHOICE: [
                 CallbackQueryHandler(handle_content_type_direct_callback, pattern='^content_type_direct$'),
                 CallbackQueryHandler(handle_content_type_file_callback, pattern='^content_type_file$'),
+                CallbackQueryHandler(handle_content_type_docx_callback, pattern='^content_type_docx$'),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, unexpected_text_in_content_choice)
             ],
             RECEIVE_TYPED_CONTENT: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_typed_content_message)],
             RECEIVE_CONTENT_FILE: [
                 MessageHandler(filters.Document.TEXT | filters.Document.FileExtension('md'), receive_content_file_upload),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_unexpected_message_in_file_state)
+            ],
+            RECEIVE_DOCX_FILE: [
+                MessageHandler(filters.Document.FileExtension("docx"), process_docx_file),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_unexpected_message_in_docx_state)
             ],
             AUTHOR: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_author)],
             IMAGE_URL: [

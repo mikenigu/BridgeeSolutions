@@ -1069,7 +1069,7 @@
                         <h3 class="text-xl font-bold text-gray-800 mb-3">${post.title || 'Untitled Post'}</h3>
                         <p class="text-sm text-gray-500 mb-2">By ${author} on ${datePublished}</p>
                         <p class="text-base text-gray-600 mb-4 leading-relaxed flex-grow">${contentSnippet}</p>
-                        <a href="blog-post.html?id=${post.id || ''}" class="text-blue-600 font-medium inline-flex items-center self-start focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Read More <i class="fas fa-arrow-right ml-2"></i></a>
+                        <a href="/post/${post.id}" class="text-blue-600 font-medium inline-flex items-center self-start focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Read More <i class="fas fa-arrow-right ml-2"></i></a>
                     `;
                     blogPostsContainer.appendChild(postElement);
                 });

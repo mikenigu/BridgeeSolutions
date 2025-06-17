@@ -5,60 +5,376 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ post.title | escape }} - My Blog</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- AOS (Animate on Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <!-- Swiper.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <!-- Tailwind Prose CSS (for blog content styling) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.x/dist/typography.min.css"/>
+
+    <!-- Fonts and Custom Styles from Index.html -->
     <style>
-        /* Basic inline styles for readability if no external CSS is present */
-        body { font-family: sans-serif; line-height: 1.6; margin: 20px; color: #333; background-color: #f4f4f4; }
-        header, footer { text-align: center; margin-bottom: 20px; padding: 10px 0; }
-        header { border-bottom: 1px solid #ddd; }
-        footer { border-top: 1px solid #ddd; margin-top: 40px; font-size: 0.9em; color: #555; }
-        main { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { color: #333; }
-        img.post-image { max-width: 100%; height: auto; margin-bottom: 20px; border-radius: 4px; }
-        .post-meta { font-size: 0.9em; color: #555; margin-bottom: 20px; }
-        .post-meta .author { font-weight: bold; }
-        .post-meta .date { margin-left: 5px; }
-        .post-content { margin-top: 20px; }
-        .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; }
-        .back-link:hover { text-decoration: underline; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+          font-family: 'Poppins', sans-serif;
+          scroll-behavior: smooth;
+        }
+
+        .hero-gradient {
+          background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+          animation: gradient 15s ease infinite;
+          background-size: 400% 400%;
+        }
+
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        .cta-button {
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+        }
+
+        .cta-button:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 0;
+          height: 100%;
+          background-color: rgba(255,255,255,0.1);
+          z-index: -1;
+          transition: width 0.3s ease;
+        }
+
+        .cta-button:hover:before {
+          width: 100%;
+        }
+
+        .tech-logo {
+          filter: grayscale(100%);
+          transition: all 0.3s ease;
+        }
+
+        .tech-logo:hover {
+          filter: grayscale(0%);
+          transform: scale(1.1);
+        }
+
+        .testimonial-card {
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          height: 420px; /* Fixed height for testimonial cards */
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        .testimonial-card p.text-blue-100 {
+          flex-grow: 1; /* Allows the paragraph to take available space */
+          overflow-y: auto; /* Add vertical scroll if content overflows */
+          padding-right: 5px; /* Space for scrollbar */
+        }
+
+        .tech-logo-scroller-container {
+          overflow: hidden;
+          padding: 20px 0;
+        }
+
+        .tech-logo-row {
+          display: flex;
+          width: 100%;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .tech-logo-row .tech-logo {
+          margin-right: 64px;
+          flex-shrink: 0;
+          box-sizing: border-box;
+          margin-left: 0;
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        .testimonial-swiper {
+          position: relative;
+          padding-left: 40px;
+          padding-right: 40px;
+          padding-bottom: 30px;
+        }
+
+        .testimonial-swiper .swiper-pagination {
+            bottom: 5px;
+        }
+
+        .testimonial-swiper .swiper-button-next,
+        .testimonial-swiper .swiper-button-prev {
+            color: #2563eb;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        .testimonial-swiper .swiper-button-next {
+            right: 10px;
+        }
+        .testimonial-swiper .swiper-button-prev {
+            left: 10px;
+        }
+
+        .testimonial-swiper .swiper-button-next:hover,
+        .testimonial-swiper .swiper-button-prev:hover {
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        .testimonial-swiper .swiper-button-next::after,
+        .testimonial-swiper .swiper-button-prev::after {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .testimonial-swiper .swiper-pagination-bullet {
+            background-color: #93c5fd;
+            opacity: 0.8;
+            width: 10px;
+            height: 10px;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+        }
+
+        .testimonial-swiper .swiper-pagination-bullet-active {
+            background-color: #2563eb;
+            opacity: 1;
+        }
+
+        .testimonial-swiper .swiper-slide {
+          transition: transform 0.3s ease, opacity 0.3s ease;
+          transform: scale(0.85);
+          opacity: 0.7;
+        }
+
+        .testimonial-swiper .swiper-slide-active {
+          transform: scale(1);
+          opacity: 1;
+          z-index: 1;
+        }
+
+        .logo-scroller-section {
+          overflow: hidden;
+          display: flex;
+        }
+
+        .ticker-track {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: flex-start;
+          flex-shrink: 0;
+          width: max-content;
+        }
+
+        .ticker-track .tech-logo {
+          flex-shrink: 0;
+          margin-right: 64px;
+        }
+
+        @keyframes ticker-ltr {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-100%); }
+        }
+
+        @keyframes ticker-rtl {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(0%); }
+        }
     </style>
 </head>
-<body>
-    <header>
-        <a href="{{ url_for('serve_index') }}" class="back-link">&larr; Back to Blog List</a>
-    </header>
-    <main>
-        <h1>{{ post.title | escape }}</h1>
-        <p class="post-meta">
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                <a href="{{ url_for('serve_index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-lg">
+                    <img src="{{ url_for('static', filename='Solutions.png') }}" alt="Bridgee Solutions Logo" class="h-12 w-auto" />
+                    <span class="ml-2 text-xl font-semibold text-gray-800">Bridgee <span class="text-blue-600">Solutions</span></span>
+                </a>
+                </div>
+
+                <div class="md:flex items-center hidden space-x-8">
+                    <a href="{{ url_for('serve_index') }}" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
+                    <a href="/about.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
+                    <a href="/services.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
+                    <a href="/careers.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
+                    <a href="{{ url_for('serve_index') }}#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
+                    <a href="/contact.html" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button class="outline-none mobile-menu-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md" id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 bg-white/30 backdrop-blur-lg shadow-lg z-50" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
+                    <a href="{{ url_for('serve_index') }}" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
+                    <a href="/about.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
+                    <a href="/services.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
+                    <a href="/careers.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
+                    <a href="{{ url_for('serve_index') }}#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
+                    <a href="/contact.html" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-12 md:py-16 bg-white shadow-xl rounded-lg my-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center">{{ post.title | escape }}</h1>
+        <p class="text-center text-sm text-gray-500 mb-8">
             {% if post.author %}
-                By: <span class="author">{{ post.author | escape }}</span>
+                By: <span class="font-semibold">{{ post.author | escape }}</span>
             {% else %}
-                By: <span class="author">Anonymous</span>
+                By: <span class="font-semibold">Anonymous</span>
             {% endif %}
             {% if post.date_published %}
-                <span class="date"> | Published on: {{ post.date_published | escape }}</span> {# Consider date formatting filter if available #}
+                <span class="ml-1"> | Published on: {{ post.date_published | escape }}</span>
             {% endif %}
         </p>
         {% if post.image_url %}
-            {# Check if image_url is an external URL or needs url_for #}
             {% if post.image_url.startswith('http') or post.image_url.startswith('/') %}
-                <img src="{{ post.image_url }}" alt="{{ post.title | escape }}" class="post-image">
+                <img src="{{ post.image_url }}" alt="{{ post.title | escape }}" class="w-full h-auto mb-8 rounded-lg shadow-lg">
             {% else %}
-                <img src="{{ url_for('static', filename=post.image_url) }}" alt="{{ post.title | escape }}" class="post-image">
+                {# Assuming image_url is a filename within 'static/uploaded_images/' #}
+                <img src="{{ url_for('static', filename='uploaded_images/' + post.image_url) }}" alt="{{ post.title | escape }}" class="w-full h-auto mb-8 rounded-lg shadow-lg">
             {% endif %}
         {% endif %}
-        <div class="post-content">
-            {# ** CRITICAL: Ensure post.content is SANITIZED before being passed to this template #}
-            {# or use a custom Jinja filter that sanitizes. Using |safe assumes pre-sanitized HTML. #}
-            {# If content_is_html flag is true, use |safe, otherwise escape #}
+        <div class="prose prose-lg max-w-none mx-auto text-gray-700 leading-relaxed">
             {% if post.content_is_html %}
                 {{ post.content | safe }}
             {% else %}
-                {{ post.content | escape | nl2br }} {# nl2br might be useful if it's plain text #}
+                {{ post.content | escape | nl2br }}
             {% endif %}
         </div>
     </main>
-    <footer>
-        <p>&copy; 2024 My Blog</p>
+    <footer class="bg-gray-900 text-white py-12"> <!-- Copied Footer from Index.html for consistency -->
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="md:col-span-2">
+                    <a href="{{ url_for('serve_index') }}" class="flex items-center mb-6 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-lg">
+                    <img src="{{ url_for('static', filename='Solutions_darkmode.png') }}" alt="Bridgee Solutions Logo" class="h-8 w-auto mr-2">
+                    <span class="text-xl font-semibold">Bridgee <span class="text-blue-400">Solutions</span></span>
+                    </a>
+                    <p class="text-gray-300 mb-4">Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/about.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">About Us</a></li>
+                        <li><a href="/careers.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Careers</a></li>
+                        <li><a href="{{ url_for('serve_index') }}#blog" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Blog</a></li>
+                        <li><a href="/contact.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/services.html#virtual-assistance" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
+                        <li><a href="/services.html#software-development" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
+                        <li><a href="/services.html#bpo-services" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
+                        <li><a href="/services.html#custom-solutions" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom Solutions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/privacy-policy.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
+                        <li><a href="/terms-of-service.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
+                        <li><a href="/gdpr-compliance.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">GDPR Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-300">
+                <p>© 2024 Bridgee Solutions. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
+
+    <!-- Mobile Menu Script (already present from previous step) -->
+    <script>
+      const menuButton = document.getElementById('mobile-menu-button');
+      const menu = document.getElementById('mobile-menu');
+
+      menuButton.addEventListener('click', function() {
+        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
+        menuButton.setAttribute('aria-expanded', !isExpanded);
+        menu.classList.toggle('hidden');
+        document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
+
+        if (!isExpanded && !menu.classList.contains('hidden')) { // If menu is now open
+          const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+          if (focusableElements.length > 0) {
+            focusableElements[0].focus();
+          }
+        }
+      });
+
+      menu.addEventListener('keydown', function(event) {
+        if (menu.classList.contains('hidden') || event.key !== 'Tab') return;
+
+        const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+        if (focusableElements.length === 0) return;
+        const firstFocusableElement = focusableElements[0];
+        const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+        if (event.shiftKey) {
+          if (document.activeElement === firstFocusableElement) {
+            lastFocusableElement.focus();
+            event.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus();
+            event.preventDefault();
+          }
+        }
+      });
+
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
+          menu.classList.add('hidden');
+          document.body.style.overflow = '';
+          menuButton.setAttribute('aria-expanded', 'false');
+          menuButton.focus();
+        }
+      });
+    </script>
+
+    <!-- AOS and other scripts -->
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script> <!-- Added Swiper JS for completeness -->
+    <script>
+      AOS.init();
+      // Swiper initialization is not needed for post.html as it doesn't use swipers.
+      // Other scripts from Index.html like logo scroller or specific page logic are also not needed here.
+    </script>
 </body>
 </html>

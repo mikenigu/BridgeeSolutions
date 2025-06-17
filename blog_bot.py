@@ -208,35 +208,117 @@ async def receive_author(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         context.user_data['new_post']['author'] = author
     else:
         context.user_data['new_post']['author'] = None
-    raw_text = "Author noted.\n\nPlease provide a URL for the post's image. (Type 'skip' if no image)"
-    text_to_send = escape_markdown_v2(raw_text)
-    await update.message.reply_text(text_to_send, parse_mode='MarkdownV2')
+    raw_prompt = "Author noted.\n\nPlease send the image for the post by either uploading it directly, sending a URL, or type 'skip' if no image."
+    escaped_prompt = escape_markdown_v2(raw_prompt)
+    await update.message.reply_text(escaped_prompt, parse_mode='MarkdownV2')
     return IMAGE_URL
 
-async def receive_image_url_and_save(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    image_url = update.message.text
-    if image_url.lower() != 'skip':
-        context.user_data['new_post']['image_url'] = image_url
-    else:
+async def handle_image_input_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handles text input for image (URL or 'skip')."""
+    text_input = update.message.text
+
+    if 'new_post' not in context.user_data:
+        logger.error("handle_image_input_text called without 'new_post' in user_data.")
+        raw_error_message = "An unexpected error occurred. Please start over using /newpost."
+        escaped_error_message = escape_markdown_v2(raw_error_message)
+        await update.message.reply_text(escaped_error_message, parse_mode='MarkdownV2')
+        return ConversationHandler.END
+
+    if text_input.lower() == 'skip':
         context.user_data['new_post']['image_url'] = None
+        raw_skip_message = "Image skipped."
+        escaped_skip_message = escape_markdown_v2(raw_skip_message)
+        await update.message.reply_text(escaped_skip_message, parse_mode='MarkdownV2')
+    else:
+        # Assume it's a URL
+        context.user_data['new_post']['image_url'] = text_input
+        # Optionally confirm URL received, e.g.:
+        # raw_url_confirm = f"Image URL set to: {text_input}"
+        # await update.message.reply_text(escape_markdown_v2(raw_url_confirm), parse_mode='MarkdownV2')
+
+
+    return await finalize_post_creation(update, context)
+
+async def handle_uploaded_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handles a directly uploaded photo for the new blog post."""
+    photo = update.message.photo[-1] # Get the highest resolution photo
+    try:
+        tg_file = await context.bot.get_file(photo.file_id)
+    except Exception as e:
+        logger.error(f"Error getting Telegram file object for uploaded photo: {e}", exc_info=True)
+        raw_error_message = "Sorry, there was an error processing the uploaded image. Please try sending a URL or skip."
+        escaped_error_message = escape_markdown_v2(raw_error_message)
+        await update.message.reply_text(escaped_error_message, parse_mode='MarkdownV2')
+        return IMAGE_URL # Allow user to try again or skip
+
+    unique_filename = uuid.uuid4().hex + ".jpg" # Assume JPEG for simplicity
+    upload_dir = "uploaded_images"
+    save_path = os.path.join(upload_dir, unique_filename)
+
+    os.makedirs(upload_dir, exist_ok=True)
+
+    try:
+        await tg_file.download_to_drive(custom_path=save_path)
+        logger.info(f"Image successfully downloaded to: {save_path}")
+        # Store a relative web path
+        context.user_data['new_post']['image_url'] = f"/{upload_dir}/{unique_filename}"
+
+        raw_confirm_message = f"Image successfully uploaded and will be saved as {unique_filename}."
+        escaped_confirm_message = escape_markdown_v2(raw_confirm_message)
+        await update.message.reply_text(escaped_confirm_message, parse_mode='MarkdownV2')
+
+        return await finalize_post_creation(update, context)
+
+    except Exception as e:
+        logger.error(f"Error downloading image to drive: {e}", exc_info=True)
+        raw_error_message = "Sorry, there was an error saving the uploaded image. Please try sending a URL or skip."
+        escaped_error_message = escape_markdown_v2(raw_error_message)
+        await update.message.reply_text(escaped_error_message, parse_mode='MarkdownV2')
+        return IMAGE_URL # Allow user to try again
+
+async def finalize_post_creation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Finalizes and saves the new blog post."""
+    if 'new_post' not in context.user_data:
+        logger.error("finalize_post_creation called without 'new_post' in user_data.")
+        raw_error_message = "An unexpected error occurred during post creation. Please start over using /newpost."
+        escaped_error_message = escape_markdown_v2(raw_error_message)
+        # Determine if update.message or update.callback_query.message should be used
+        if update.callback_query and update.callback_query.message:
+             await update.callback_query.message.reply_text(escaped_error_message, parse_mode='MarkdownV2')
+        elif update.message:
+            await update.message.reply_text(escaped_error_message, parse_mode='MarkdownV2')
+        return ConversationHandler.END
 
     post_data = context.user_data['new_post']
-    post_data['id'] = str(uuid.uuid4())
-    post_data['date_published'] = datetime.utcnow().isoformat() + 'Z'
+
+    # Set defaults for any fields that might not have been explicitly set
     post_data.setdefault('title', 'Untitled Post')
     post_data.setdefault('content', '')
+    # 'author' and 'image_url' should be set to a value or None by previous steps
     post_data.setdefault('author', None)
     post_data.setdefault('image_url', None)
+
+    post_data['id'] = str(uuid.uuid4())
+    post_data['date_published'] = datetime.utcnow().isoformat() + 'Z'
 
     posts = load_blog_posts()
     posts.append(post_data)
 
     if save_blog_posts(posts):
-        raw_text = f"Blog post '{str(post_data['title'])}' successfully saved with ID: {str(post_data['id'])}!"
-        text_to_send = escape_markdown_v2(raw_text)
-        await update.message.reply_text(text_to_send, parse_mode='MarkdownV2')
+        raw_success_msg = f"Blog post '{str(post_data['title'])}' successfully saved with ID: {str(post_data['id'])}!"
+        escaped_success_msg = escape_markdown_v2(raw_success_msg)
+        if update.callback_query and update.callback_query.message: # If triggered by photo upload (callback from previous message)
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=escaped_success_msg, parse_mode='MarkdownV2')
+        elif update.message: # If triggered by text input (URL/skip)
+            await update.message.reply_text(escaped_success_msg, parse_mode='MarkdownV2')
     else:
-        await update.message.reply_text("Error: Could not save the blog post to the file.")
+        raw_save_error_msg = "Error: Could not save the blog post to the file."
+        escaped_save_error_msg = escape_markdown_v2(raw_save_error_msg)
+        if update.callback_query and update.callback_query.message:
+             await context.bot.send_message(chat_id=update.effective_chat.id, text=escaped_save_error_msg, parse_mode='MarkdownV2')
+        elif update.message:
+            await update.message.reply_text(escaped_save_error_msg, parse_mode='MarkdownV2')
+
 
     context.user_data.pop('new_post', None)
     await start_command(update, context)
@@ -338,7 +420,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "     1. I'll ask for the title first.\n"
         "     2. Then, you can choose to <b>Type Content Directly</b> or <b>Upload a Content File</b>.\n"
         "        (Accepted files: .txt, .md, UTF-8 encoded, max 1MB).\n"
-        "     3. Finally, I'll ask for an author (optional) and an image URL (optional).\n\n"
+        "     3. Finally, I'll ask for an author (optional) and an image. For the image, you can <b>upload a photo directly</b>, provide a <b>URL</b>, or type 'skip' if no image is needed.\n\n"
 
         "   - <b>📄 List All Posts</b>: Shows a paginated view of all your blog posts, including their titles, dates, IDs, and short content snippets for quick reference.\n\n"
 
@@ -1138,7 +1220,10 @@ async def main() -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_unexpected_message_in_file_state)
             ],
             AUTHOR: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_author)],
-            IMAGE_URL: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_image_url_and_save)],
+            IMAGE_URL: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_image_input_text), # For URL or 'skip'
+                MessageHandler(filters.PHOTO, handle_uploaded_image)      # For direct photo upload
+            ],
         },
         fallbacks=[CommandHandler('cancel', cancel_newpost)],
     )

@@ -227,7 +227,7 @@ def submit_application(): # Synchronous route
         print(f"Job Application: Received POST for job: {job_title}. Form data: {request.form}")
 
         if not all([full_name, email, job_title]): # Basic check for job application
-            return jsonify({'error': 'Missing required fields (full_name, email, job_title) for job application'}), 400
+            return jsonify({'success': False, 'message': 'Validation Error: Missing required fields (Full Name, Email, Job Title).'}), 400
 
         # --- Duplicate Application Check ---
         applications_log = []
@@ -252,7 +252,7 @@ def submit_application(): # Synchronous route
         for app_log in applications_log:
             # Ensure keys exist in log entry before accessing
             if app_log.get('email') == email and app_log.get('job_title') == job_title:
-                return jsonify({'error': 'You have already applied for this position.'}), 409
+                return jsonify({'success': False, 'message': 'It looks like you have already applied for this position with this email.'}), 409
         # --- End Duplicate Application Check ---
 
         cv_file = None
@@ -260,45 +260,47 @@ def submit_application(): # Synchronous route
         filename = None # Initialize filename
 
         if 'cv_upload' not in request.files:
-            return jsonify({'error': 'No CV file part in the request'}), 400
+            return jsonify({'success': False, 'message': 'Validation Error: No CV file part in the request.'}), 400
 
         cv_file = request.files['cv_upload']
 
         if cv_file.filename == '':
-            return jsonify({'error': 'No CV file selected'}), 400
+            return jsonify({'success': False, 'message': 'Validation Error: No CV file selected.'}), 400
 
         if cv_file and allowed_file(cv_file.filename):
             original_filename = secure_filename(cv_file.filename)
-            # New timestamp-based unique filename:
             timestamp_ms = int(datetime.utcnow().timestamp() * 1000)
             unique_filename = f"{timestamp_ms}-{original_filename}"
             filename = unique_filename
 
-            # Ensure uploads folder exists (Flask often runs from project root in dev)
             upload_folder_path = app.config['UPLOAD_FOLDER']
             if not os.path.exists(upload_folder_path):
-                os.makedirs(upload_folder_path)
-                print(f"Created upload folder: {upload_folder_path}")
+                try:
+                    os.makedirs(upload_folder_path)
+                    app.logger.info(f"Created upload folder: {upload_folder_path}")
+                except Exception as e:
+                    app.logger.error(f"Error creating upload folder {upload_folder_path}: {str(e)}")
+                    return jsonify({'success': False, 'message': 'An unexpected error occurred. Please try again later.'}), 500
 
             cv_filepath = os.path.join(upload_folder_path, filename)
 
             try:
                 cv_file.save(cv_filepath)
-                print(f"CV saved to {cv_filepath}")
+                app.logger.info(f"CV saved to {cv_filepath}")
             except Exception as e:
-                print(f"Error saving CV: {e}")
-                return jsonify({'error': f'Could not save CV file: {str(e)}'}), 500
+                app.logger.error(f"Error saving CV to {cv_filepath}: {str(e)}")
+                return jsonify({'success': False, 'message': 'An unexpected error occurred while saving your CV. Please try again later.'}), 500
         else:
-            return jsonify({'error': 'Invalid CV file type. Allowed: pdf, doc, docx'}), 400
+            return jsonify({'success': False, 'message': 'Validation Error: Invalid CV file type. Allowed: pdf, doc, docx.'}), 400
 
-        # Prepare applicant data dictionary for Telegram function
-        applicant_data = {
-            'full_name': full_name,
-            'email': email,
-            'phone_number': form_data.get('phone_number', ''),
-            'cover_letter': form_data.get('cover_letter', ''),
-            'job_title': job_title
-        }
+        # Applicant data for logging (Telegram data prep removed/commented out previously)
+        # applicant_data = {
+        #     'full_name': full_name,
+        #     'email': email,
+        #     'phone_number': form_data.get('phone_number', ''),
+        #     'cover_letter': form_data.get('cover_letter', ''),
+        #     'job_title': job_title
+        # }
 
         # --- Log Application ---
         # The applications_log list is already populated from the duplicate check step earlier

@@ -123,10 +123,7 @@
                                     <label for="website" class="block text-sm font-medium text-gray-700 mb-1">Website (Optional)</label>
                                     <input type="url" name="website" id="website" placeholder="https://example.com" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                 </div>
-                                <div>
-                                    <label for="country_timezone" class="block text-sm font-medium text-gray-700 mb-1">Country & Time Zone <span class="text-red-500">*</span></label>
-                                    <input type="text" name="country_timezone" id="country_timezone" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                </div>
+                                {/* Country and Time Zone field removed */}
                             </div>
                         </div>
 
@@ -160,6 +157,16 @@
                         </div>
                     </form>
                     <div id="formFeedback" class="mt-6 text-center"></div>
+
+                    <!-- New Success Message Container -->
+                    <div id="successMessageContainer" class="hidden text-center p-4 md:p-6 border-2 border-green-500 rounded-lg shadow-lg bg-white mt-8">
+                        <svg class="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="mt-4 text-xl font-semibold text-gray-700">Thank You!</p>
+                        <p class="mt-2 text-gray-600">Your service request has been received successfully.</p>
+                        <p class="mt-1 text-gray-600">We will get back to you shortly.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -288,6 +295,7 @@
         // AJAX Form Submission
         const serviceRequestForm = document.getElementById('serviceRequestForm');
         const formFeedback = document.getElementById('formFeedback');
+        const successMessageContainer = document.getElementById('successMessageContainer');
         const submitButton = document.getElementById('submitServiceRequestBtn');
 
         if (serviceRequestForm) {
@@ -296,8 +304,13 @@
             const originalButtonText = submitButton.innerHTML;
             submitButton.disabled = true;
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
-            formFeedback.textContent = '';
-            formFeedback.className = 'mt-6 text-center'; // Reset classes
+
+            // Clear previous feedback
+            if(formFeedback) {
+                formFeedback.textContent = '';
+                formFeedback.className = 'mt-6 text-center';
+            }
+            successMessageContainer.classList.add('hidden'); // Ensure success message is hidden initially on new submit
 
             const formData = new FormData(serviceRequestForm);
 
@@ -308,23 +321,50 @@
             .then(response => response.json())
             .then(data => {
               if (data.success) {
-                formFeedback.className = 'mt-6 text-center text-green-600 p-3 bg-green-50 rounded-md shadow-sm';
-                formFeedback.textContent = data.message;
-                serviceRequestForm.reset(); // Clear form
-                toggleCustomDescription(); // Re-run to hide custom textarea if applicable after reset
+                if (formFeedback) { // Clear any previous error messages
+                    formFeedback.textContent = '';
+                    formFeedback.className = 'mt-6 text-center';
+                }
+                serviceRequestForm.reset(); // Reset form fields
+                toggleCustomDescription(); // Ensure custom description field is correctly hidden/reset
+
+                serviceRequestForm.classList.add('opacity-0', 'transition-opacity', 'duration-500', 'ease-out');
+                setTimeout(() => {
+                    serviceRequestForm.classList.add('hidden');
+                    serviceRequestForm.classList.remove('opacity-0', 'transition-opacity', 'duration-500', 'ease-out');
+
+                    successMessageContainer.classList.remove('hidden');
+                    successMessageContainer.classList.add('opacity-0', 'transition-opacity', 'duration-500', 'ease-in');
+                    setTimeout(() => {
+                         successMessageContainer.classList.remove('opacity-0');
+                    }, 20);
+
+                }, 500); // Match duration-500
+
               } else {
-                formFeedback.className = 'mt-6 text-center text-red-600 p-3 bg-red-50 rounded-md shadow-sm';
-                formFeedback.textContent = data.message || 'An unknown error occurred.';
+                serviceRequestForm.classList.remove('hidden', 'opacity-0'); // Ensure form is visible
+                successMessageContainer.classList.add('hidden'); // Ensure success message is hidden
+                if(formFeedback){
+                    formFeedback.className = 'mt-6 text-center text-red-600 p-3 bg-red-50 rounded-md shadow-sm';
+                    formFeedback.textContent = data.message || 'An unknown error occurred.';
+                }
               }
             })
             .catch(error => {
-              formFeedback.className = 'mt-6 text-center text-red-600 p-3 bg-red-50 rounded-md shadow-sm';
-              formFeedback.textContent = 'A network error occurred. Please try again.';
+              serviceRequestForm.classList.remove('hidden', 'opacity-0'); // Ensure form is visible
+              successMessageContainer.classList.add('hidden'); // Ensure success message is hidden
+              if(formFeedback){
+                formFeedback.className = 'mt-6 text-center text-red-600 p-3 bg-red-50 rounded-md shadow-sm';
+                formFeedback.textContent = 'A network error occurred. Please try again.';
+              }
               console.error('Error submitting form:', error);
             })
             .finally(() => {
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
+                // Only re-enable the button if the form is still visible (i.e., not on success)
+                if (!serviceRequestForm.classList.contains('hidden')) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                }
             });
           });
         }

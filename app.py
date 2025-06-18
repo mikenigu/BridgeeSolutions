@@ -178,6 +178,18 @@ def view_post(post_id):
     posts = load_blog_posts()
     found_post = next((p for p in posts if p.get('id') == post_id), None)
     if found_post:
+        # Update date format before passing to template
+        if 'date_published' in found_post and isinstance(found_post['date_published'], str):
+            try:
+                # Parse ISO 8601 string, handling the 'Z' for UTC
+                dt_object = datetime.fromisoformat(found_post['date_published'].replace('Z', '+00:00'))
+                # Format to "Month DD, YYYY"
+                found_post['date_published'] = dt_object.strftime('%B %d, %Y')
+            except ValueError as e:
+                app.logger.error(f"Error parsing date for post {post_id}: {e}")
+                # Keep original date string if parsing fails, or set to a default
+                # For now, we'll keep the original malformed or unparsable string
+                pass # Keep original if parsing fails
         return render_template('post.html', post=found_post)
     else:
         abort(404)

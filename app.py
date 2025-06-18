@@ -135,8 +135,32 @@ def serve_static_files(filename):
 @app.route('/api/blog-posts', methods=['GET'])
 @cross_origin()
 def get_blog_posts():
-    posts = load_blog_posts()
-    return jsonify(posts), 200
+    page = request.args.get('page', 1, type=int)
+    POSTS_PER_PAGE = 3  # Define how many posts per page
+
+    all_posts = load_blog_posts()
+    # Sort posts by date, assuming 'date_published' is in ISO format and can be sorted lexicographically for recent first
+    # For more robust sorting, convert to datetime objects if not already
+    try:
+        # Assuming date_published is like "YYYY-MM-DDTHH:MM:SSZ" or similar sortable string
+        all_posts.sort(key=lambda x: x.get('date_published', ''), reverse=True)
+    except Exception as e:
+        app.logger.error(f"Error sorting blog posts: {e}")
+        # Decide if you want to return unsorted or handle error differently
+
+    total_posts = len(all_posts)
+    total_pages = (total_posts + POSTS_PER_PAGE - 1) // POSTS_PER_PAGE
+
+    start_index = (page - 1) * POSTS_PER_PAGE
+    end_index = start_index + POSTS_PER_PAGE
+    posts_on_page = all_posts[start_index:end_index]
+
+    return jsonify({
+        'posts': posts_on_page,
+        'current_page': page,
+        'total_pages': total_pages,
+        'total_posts': total_posts
+    }), 200
 
 @app.route('/api/blog-posts/<string:post_id>', methods=['GET'])
 @cross_origin()

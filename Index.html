@@ -1006,83 +1006,132 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const blogPostsContainer = document.querySelector('#blog .grid'); // Target the grid
+        const blogPostsContainer = document.querySelector('#blog .grid');
+        const paginationControlsContainer = document.createElement('div');
+        paginationControlsContainer.className = 'col-span-full mt-8 text-center'; // Ensure it spans full width of grid
+        blogPostsContainer.parentNode.insertBefore(paginationControlsContainer, blogPostsContainer.nextSibling);
+
 
         if (!blogPostsContainer) {
             console.error('Blog posts container not found!');
             return;
         }
 
-        fetch('/api/blog-posts')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(posts => {
-                blogPostsContainer.innerHTML = ''; // Clear any residual static content or loading message
+        function fetchBlogPosts(page = 1) {
+            fetch(`/api/blog-posts?page=${page}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    blogPostsContainer.innerHTML = ''; // Clear previous posts
+                    paginationControlsContainer.innerHTML = ''; // Clear previous pagination controls
 
-                if (!Array.isArray(posts) || posts.length === 0) {
-                    blogPostsContainer.innerHTML = '<p class="text-center text-gray-600 col-span-full">No blog posts available at the moment. Please check back later!</p>';
-                    return;
-                }
+                    const posts = data.posts;
+                    const currentPage = data.current_page;
+                    const totalPages = data.total_pages;
 
-                posts.forEach(post => {
-                    const postElement = document.createElement('div');
-                    postElement.className = 'bg-white rounded-xl p-8 shadow-lg flex flex-col'; // Added flex flex-col for layout
-                    // Add AOS attributes if desired, e.g., postElement.setAttribute('data-aos', 'fade-up');
-
-                    let imageHtml = '';
-                    if (post.image_url) {
-                        // Default image if post.image_url is present but maybe broken, or a placeholder
-                        imageHtml = `<img src="${post.image_url}" alt="${post.title || 'Blog post image'}" class="rounded-lg mb-4 w-full h-48 object-cover">`;
-                    } else {
-                        // Optional: Placeholder if no image_url provided
-                        imageHtml = `<img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Default blog image" class="rounded-lg mb-4 w-full h-48 object-cover">`;
+                    if (!Array.isArray(posts) || posts.length === 0) {
+                        blogPostsContainer.innerHTML = '<p class="text-center text-gray-600 col-span-full">No blog posts available at the moment. Please check back later!</p>';
+                        return;
                     }
 
-                    // Ensure content exists and is a string before trying to snippet it
-                    let contentSnippet = 'No content available.';
-                    if (post.content && typeof post.content === 'string') {
-                        contentSnippet = post.content.substring(0, 100) + (post.content.length > 100 ? '...' : '');
-                    } else if (post.content) { // If content exists but not a string, display a placeholder
-                        contentSnippet = 'Content available but in unexpected format.';
-                    }
+                    posts.forEach(post => {
+                        const postElement = document.createElement('div');
+                        postElement.className = 'bg-white rounded-xl p-8 shadow-lg flex flex-col';
+                        // Add AOS attributes if desired, e.g., postElement.setAttribute('data-aos', 'fade-up');
 
-                    // Safely access author and date with defaults
-                    const author = post.author || 'Anonymous';
-                    let datePublished = 'Date not specified';
-                    if (post.date_published) {
-                        try {
-                            datePublished = new Date(post.date_published).toLocaleDateString('en-US', {
-                                year: 'numeric', month: 'long', day: 'numeric'
-                            });
-                        } catch (e) {
-                            console.warn('Could not parse date_published:', post.date_published);
-                            datePublished = post.date_published; // Show raw if parsing fails
+                        let imageHtml = '';
+                        if (post.image_url) {
+                             // Check if the URL is absolute or needs prefixing
+                            let imageUrl = post.image_url;
+                            if (!post.image_url.startsWith('http') && !post.image_url.startsWith('/')) {
+                                // Assuming images uploaded via bot are stored in a specific static path
+                                // For example, if blog_bot.py saves to 'uploaded_images' and Flask serves it from '/uploaded_images/'
+                                imageUrl = `/uploaded_images/${post.image_url}`;
+                            }
+                            imageHtml = `<img src="${imageUrl}" alt="${post.title || 'Blog post image'}" class="rounded-lg mb-4 w-full h-48 object-cover">`;
+                        } else {
+                            imageHtml = `<img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Default blog image" class="rounded-lg mb-4 w-full h-48 object-cover">`;
                         }
+
+                        let contentSnippet = 'No content available.';
+                        if (post.content && typeof post.content === 'string') {
+                           // Basic stripping of HTML tags for snippet if content_is_html is true
+                            let textContent = post.content;
+                            if (post.content_is_html) {
+                                const tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = post.content;
+                                textContent = tempDiv.textContent || tempDiv.innerText || "";
+                            }
+                            contentSnippet = textContent.substring(0, 100) + (textContent.length > 100 ? '...' : '');
+                        } else if (post.content) {
+                            contentSnippet = 'Content available but in unexpected format.';
+                        }
+
+
+                        const author = post.author || 'Anonymous';
+                        let datePublished = 'Date not specified';
+                        if (post.date_published) {
+                            try {
+                                datePublished = new Date(post.date_published).toLocaleDateString('en-US', {
+                                    year: 'numeric', month: 'long', day: 'numeric'
+                                });
+                            } catch (e) {
+                                console.warn('Could not parse date_published:', post.date_published);
+                                datePublished = post.date_published;
+                            }
+                        }
+
+                        postElement.innerHTML = `
+                            ${imageHtml}
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">${post.title || 'Untitled Post'}</h3>
+                            <p class="text-sm text-gray-500 mb-2">By ${author} on ${datePublished}</p>
+                            <p class="text-base text-gray-600 mb-4 leading-relaxed flex-grow">${contentSnippet}</p>
+                            <a href="/post/${post.id}" class="text-blue-600 font-medium inline-flex items-center self-start focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Read More <i class="fas fa-arrow-right ml-2"></i></a>
+                        `;
+                        blogPostsContainer.appendChild(postElement);
+                    });
+
+                    // Render Pagination Controls
+                    if (totalPages > 1) {
+                        const prevButton = document.createElement('button');
+                        prevButton.innerHTML = '<i class="fas fa-arrow-left mr-2"></i>Previous';
+                        prevButton.className = 'px-4 py-2 mx-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
+                        if (currentPage === 1) {
+                            prevButton.disabled = true;
+                        }
+                        prevButton.addEventListener('click', () => fetchBlogPosts(currentPage - 1));
+                        paginationControlsContainer.appendChild(prevButton);
+
+                        const pageInfo = document.createElement('span');
+                        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                        pageInfo.className = 'px-4 py-2 mx-2 text-gray-700 font-medium';
+                        paginationControlsContainer.appendChild(pageInfo);
+
+                        const nextButton = document.createElement('button');
+                        nextButton.innerHTML = 'Next<i class="fas fa-arrow-right ml-2"></i>';
+                        nextButton.className = 'px-4 py-2 mx-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
+                        if (currentPage >= totalPages) { // Adjusted condition here
+                            nextButton.disabled = true;
+                        }
+                        nextButton.addEventListener('click', () => fetchBlogPosts(currentPage + 1));
+                        paginationControlsContainer.appendChild(nextButton);
                     }
-
-                    postElement.innerHTML = `
-                        ${imageHtml}
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">${post.title || 'Untitled Post'}</h3>
-                        <p class="text-sm text-gray-500 mb-2">By ${author} on ${datePublished}</p>
-                        <p class="text-base text-gray-600 mb-4 leading-relaxed flex-grow">${contentSnippet}</p>
-                        <a href="/post/${post.id}" class="text-blue-600 font-medium inline-flex items-center self-start focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Read More <i class="fas fa-arrow-right ml-2"></i></a>
-                    `;
-                    blogPostsContainer.appendChild(postElement);
+                     // If AOS is used, you might need to re-initialize it after adding dynamic content
+                    if (typeof AOS !== 'undefined') {
+                        AOS.refresh();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching blog posts:', error);
+                    blogPostsContainer.innerHTML = '<p class="text-center text-red-500 col-span-full">Could not load blog posts. Please try again later.</p>';
                 });
+        }
 
-                // If AOS is used, you might need to re-initialize it after adding dynamic content
-                // if (typeof AOS !== 'undefined') {
-                //     AOS.refresh();
-                // }
-            })
-            .catch(error => {
-                console.error('Error fetching blog posts:', error);
-                blogPostsContainer.innerHTML = '<p class="text-center text-red-500 col-span-full">Could not load blog posts. Please try again later.</p>';
-            });
+        fetchBlogPosts(1); // Initial fetch for page 1
     });
   </script>
 </body>

@@ -7,6 +7,7 @@ import json # Import json module
 from datetime import datetime # Import datetime
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename # Keep for now, might be used by other routes later or full version
+from flask_mail import Mail, Message # Import Mail and Message
 import telegram # Keep for now
 
 load_dotenv()
@@ -15,16 +16,31 @@ app = Flask(__name__)
 CORS(app) # Initialize CORS globally
 
 # --- Configuration ---
-# For a real application, use environment variables for sensitive data like tokens and IDs
-TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', 'YOUR_TELEGRAM_BOT_TOKEN_PLACEHOLDER')
-HR_CHAT_ID = os.environ.get('HR_CHAT_ID', 'YOUR_HR_CHAT_ID_PLACEHOLDER') # Can be a user ID or group/channel ID
-APPLICATION_LOG_FILE = 'submitted_applications.log.json' # Log file for submitted applications
+# Telegram Bot Configuration (already present)
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', 'YOUR_TELEGRAM_BOT_TOKEN_PLACEHOLDER') # This seems to be a general token, review if HR bot needs a separate one
+HR_CHAT_ID = os.environ.get('HR_CHAT_ID', 'YOUR_HR_CHAT_ID_PLACEHOLDER')
+
+# File Paths
+APPLICATION_LOG_FILE = 'submitted_applications.log.json'
 BLOG_POSTS_FILE = 'blog_posts.json'
 
+# Uploads Configuration
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB max file size, optional
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB max file size
+
+# Flask-Mail Configuration
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() == 'true'
+app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL', 'False').lower() == 'true'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', app.config['MAIL_USERNAME'])
+# Note: SERVICE_REQUEST_RECIPIENT will be used directly in the mail sending logic, not as a Flask-Mail config.
+
+mail = Mail(app)
 
 # --- Helper Functions ---
 def allowed_file(filename):
@@ -206,12 +222,12 @@ def submit_application(): # Synchronous route
         form_data = request.form.to_dict()
         full_name = form_data.get('full_name')
         email = form_data.get('email')
-        job_title = form_data.get('job_title')
+        job_title = form_data.get('job_title') # Specific to job application
 
-        print(f"Full endpoint: Received POST for job: {job_title}. Form data: {request.form}")
+        print(f"Job Application: Received POST for job: {job_title}. Form data: {request.form}")
 
-        if not all([full_name, email, job_title]): # Basic check, full_name is not used by log yet but essential for application
-            return jsonify({'error': 'Missing required fields (full_name, email, job_title)'}), 400
+        if not all([full_name, email, job_title]): # Basic check for job application
+            return jsonify({'error': 'Missing required fields (full_name, email, job_title) for job application'}), 400
 
         # --- Duplicate Application Check ---
         applications_log = []
@@ -329,23 +345,91 @@ def submit_application(): # Synchronous route
 
         # The function will now unconditionally return success if all prior steps (CV save, logging) are fine.
         # The logging to submitted_applications.log.json which includes 'status': 'new' happens before this.
-
-        # Optionally, delete the CV from local server if it's only needed for the (now removed) direct Telegram upload.
-        # However, the HR bot will need access to this file via "Get CV" button, so we should NOT delete it here.
-        # if cv_filepath and os.path.exists(cv_filepath):
-        #     try:
-        #         os.remove(cv_filepath)
-        #         print(f"Removed temporary CV: {cv_filepath}") # This might be premature if HR bot needs it later
-        #     except Exception as e:
-        #         print(f"Error removing temporary CV {cv_filepath}: {e}")
-
         return jsonify({
             'message': 'Application received successfully and logged.',
             'filename': filename # The unique CV filename
         }), 200
 
-    else: # Should not be reached if methods are POST, OPTIONS
-        return jsonify({'error': 'Method not allowed'}), 405
+    else: # Should not be reached if methods are POST, OPTIONS for this specific route
+        return jsonify({'error': 'Method not allowed for /api/submit-application'}), 405
+
+@app.route('/api/submit-service-request', methods=['POST'])
+@cross_origin() # Apply CORS for this new route as well
+def submit_service_request():
+    if request.method == 'POST':
+        full_name = request.form.get('full_name')
+        company_name = request.form.get('company_name') # Optional based on form
+        email = request.form.get('email')
+        phone = request.form.get('phone_number') # Matches 'phone_number' in service-request.html
+        website = request.form.get('website') # Optional
+        country_timezone = request.form.get('country_timezone')
+        service_type = request.form.get('service_type')
+        custom_service_description = request.form.get('custom_service_description', '') # Default to empty string if not provided
+
+        app.logger.info(f"Service Request Received: Name: {full_name}, Email: {email}, Service: {service_type}")
+
+        # Basic Validation
+        required_fields = {
+            'Full Name': full_name,
+            'Email Address': email,
+            'Phone Number': phone,
+            'Country and Time Zone': country_timezone,
+            'Service Type': service_type
+        }
+
+        missing_fields = [name for name, value in required_fields.items() if not value]
+
+        if service_type == 'Custom/Other' and not custom_service_description.strip():
+            missing_fields.append('Custom Service Description (since "Custom/Other" was selected)')
+
+        if missing_fields:
+            message = f"Missing required fields: {', '.join(missing_fields)}"
+            app.logger.warning(f"Service Request Validation Failed: {message}")
+            return jsonify({'success': False, 'message': message}), 400
+
+        # Email Sending Logic
+        recipient_email = os.getenv('SERVICE_REQUEST_RECIPIENT')
+        if not recipient_email:
+            app.logger.error("SERVICE_REQUEST_RECIPIENT environment variable is not set. Cannot send service request email.")
+            return jsonify({'success': False, 'message': 'Server configuration error. Could not process request.'}), 500
+
+        subject = f"New Service Request from {company_name if company_name else full_name} - {service_type}"
+
+        email_body_parts = [
+            "You have received a new service request:",
+            "",
+            "Contact Information:",
+            f"Full Name: {full_name}",
+            f"Company Name: {company_name if company_name else 'N/A'}",
+            f"Email Address: {email}",
+            f"Phone Number: {phone}",
+            f"Website: {website if website else 'N/A'}",
+            f"Country and Time Zone: {country_timezone}",
+            "",
+            "Service Needed:",
+            f"Type: {service_type}"
+        ]
+        if service_type == "Custom/Other" and custom_service_description.strip(): # Ensure description is not just whitespace
+            email_body_parts.append(f"Description: {custom_service_description}")
+
+        email_body = "\n".join(email_body_parts)
+
+        # Sender will be app.config['MAIL_DEFAULT_SENDER']
+        msg = Message(subject, recipients=[recipient_email], body=email_body)
+
+        try:
+            mail.send(msg)
+            app.logger.info(f"Service request email sent successfully to {recipient_email} from {email} for service {service_type}")
+            return jsonify({'success': True, 'message': 'Your service request has been sent successfully!'})
+        except Exception as e:
+            app.logger.error(f"Failed to send service request email from {email} to {recipient_email}. Error: {str(e)}")
+            # For more detailed debugging in a real scenario, you might log the full exception:
+            # app.logger.exception("Exception occurred while sending service request email:")
+            return jsonify({'success': False, 'message': 'There was an error processing your request. Please try again later.'}), 500
+
+    # Should not be reached if methods only include POST and preflight handles OPTIONS
+    return jsonify({'error': 'Method not allowed for /api/submit-service-request'}), 405
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

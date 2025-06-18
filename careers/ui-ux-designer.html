@@ -305,7 +305,7 @@
             <section class="mt-10 py-8 bg-blue-50 p-6 md:p-8 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="700">
                 <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 text-center">Apply for this Role</h2>
 
-                <form action="/api/submit-application" method="POST" enctype="multipart/form-data" class="space-y-6 max-w-xl mx-auto" id="applicationForm">
+                <form action="/api/submit-application" method="POST" enctype="multipart/form-data" class="space-y-6 max-w-xl mx-auto" id="careerApplicationForm">
                     <div>
                         <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                         <input type="text" name="full_name" id="full_name" placeholder="Enter your full name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
@@ -334,12 +334,19 @@
                     <input type="hidden" name="job_title" id="job_title_hidden" value="UI/UX Designer">
 
                     <div class="text-center pt-4">
-                        <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                        <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out disabled:opacity-50">
                             Submit Application
                         </button>
                     </div>
                 </form>
-                <div id="formStatusMessage" class="mt-4 text-center"></div>
+                <div id="formFeedbackCareers" class="mt-4 text-center"></div>
+                <div id="successMessageContainerCareers" class="hidden text-center p-4 md:p-6 mt-4 border-2 border-green-500 rounded-lg shadow-lg bg-white">
+                    <svg class="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="mt-4 text-xl font-semibold text-gray-700">Thank You!</p>
+                    <p class="mt-2 text-gray-600">Your application has been submitted successfully.</p>
+                </div>
                 <p class="text-xs text-gray-500 mt-6 text-center">
                     Bridgee Solutions is an equal opportunity employer. We celebrate diversity and are committed to creating an inclusive environment for all employees. By submitting your application, you agree to our <a href="../privacy-policy.html" class="text-blue-600 hover:underline">Privacy Policy</a>.
                 </p>
@@ -451,52 +458,17 @@
   <script>
     AOS.init();
   </script>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          const applicationForm = document.getElementById('applicationForm');
-          const formStatusMessage = document.getElementById('formStatusMessage');
-          const submitButton = applicationForm.querySelector('button[type="submit"]');
-
-          if (applicationForm) {
-            applicationForm.addEventListener('submit', async function (event) {
-              event.preventDefault();
-              const originalButtonText = submitButton.innerHTML;
-              submitButton.disabled = true;
-              submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
-              formStatusMessage.textContent = ''; // Clear previous messages
-              formStatusMessage.className = 'mt-4 text-center'; // Reset classes
-
-              const formData = new FormData(applicationForm);
-
-              try {
-                const response = await fetch('http://127.0.0.1:5000/api/submit-application', {
-                  method: 'POST',
-                  body: formData,
-                  // Headers are not typically needed for FormData with fetch,
-                  // as the browser sets Content-Type to multipart/form-data correctly.
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                  formStatusMessage.textContent = result.message || 'Application submitted successfully!';
-                  formStatusMessage.classList.add('text-green-600');
-                  applicationForm.reset(); // Clear the form on success
-                } else {
-                  formStatusMessage.textContent = result.error || 'An unknown error occurred.';
-                  formStatusMessage.classList.add('text-red-600');
-                }
-              } catch (error) {
-                console.error('Submission error:', error);
-                formStatusMessage.textContent = 'An error occurred while submitting the form. Please try again.';
-                formStatusMessage.classList.add('text-red-600');
-              } finally {
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
-              }
-            });
-          }
+    <!-- Old inline script removed -->
+    <script src="../static/js/career_form_handler.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure the function is called only if the form exists on this page.
+            if (document.getElementById('careerApplicationForm')) {
+                handleCareerFormSubmit('careerApplicationForm', 'successMessageContainerCareers', 'formFeedbackCareers');
+            }
         });
-      </script>
+    </script>
 </body>
 </html>
+
+[end of careers/ui-ux-designer.html]

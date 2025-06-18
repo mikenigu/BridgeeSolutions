@@ -242,12 +242,12 @@
     </nav>
 
     <main class="container mx-auto px-6 py-12 md:py-16 bg-white shadow-xl rounded-lg my-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center">{{ post.title | escape }}</h1>
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-600 mb-6 text-center">{{ post.title | escape }}</h1>
         <p class="text-center text-sm text-gray-500 mb-8">
             {% if post.author %}
-                By: <span class="font-semibold">{{ post.author | escape }}</span>
+                By: <span class="font-semibold text-blue-600">{{ post.author | escape }}</span>
             {% else %}
-                By: <span class="font-semibold">Anonymous</span>
+                By: <span class="font-semibold text-gray-700">Anonymous</span>
             {% endif %}
             {% if post.date_published %}
                 <span class="ml-1"> | Published on: {{ post.date_published | escape }}</span>

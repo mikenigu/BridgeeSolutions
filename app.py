@@ -362,7 +362,7 @@ def submit_service_request():
         email = request.form.get('email')
         phone = request.form.get('phone_number') # Matches 'phone_number' in service-request.html
         website = request.form.get('website') # Optional
-        country_timezone = request.form.get('country_timezone')
+        # country_timezone = request.form.get('country_timezone') # Removed
         service_type = request.form.get('service_type')
         custom_service_description = request.form.get('custom_service_description', '') # Default to empty string if not provided
 
@@ -373,7 +373,7 @@ def submit_service_request():
             'Full Name': full_name,
             'Email Address': email,
             'Phone Number': phone,
-            'Country and Time Zone': country_timezone,
+            # 'Country and Time Zone': country_timezone, # Removed
             'Service Type': service_type
         }
 
@@ -404,7 +404,7 @@ def submit_service_request():
             f"Email Address: {email}",
             f"Phone Number: {phone}",
             f"Website: {website if website else 'N/A'}",
-            f"Country and Time Zone: {country_timezone}",
+            # f"Country and Time Zone: {country_timezone}", # Removed
             "",
             "Service Needed:",
             f"Type: {service_type}"

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Our Services | Bridgee Solutions - VA, Software Development, BPO</title>
-  <meta name="description" content="Explore the comprehensive outsourcing services offered by Bridgee Solutions, including Virtual Assistance, Software Development, and Custom BPO solutions designed to enhance your business efficiency and growth.">
+  <title>Service Request | Bridgee Solutions</title>
+  <meta name="description" content="Request a service from Bridgee Solutions. Let us know your needs for Virtual Assistance, Software Development, or Custom Services.">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,180 +23,27 @@
       font-family: 'Poppins', sans-serif;
       scroll-behavior: smooth;
     }
-
-    .hero-gradient {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      animation: gradient 15s ease infinite;
-      background-size: 400% 400%;
+    /* Add other common styles from existing pages if necessary */
+    .form-radio { /* Custom styling for radio buttons if needed */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #ddd;
+        transition: 0.2s all linear;
+        margin-right: 5px;
+        position: relative;
+        top: 4px;
     }
-
-    @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .form-radio:checked {
+        border: 6px solid #2563eb; /* Tailwind blue-600 */
     }
-
-    .cta-button {
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .cta-button:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 100%;
-      background-color: rgba(255,255,255,0.1);
-      z-index: -1;
-      transition: width 0.3s ease;
-    }
-
-    .cta-button:hover:before {
-      width: 100%;
-    }
-
-    .tech-logo {
-      filter: grayscale(100%);
-      transition: all 0.3s ease;
-    }
-
-    .tech-logo:hover {
-      filter: grayscale(0%);
-      transform: scale(1.1);
-    }
-
-    .testimonial-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    @keyframes slide-in-from-left {
-      0% {
-        opacity: 0;
-        transform: translateX(-20px); /* Slide from left */
-      }
-      100% {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .animate-slide-in-from-left {
-      animation: slide-in-from-left 0.6s ease-out forwards;
-      opacity: 0; /* Start hidden */
+    label:hover .form-radio {
+        border-color: #9ca3af; /* Tailwind gray-400 */
     }
   </style>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Bridgee Solutions",
-      "url": "https://www.bridgeesolutions.com",
-      "logo": "https://www.bridgeesolutions.com/Solutions.png",
-      "description": "Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Addis Ababa",
-        "addressCountry": "ET"
-      },
-      "sameAs": [
-        "https://www.facebook.com/bridgeesolutions",
-        "https://www.twitter.com/bridgeesolutions",
-        "https://www.linkedin.com/company/bridgeesolutions"
-      ]
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "serviceType": "Virtual Assistance",
-      "name": "Virtual Assistance Services",
-      "description": "Boost productivity with skilled remote assistants from Bridgee Solutions handling admin, inboxes, research & more.",
-      "provider": {
-        "@type": "Organization",
-        "name": "Bridgee Solutions"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Ethiopia"
-      },
-      "potentialAction": {
-        "@type": "ReserveAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.bridgeesolutions.com#contact",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
-        }
-      }
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "serviceType": "Software Development",
-      "name": "Software Development Solutions",
-      "description": "Full-stack web & mobile solutions — custom-built by our agile, experienced dev teams.",
-      "provider": {
-        "@type": "Organization",
-        "name": "Bridgee Solutions"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Ethiopia"
-      },
-      "potentialAction": {
-        "@type": "ReserveAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.bridgeesolutions.com#contact",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
-        }
-      }
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "serviceType": "Custom BPO Services",
-      "name": "Custom BPO Services",
-      "description": "Outsource customer support, lead gen, data entry, or accounting — tailored to your needs.",
-      "provider": {
-        "@type": "Organization",
-        "name": "Bridgee Solutions"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Ethiopia"
-      },
-      "potentialAction": {
-        "@type": "ReserveAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.bridgeesolutions.com#contact",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
-        }
-      }
-    }
-  </script>
 </head>
 
 <body class="bg-gray-50">
@@ -215,7 +62,7 @@
                 <div class="md:flex items-center hidden space-x-8">
                     <a href="index.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
                     <a href="about.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
-                    <a href="services.html" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
+                    <a href="services.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
                     <a href="careers.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
                     <a href="index.html#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
                     <a href="contact.html" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -232,7 +79,7 @@
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
                     <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
                     <a href="about.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
-                    <a href="services.html" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
+                    <a href="services.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
                     <a href="careers.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
                     <a href="index.html#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
                     <a href="contact.html" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -241,49 +88,80 @@
         </div>
     </nav>
 
-    <main id="services-content">
-        <section class="py-12 md:py-16 text-center bg-blue-50">
+    <main id="service-request-content" class="min-h-[calc(100vh-380px)] md:min-h-[calc(100vh-340px)]">
+        <section class="py-12 md:py-16 bg-blue-50 text-center">
             <div class="container mx-auto px-6">
-                <h1 class="text-4xl md:text-5xl font-bold text-blue-700 mb-4" data-aos="fade-up">Our Core Services</h1>
-                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">Tailored solutions to drive your business forward. Select a service below to make a request.</p>
+                <h1 class="text-4xl md:text-5xl font-bold text-blue-700 mb-4" data-aos="fade-up">Service Request</h1>
+                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">Let us know your requirements, and we'll get back to you shortly.</p>
             </div>
         </section>
+        <section class="py-12 md:py-16">
+            <div class="container mx-auto px-6">
+                <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="150">
+                    <form action="mailto:mike.enmy1995@gmail.com" method="post" enctype="text/plain" class="space-y-6">
 
-        <div class="container mx-auto px-6 py-12 md:py-16">
-            <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Contact Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                                    <input type="text" name="full_name" id="full_name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="company_name" class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                                    <input type="text" name="company_name" id="company_name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address <span class="text-red-500">*</span></label>
+                                    <input type="email" name="email" id="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1">Phone Number <span class="text-red-500">*</span></label>
+                                    <input type="tel" name="phone_number" id="phone_number" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="website" class="block text-sm font-medium text-gray-700 mb-1">Website (Optional)</label>
+                                    <input type="url" name="website" id="website" placeholder="https://example.com" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="country_timezone" class="block text-sm font-medium text-gray-700 mb-1">Country & Time Zone <span class="text-red-500">*</span></label>
+                                    <input type="text" name="country_timezone" id="country_timezone" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                            </div>
+                        </div>
 
-                <!-- New Virtual Assistance Card -->
-                <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="100">
-                    <div class="bg-blue-100 p-4 rounded-full mb-4">
-                        <i class="fas fa-headset text-blue-600 text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Virtual Assistance</h3>
-                    <p class="text-gray-600 mb-6 flex-grow">Dedicated support for administrative, technical, and creative tasks to enhance your productivity.</p>
-                    <a href="service-request.html?service=va" class="mt-auto inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Request This Service</a>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2 pt-4">Type of Service Needed</h3>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="service_type" value="Virtual Assistance" class="form-radio focus:ring-blue-500" id="service_va">
+                                    <span class="ml-2 text-gray-700">Virtual Assistance</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="service_type" value="Software Development" class="form-radio focus:ring-blue-500" id="service_software">
+                                    <span class="ml-2 text-gray-700">Software Development</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="service_type" value="Custom/Other" class="form-radio focus:ring-blue-500" id="service_custom">
+                                    <span class="ml-2 text-gray-700">Custom/ Other services</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="custom_service_description_container" class="mt-4"> {/* Removed hidden by default, JS will handle it */}
+                            <label for="custom_service_description" class="block text-sm font-medium text-gray-700 mb-1">Please describe your custom/other service needs <span class="text-red-500">*</span></label>
+                            <textarea name="custom_service_description" id="custom_service_description" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                        </div>
+
+                        <div class="text-center pt-6">
+                            <button type="submit" class="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">
+                                Send Request
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <!-- New Software Development Card -->
-                <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="200">
-                    <div class="bg-blue-100 p-4 rounded-full mb-4">
-                        <i class="fas fa-code text-blue-600 text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Software Development</h3>
-                    <p class="text-gray-600 mb-6 flex-grow">Custom web and mobile application development, built with cutting-edge technologies and agile practices.</p>
-                    <a href="service-request.html?service=software" class="mt-auto inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Request This Service</a>
-                </div>
-
-                <!-- New Custom/Other Services Card -->
-                <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="300">
-                    <div class="bg-blue-100 p-4 rounded-full mb-4">
-                        <i class="fas fa-cogs text-blue-600 text-3xl"></i> <!-- Changed icon for differentiation -->
-                    </div>
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Custom/ Other Services</h3>
-                    <p class="text-gray-600 mb-6 flex-grow">Tailored BPO solutions, specialized projects, or unique operational support designed to meet your specific business needs.</p>
-                    <a href="service-request.html?service=custom" class="mt-auto inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Request This Service</a>
-                </div>
-
             </div>
-        </div>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -295,7 +173,6 @@
                     <img src="Solutions_darkmode.png" alt="Bridgee Solutions Logo" class="h-8 w-auto mr-2">
                     <span class="text-xl font-semibold">Bridgee <span class="text-blue-400">Solutions</span></span>
                     </a>
-
                     <p class="text-gray-300 mb-4">Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.</p>
                     <div class="flex space-x-4">
                         <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -307,7 +184,6 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Company</h3>
                     <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Home</a></li>
                         <li><a href="about.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">About Us</a></li>
                         <li><a href="careers.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Careers</a></li>
                         <li><a href="index.html#blog" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Blog</a></li>
@@ -317,10 +193,10 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Services</h3>
                     <ul class="space-y-2">
-                        <li><a href="services.html#virtual-assistance" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
-                        <li><a href="services.html#software-development" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
-                        <li><a href="services.html#bpo-services" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
-                        <li><a href="services.html#custom-solutions" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom Solutions</a></li>
+                        <li><a href="services.html#virtual-assistance" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
+                        <li><a href="services.html#software-development" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
+                        <li><a href="services.html#bpo-services" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
+                        <li><a href="services.html#custom-solutions" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom Solutions</a></li>
                     </ul>
                 </div>
                 <div>
@@ -339,46 +215,31 @@
     </footer>
 
     <script>
+      // Mobile Menu Script
       const menuButton = document.getElementById('mobile-menu-button');
       const menu = document.getElementById('mobile-menu');
-
       menuButton.addEventListener('click', function() {
         const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
         menuButton.setAttribute('aria-expanded', !isExpanded);
         menu.classList.toggle('hidden');
         document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
-
-        if (!isExpanded && !menu.classList.contains('hidden')) { // If menu is now open
+        if (!isExpanded && !menu.classList.contains('hidden')) {
           const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
-          if (focusableElements.length > 0) {
-            focusableElements[0].focus();
-          }
+          if (focusableElements.length > 0) focusableElements[0].focus();
         }
       });
-
-      // Focus trapping
       menu.addEventListener('keydown', function(event) {
         if (menu.classList.contains('hidden') || event.key !== 'Tab') return;
-
         const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
         if (focusableElements.length === 0) return;
         const firstFocusableElement = focusableElements[0];
         const lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-        if (event.shiftKey) { // Shift + Tab
-          if (document.activeElement === firstFocusableElement) {
-            lastFocusableElement.focus();
-            event.preventDefault();
-          }
-        } else { // Tab
-          if (document.activeElement === lastFocusableElement) {
-            firstFocusableElement.focus();
-            event.preventDefault();
-          }
+        if (event.shiftKey) {
+          if (document.activeElement === firstFocusableElement) { lastFocusableElement.focus(); event.preventDefault(); }
+        } else {
+          if (document.activeElement === lastFocusableElement) { firstFocusableElement.focus(); event.preventDefault(); }
         }
       });
-
-      // Escape key to close
       document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
           menu.classList.add('hidden');
@@ -387,19 +248,48 @@
           menuButton.focus();
         }
       });
+
+      // Service Request Form Script
+      document.addEventListener('DOMContentLoaded', function () {
+        const params = new URLSearchParams(window.location.search);
+        const serviceParam = params.get('service');
+        const customServiceTextareaContainer = document.getElementById('custom_service_description_container');
+        const customServiceTextarea = document.getElementById('custom_service_description');
+        const serviceRadioButtons = document.querySelectorAll('input[name="service_type"]');
+
+        if (serviceParam) {
+          if (serviceParam === 'va') {
+            document.getElementById('service_va').checked = true;
+          } else if (serviceParam === 'software') {
+            document.getElementById('service_software').checked = true;
+          } else if (serviceParam === 'custom') {
+            document.getElementById('service_custom').checked = true;
+          }
+        }
+
+        function toggleCustomDescription() {
+          if (document.getElementById('service_custom').checked) {
+            customServiceTextareaContainer.classList.remove('hidden');
+            customServiceTextarea.required = true;
+          } else {
+            customServiceTextareaContainer.classList.add('hidden');
+            customServiceTextarea.required = false;
+            customServiceTextarea.value = ''; // Clear value when hidden
+          }
+        }
+
+        serviceRadioButtons.forEach(radio => {
+          radio.addEventListener('change', toggleCustomDescription);
+        });
+
+        // Initial check in case the page is loaded with 'custom' pre-selected
+        toggleCustomDescription();
+      });
     </script>
 
-  <!-- Accordion Script -->
-  <!-- AOS and other scripts -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
     AOS.init();
-
-    // Fade-in hero elements on page load (if this script is still needed and separate)
-    // window.addEventListener('DOMContentLoaded', () => {
-    //   document.getElementById('hero-text')?.classList.remove('opacity-0', 'translate-y-6');
-    //   document.getElementById('hero-image')?.classList.remove('opacity-0', 'translate-y-6');
-    // });
   </script>
 </body>
 </html>

@@ -3,6 +3,7 @@ import json
 import logging
 from datetime import datetime
 import asyncio
+import re # Ensure re is imported
 
 import platform
 if platform.system() == "Windows":
@@ -123,15 +124,16 @@ def get_application_by_app_id(app_id: str, applications_data: list = None) -> tu
     logger.warning(f"Application with app_id (timestamp prefix) '{app_id}' not found.")
     return None, -1
 
-
 def escape_markdown_v2(text: str) -> str:
+    """Escapes special characters for Telegram MarkdownV2 parse mode."""
     if not isinstance(text, str):
-        text = str(text)
-    escape_chars = r'_*[]()~`>#+-=|{}.!'
-    escaped_text = text
-    for char in escape_chars:
-        escaped_text = escaped_text.replace(char, '\\' + char)
-    return escaped_text
+        text = str(text)  # Ensure text is a string
+    # Special characters for MarkdownV2: _, *, [, ], (, ), ~, `, >, #, +, -, =, |, {, }, ., !
+    # This pattern matches any of these characters for substitution.
+    pattern = r"([_*\[\]()~`>#+\-=|{}.!])"
+    # The replacement prepends a backslash to the matched character.
+    return re.sub(pattern, r"\\\1", text) # Corrected to \\1 for re.sub
+
 # --- End Helper Functions ---
 
 # --- Command Handlers ---
@@ -285,7 +287,7 @@ async def _display_application_page_common(update: Update, context: ContextTypes
 
             actor_info_display = escape_markdown_v2(reviewed_by_name_raw)
             if reviewed_by_id_raw:
-                 actor_info_display += f" (ID: {escape_markdown_v2(str(reviewed_by_id_raw))})"
+                 actor_info_display += f" \\(ID: {escape_markdown_v2(str(reviewed_by_id_raw))}\\)" # Escaped parentheses
             message_text += f"*Last Action:* {formatted_timestamp} by {actor_info_display}\n"
 
         keyboard_buttons = []
@@ -378,7 +380,7 @@ async def view_declined_company_apps_command(update: Update, context: ContextTyp
 
 async def help_command_menu_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await restricted_access(update, context): return
-    status_list_md = "\n".join([f"- *{escape_markdown_v2(name)}* (`{escape_markdown_v2(key)}`)" for key, name in STATUS_DISPLAY_NAMES.items()]) # Escaped here
+    status_list_md = "\n".join([f"- *{escape_markdown_v2(name)}* (`{escape_markdown_v2(key)}`)" for key, name in STATUS_DISPLAY_NAMES.items()])
 
     help_text = (
         "Welcome to the HR Application Management Bot!\n\n"
@@ -409,7 +411,7 @@ async def help_command_menu_entry(update: Update, context: ContextTypes.DEFAULT_
     if not reply_target and update.callback_query:
         reply_target = update.callback_query.message
 
-    await reply_target.reply_text(help_text, parse_mode='MarkdownV2', reply_markup=main_menu_keyboard) # Changed to MarkdownV2
+    await reply_target.reply_text(help_text, parse_mode='MarkdownV2', reply_markup=main_menu_keyboard)
 
 
 async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -524,7 +526,7 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
 
                 actor_info = escape_markdown_v2(reviewed_by_name_updated)
                 if reviewed_by_id_updated:
-                    actor_info += f" (ID: {escape_markdown_v2(str(reviewed_by_id_updated))})"
+                    actor_info += f" \\(ID: {escape_markdown_v2(str(reviewed_by_id_updated))}\\)" # Escaped parentheses
                 message_text_updated += f"*Last Action:* {formatted_timestamp} by {actor_info}\n"
 
             keyboard_buttons_updated = []
@@ -689,3 +691,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+[end of hr_bot.py]

@@ -458,91 +458,15 @@
   <script>
     AOS.init();
   </script>
+    <!-- Link to the shared career form handler -->
+    <script src="../static/js/career_form_handler.js" defer></script>
     <script>
-    // Ensure this runs after the DOM is loaded, or that elements are available
-    // For safety, wrap in DOMContentLoaded if not sure
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('careerApplicationForm');
-        const successMessageContainer = document.getElementById('successMessageContainerCareers');
-        const feedbackDiv = document.getElementById('formFeedbackCareers');
-
-        // Important: Check if form exists before adding listener
-        if (form) {
-            const submitButton = form.querySelector('button[type="submit"]');
-
-            if (!successMessageContainer || !feedbackDiv || !submitButton) {
-                console.error('Inline script: Missing one or more required feedback/button elements.');
-                return;
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure the function is called only if the form exists on this page.
+            if (document.getElementById('careerApplicationForm')) {
+                handleCareerFormSubmit('careerApplicationForm', 'successMessageContainerCareers', 'formFeedbackCareers');
             }
-
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const originalButtonText = submitButton.innerHTML;
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...'; // Or add a spinner
-
-                const formData = new FormData(form);
-
-                fetch('/api/submit-application', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    // It's good practice to check if response.ok before response.json()
-                    if (!response.ok) {
-                        // Try to get error message from backend if possible,
-                        // otherwise, a generic one.
-                        return response.json().catch(() => ({ // Catch if .json() itself fails
-                           success: false,
-                           message: `Server error: ${response.status} ${response.statusText}`
-                        })).then(errData => Promise.reject(errData)); // Make it a rejected promise
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = originalButtonText;
-                    feedbackDiv.textContent = '';
-                    feedbackDiv.className = 'mt-4 text-center';
-
-                    if (data.success) {
-                        form.classList.add('opacity-0', 'transition-opacity', 'duration-500', 'ease-out');
-                        setTimeout(() => {
-                            form.classList.add('hidden');
-                            form.classList.remove('opacity-0');
-                            successMessageContainer.classList.remove('hidden');
-                            successMessageContainer.classList.add('opacity-0', 'transition-opacity', 'duration-500', 'ease-in');
-                            setTimeout(() => {
-                                successMessageContainer.classList.remove('opacity-0');
-                            }, 20);
-                            form.reset();
-                        }, 500);
-                    } else {
-                        form.classList.remove('hidden', 'opacity-0');
-                        successMessageContainer.classList.add('hidden');
-                        feedbackDiv.className = 'text-red-600 mt-4 text-center p-2 bg-red-100 rounded'; // Added text-center here for consistency
-                        feedbackDiv.textContent = data.message || 'An unknown error occurred.';
-                    }
-                })
-                .catch(error => { // Catches network errors and errors from response.ok check
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = originalButtonText;
-                    form.classList.remove('hidden', 'opacity-0');
-                    successMessageContainer.classList.add('hidden');
-                    feedbackDiv.className = 'text-red-600 mt-4 text-center p-2 bg-red-100 rounded'; // Added text-center here for consistency
-                    // If error is an object with a message property (from our rejected promise)
-                    if (error && error.message) {
-                        feedbackDiv.textContent = error.message;
-                    } else {
-                        feedbackDiv.textContent = 'A network error or unexpected issue occurred. Please try again.';
-                    }
-                    console.error('Error submitting form:', error);
-                });
-            });
-        } else {
-            console.error('Inline script: Form with ID "careerApplicationForm" not found.');
-        }
-    });
+        });
     </script>
 </body>
 </html>

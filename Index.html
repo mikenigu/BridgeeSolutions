@@ -27,6 +27,11 @@
       scroll-behavior: smooth;
     }
 
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
     .hero-gradient {
       /* background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); */
       /* animation: gradient 15s ease infinite; */
@@ -483,7 +488,7 @@
 <body class="bg-gray-50">
 
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50" id="main-navbar">
+    <nav class="bg-white shadow-lg fixed top-0 left-0 right-0 z-50 w-full" id="main-navbar"> {/* Removed sticky, added fixed, left-0, right-0, w-full */}
         <div class="container mx-auto px-6 py-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
@@ -523,9 +528,9 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-gradient py-28 md:py-40">
+    <section class="hero-gradient pb-28 md:pb-40"> {/* Removed py-28, md:py-40; Added pb-28, md:pb-40 */}
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
-            <div class="md:w-full flex flex-col items-start max-w-4xl mt-10 md:mt-0" style="position: relative; z-index: 1;">
+            <div class="md:w-full flex flex-col items-start max-w-4xl pt-24 mt-10 md:mt-0" style="position: relative; z-index: 1;"> {/* Added pt-24 */}
                 <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-8">Your Bridge to <span class="underline decoration-blue-300">Scalable, Skilled</span> and <span class="underline decoration-blue-300">Smart</span> Outsourcing</h1>
                 <p class="text-lg md:text-xl mb-10 leading-relaxed">Virtual Assistants. Software Development. Custom BPO. All tailored from Addis Ababa to power your business growth.</p>
                 <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">

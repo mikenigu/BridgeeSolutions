@@ -60,7 +60,7 @@ def escape_markdown_v2(text: str) -> str:
 async def send_telegram_notification(applicant_data, cv_filepath):
     bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
 
-    message_text = f"📢 New Job Application Received\!\n\n"
+    message_text = f"📢 New Job Application Received!\n\n" # Corrected: Removed backslash before !
 
     # Escape MarkdownV2 characters for user-provided fields
     job_title = escape_markdown_v2(applicant_data.get('job_title', 'N/A'))
@@ -218,147 +218,149 @@ def submit_application(): # Synchronous route
         return jsonify({'message': 'CORS preflight successful (full endpoint)'}), 200
 
     if request.method == 'POST':
-        # Extract form data
-        form_data = request.form.to_dict()
-        full_name = form_data.get('full_name')
-        email = form_data.get('email')
-        job_title = form_data.get('job_title') # Specific to job application
-
-        print(f"Job Application: Received POST for job: {job_title}. Form data: {request.form}")
-
-        if not all([full_name, email, job_title]): # Basic check for job application
-            return jsonify({'success': False, 'message': 'Validation Error: Missing required fields (Full Name, Email, Job Title).'}), 400
-
-        # --- Duplicate Application Check ---
-        applications_log = []
-        if os.path.exists(APPLICATION_LOG_FILE):
-            try:
-                with open(APPLICATION_LOG_FILE, 'r') as f:
-                    content = f.read()
-                    if content:
-                        applications_log = json.loads(content)
-                        if not isinstance(applications_log, list): # Ensure it's a list
-                            print(f"Warning: Log file {APPLICATION_LOG_FILE} does not contain a list. Resetting log.")
-                            applications_log = []
-                    else:
-                        applications_log = [] # File is empty
-            except json.JSONDecodeError:
-                print(f"Warning: Could not decode JSON from {APPLICATION_LOG_FILE}. Starting with an empty log.")
-                applications_log = [] # File is malformed
-            except IOError as e:
-                print(f"Warning: Could not read {APPLICATION_LOG_FILE}: {e}. Starting with an empty log.")
-                applications_log = []
-
-        for app_log in applications_log:
-            # Ensure keys exist in log entry before accessing
-            if app_log.get('email') == email and app_log.get('job_title') == job_title:
-                return jsonify({'success': False, 'message': 'It looks like you have already applied for this position with this email.'}), 409
-        # --- End Duplicate Application Check ---
-
-        cv_file = None
-        cv_filepath = None
-        filename = None # Initialize filename
-
-        if 'cv_upload' not in request.files:
-            return jsonify({'success': False, 'message': 'Validation Error: No CV file part in the request.'}), 400
-
-        cv_file = request.files['cv_upload']
-
-        if cv_file.filename == '':
-            return jsonify({'success': False, 'message': 'Validation Error: No CV file selected.'}), 400
-
-        if cv_file and allowed_file(cv_file.filename):
-            original_filename = secure_filename(cv_file.filename)
-            timestamp_ms = int(datetime.utcnow().timestamp() * 1000)
-            unique_filename = f"{timestamp_ms}-{original_filename}"
-            filename = unique_filename
-
-            upload_folder_path = app.config['UPLOAD_FOLDER']
-            if not os.path.exists(upload_folder_path):
-                try:
-                    os.makedirs(upload_folder_path)
-                    app.logger.info(f"Created upload folder: {upload_folder_path}")
-                except Exception as e:
-                    app.logger.error(f"Error creating upload folder {upload_folder_path}: {str(e)}")
-                    return jsonify({'success': False, 'message': 'An unexpected error occurred. Please try again later.'}), 500
-
-            cv_filepath = os.path.join(upload_folder_path, filename)
-
-            try:
-                cv_file.save(cv_filepath)
-                app.logger.info(f"CV saved to {cv_filepath}")
-            except Exception as e:
-                app.logger.error(f"Error saving CV to {cv_filepath}: {str(e)}")
-                return jsonify({'success': False, 'message': 'An unexpected error occurred while saving your CV. Please try again later.'}), 500
-        else:
-            return jsonify({'success': False, 'message': 'Validation Error: Invalid CV file type. Allowed: pdf, doc, docx.'}), 400
-
-        # Applicant data for logging (Telegram data prep removed/commented out previously)
-        # applicant_data = {
-        #     'full_name': full_name,
-        #     'email': email,
-        #     'phone_number': form_data.get('phone_number', ''),
-        #     'cover_letter': form_data.get('cover_letter', ''),
-        #     'job_title': job_title
-        # }
-
-        # --- Log Application ---
-        # The applications_log list is already populated from the duplicate check step earlier
-        # or initialized as an empty list if the log file didn't exist or was invalid.
-        new_application_entry = {
-            'email': email,
-            'job_title': job_title,
-            'timestamp': datetime.utcnow().isoformat() + 'Z',
-            'full_name': full_name,
-            'phone_number': form_data.get('phone_number', ''),
-            'cv_filename': filename, # This is the unique filename
-            'cover_letter': form_data.get('cover_letter', ''), # ADD THIS LINE
-            'status': 'new' # New field
-        }
-        applications_log.append(new_application_entry)
-
         try:
-            with open(APPLICATION_LOG_FILE, 'w') as f:
-                json.dump(applications_log, f, indent=4)
-            print(f"Successfully logged application for {full_name} to {APPLICATION_LOG_FILE}")
-        except IOError as e:
-            print(f"Error: Could not write to {APPLICATION_LOG_FILE}: {e}. Application for {full_name} was processed but not logged.")
-        # --- End Log Application ---
+            # Extract form data
+            form_data = request.form.to_dict()
+            full_name = form_data.get('full_name')
+            email = form_data.get('email')
+            job_title = form_data.get('job_title') # Specific to job application
 
-        # Telegram notification is now handled by the HR bot, so we remove the direct call here.
-        # print(f"Preparing to send Telegram notification for {full_name}...")
-        # telegram_success = False # Initialize
-        # try:
-        #     telegram_success = asyncio.run(send_telegram_notification(applicant_data, cv_filepath))
-        # except RuntimeError as e:
-        #     # This can happen if asyncio.run() is called when an event loop is already running
-        #     # (less common with Flask's dev server but good to be aware of for other contexts)
-        #     print(f"Asyncio RuntimeError (possibly nested event loops): {e}. Trying to get existing loop.")
-        #     try:
-        #         loop = asyncio.get_event_loop()
-        #         if loop.is_running():
-        #             # This is a more complex scenario, often requires contextvars or different async handling
-        #             print("Event loop is already running. Telegram notification might not work as expected from sync Flask route without further async management.")
-        #             pass
-        #         else:
-        #              telegram_success = loop.run_until_complete(send_telegram_notification(applicant_data, cv_filepath))
-        #     except Exception as async_e:
-        #         print(f"Error during advanced asyncio handling for Telegram: {async_e}")
+            print(f"Job Application: Received POST for job: {job_title}. Form data: {request.form}")
 
-        # The function will now unconditionally return success if all prior steps (CV save, logging) are fine.
-        # The logging to submitted_applications.log.json which includes 'status': 'new' happens before this.
-        return jsonify({
-            'success': True,
-            'message': 'Your application has been submitted successfully!', # Standardized message
-            'filename': filename # The unique CV filename
-        }), 200
+            if not all([full_name, email, job_title]): # Basic check for job application
+                return jsonify({'success': False, 'message': 'Validation Error: Missing required fields (Full Name, Email, Job Title).'}), 400
 
-    except Exception as e: # Catch any unexpected errors during the process
-        app.logger.error(f"An unexpected error occurred in /api/submit-application: {str(e)}")
-        # It's good practice to log the full exception for debugging:
-        # import traceback
-        # app.logger.error(traceback.format_exc())
-        return jsonify({'success': False, 'message': 'An unexpected error occurred. Please try again later.'}), 500
+            # --- Duplicate Application Check ---
+            applications_log = []
+            if os.path.exists(APPLICATION_LOG_FILE):
+                try:
+                    with open(APPLICATION_LOG_FILE, 'r') as f:
+                        content = f.read()
+                        if content:
+                            applications_log = json.loads(content)
+                            if not isinstance(applications_log, list): # Ensure it's a list
+                                print(f"Warning: Log file {APPLICATION_LOG_FILE} does not contain a list. Resetting log.")
+                                applications_log = []
+                        else:
+                            applications_log = [] # File is empty
+                except json.JSONDecodeError:
+                    print(f"Warning: Could not decode JSON from {APPLICATION_LOG_FILE}. Starting with an empty log.")
+                    applications_log = [] # File is malformed
+                except IOError as e:
+                    print(f"Warning: Could not read {APPLICATION_LOG_FILE}: {e}. Starting with an empty log.")
+                    applications_log = []
+
+            for app_log in applications_log:
+                # Ensure keys exist in log entry before accessing
+                if app_log.get('email') == email and app_log.get('job_title') == job_title:
+                    return jsonify({'success': False, 'message': 'It looks like you have already applied for this position with this email.'}), 409
+            # --- End Duplicate Application Check ---
+
+            cv_file = None
+            cv_filepath = None
+            filename = None # Initialize filename
+
+            if 'cv_upload' not in request.files:
+                return jsonify({'success': False, 'message': 'Validation Error: No CV file part in the request.'}), 400
+
+            cv_file = request.files['cv_upload']
+
+            if cv_file.filename == '':
+                return jsonify({'success': False, 'message': 'Validation Error: No CV file selected.'}), 400
+
+            if cv_file and allowed_file(cv_file.filename):
+                original_filename = secure_filename(cv_file.filename)
+                timestamp_ms = int(datetime.utcnow().timestamp() * 1000)
+                unique_filename = f"{timestamp_ms}-{original_filename}"
+                filename = unique_filename
+
+                upload_folder_path = app.config['UPLOAD_FOLDER']
+                if not os.path.exists(upload_folder_path):
+                    try:
+                        os.makedirs(upload_folder_path)
+                        app.logger.info(f"Created upload folder: {upload_folder_path}")
+                    except Exception as e:
+                        app.logger.error(f"Error creating upload folder {upload_folder_path}: {str(e)}")
+                        return jsonify({'success': False, 'message': 'An unexpected error occurred. Please try again later.'}), 500
+
+                cv_filepath = os.path.join(upload_folder_path, filename)
+
+                try:
+                    cv_file.save(cv_filepath)
+                    app.logger.info(f"CV saved to {cv_filepath}")
+                except Exception as e:
+                    app.logger.error(f"Error saving CV to {cv_filepath}: {str(e)}")
+                    return jsonify({'success': False, 'message': 'An unexpected error occurred while saving your CV. Please try again later.'}), 500
+            else:
+                return jsonify({'success': False, 'message': 'Validation Error: Invalid CV file type. Allowed: pdf, doc, docx.'}), 400
+
+            # Applicant data for logging (Telegram data prep removed/commented out previously)
+            # applicant_data = {
+            #     'full_name': full_name,
+            #     'email': email,
+            #     'phone_number': form_data.get('phone_number', ''),
+            #     'cover_letter': form_data.get('cover_letter', ''),
+            #     'job_title': job_title
+            # }
+
+            # --- Log Application ---
+            # The applications_log list is already populated from the duplicate check step earlier
+            # or initialized as an empty list if the log file didn't exist or was invalid.
+            new_application_entry = {
+                'email': email,
+                'job_title': job_title,
+                'timestamp': datetime.utcnow().isoformat() + 'Z',
+                'full_name': full_name,
+                'phone_number': form_data.get('phone_number', ''),
+                'cv_filename': filename, # This is the unique filename
+                'cover_letter': form_data.get('cover_letter', ''), # ADD THIS LINE
+                'status': 'new' # New field
+            }
+            applications_log.append(new_application_entry)
+
+            try:
+                with open(APPLICATION_LOG_FILE, 'w') as f:
+                    json.dump(applications_log, f, indent=4)
+                print(f"Successfully logged application for {full_name} to {APPLICATION_LOG_FILE}")
+            except IOError as e:
+                print(f"Error: Could not write to {APPLICATION_LOG_FILE}: {e}. Application for {full_name} was processed but not logged.")
+            # --- End Log Application ---
+
+            # Telegram notification is now handled by the HR bot, so we remove the direct call here.
+            # print(f"Preparing to send Telegram notification for {full_name}...")
+            # telegram_success = False # Initialize
+            # try:
+            #     telegram_success = asyncio.run(send_telegram_notification(applicant_data, cv_filepath))
+            # except RuntimeError as e:
+            #     # This can happen if asyncio.run() is called when an event loop is already running
+            #     # (less common with Flask's dev server but good to be aware of for other contexts)
+            #     print(f"Asyncio RuntimeError (possibly nested event loops): {e}. Trying to get existing loop.")
+            #     try:
+            #         loop = asyncio.get_event_loop()
+            #         if loop.is_running():
+            #             # This is a more complex scenario, often requires contextvars or different async handling
+            #             print("Event loop is already running. Telegram notification might not work as expected from sync Flask route without further async management.")
+            #             pass
+            #         else:
+            #              telegram_success = loop.run_until_complete(send_telegram_notification(applicant_data, cv_filepath))
+            #     except Exception as async_e:
+            #         print(f"Error during advanced asyncio handling for Telegram: {async_e}")
+
+            # The function will now unconditionally return success if all prior steps (CV save, logging) are fine.
+            # The logging to submitted_applications.log.json which includes 'status': 'new' happens before this.
+            return jsonify({
+                'success': True,
+                'message': 'Your application has been submitted successfully!', # Standardized message
+                'filename': filename # The unique CV filename
+            }), 200
+
+        except Exception as e: # Catch any unexpected errors during the process
+            app.logger.error(f"An unexpected error occurred in /api/submit-application: {str(e)}")
+            # It's good practice to log the full exception for debugging:
+            # import traceback
+            # app.logger.error(traceback.format_exc())
+            return jsonify({'success': False, 'message': 'An unexpected error occurred. Please try again later.'}), 500
+    # Removed the 'else' for method not allowed as it's implicitly handled or covered by OPTIONS preflight
 
 @app.route('/api/submit-service-request', methods=['POST'])
 @cross_origin() # Apply CORS for this new route as well

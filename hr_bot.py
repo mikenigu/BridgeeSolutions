@@ -27,7 +27,7 @@ HR_BOT_TOKEN = os.getenv('HR_BOT_TOKEN')
 HR_CHAT_ID = os.getenv('HR_CHAT_ID')
 
 APPLICATION_LOG_FILE = 'submitted_applications.log.json'
-UPLOAD_FOLDER = 'uploads/' # Ensure this has a trailing slash if os.path.join is used directly with it
+UPLOAD_FOLDER = 'uploads/'
 APPS_PER_PAGE = 3
 
 logging.basicConfig(
@@ -39,12 +39,12 @@ logger = logging.getLogger(__name__)
 # --- Status Definitions ---
 ALL_STATUSES = [
     'new',
-    'reviewed_accepted', # Accepted for initial review, pending interview
+    'reviewed_accepted',
     'interviewing',
     'offer_extended',
     'employed',
-    'reviewed_declined', # Declined by company at any stage before offer
-    'offer_declined'     # Offer declined by candidate
+    'reviewed_declined',
+    'offer_declined'
 ]
 
 STATUS_DISPLAY_NAMES = {
@@ -85,7 +85,7 @@ def load_applications() -> list:
         logger.info(f"{APPLICATION_LOG_FILE} not found. Returning empty list.")
         return []
     try:
-        with open(APPLICATION_LOG_FILE, 'r', encoding='utf-8') as f: # Added encoding
+        with open(APPLICATION_LOG_FILE, 'r', encoding='utf-8') as f:
             content = f.read()
             if not content:
                 logger.info(f"{APPLICATION_LOG_FILE} is empty. Returning empty list.")
@@ -104,8 +104,8 @@ def load_applications() -> list:
 
 def save_applications(applications_data: list) -> bool:
     try:
-        with open(APPLICATION_LOG_FILE, 'w', encoding='utf-8') as f: # Added encoding
-            json.dump(applications_data, f, indent=4, ensure_ascii=False) # Added ensure_ascii
+        with open(APPLICATION_LOG_FILE, 'w', encoding='utf-8') as f:
+            json.dump(applications_data, f, indent=4, ensure_ascii=False)
         logger.info(f"Successfully saved {len(applications_data)} applications to {APPLICATION_LOG_FILE}")
         return True
     except IOError as e:
@@ -137,18 +137,18 @@ def escape_markdown_v2(text: str) -> str:
 # --- Command Handlers ---
 async def restricted_access(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     chat_id_str = str(update.effective_chat.id)
-    if chat_id_str != HR_CHAT_ID:
+    if HR_CHAT_ID and chat_id_str != HR_CHAT_ID:
         unauthorized_message = "Sorry, you are not authorized to use this command."
         if update.message:
             await update.message.reply_text(unauthorized_message)
-        elif update.callback_query: # Also handle for callback queries
+        elif update.callback_query:
              await update.callback_query.answer("Unauthorized", show_alert=True)
         logger.warning(f"Unauthorized access attempt by chat_id: {chat_id_str}")
         return False
     return True
 
 async def start_review_session(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await restricted_access(update, context): return # Added access check
+    if not await restricted_access(update, context): return
     logger.info(f"Attempting to start review session for 'new' applications for chat_id: {update.effective_chat.id}")
     await start_view_specific_status_session(update, context, 'new', is_review_session=True)
 
@@ -159,10 +159,13 @@ async def start_view_specific_status_session(update: Update, context: ContextTyp
 
     all_applications = load_applications()
     job_title_filter = None
-    if context.args and not is_review_session: # Job title filter from command args, not from button presses
+
+    is_command_with_args = context.args and not is_review_session and update.message and not update.message.text.startswith("View")
+
+    if is_command_with_args:
         job_title_filter = " ".join(context.args).strip().lower()
         if job_title_filter:
-             logger.info(f"Filtering specific status view for job title: '{escape_markdown_v2(job_title_filter)}'")
+             logger.info(f"Filtering command-based status view for job title: '{escape_markdown_v2(job_title_filter)}'")
 
     apps_with_target_status = [
         app for app in all_applications
@@ -170,11 +173,11 @@ async def start_view_specific_status_session(update: Update, context: ContextTyp
            (not job_title_filter or str(app.get('job_title', '')).lower() == job_title_filter)
     ]
 
-    reply_target = update.effective_message or update.message # Ensure reply_target is set
-    if not reply_target and update.callback_query: # Fallback for callback query if message is None
+    reply_target = update.effective_message
+    if not reply_target and update.callback_query:
         reply_target = update.callback_query.message
     if not reply_target:
-        logger.error(f"start_view_specific_status_session: No message context for reply. Chat ID: {update.effective_chat.id}")
+        logger.error(f"start_view_specific_status_session: No message context for reply. Chat ID: {update.effective_chat.id if update.effective_chat else 'Unknown'}")
         return
 
     status_display_name = STATUS_DISPLAY_NAMES.get(target_status, target_status.capitalize())
@@ -189,11 +192,11 @@ async def start_view_specific_status_session(update: Update, context: ContextTyp
         context.user_data.pop('current_view_status', None)
         return
 
-    context.user_data['review_list'] = sorted(apps_with_target_status, key=lambda x: x.get('timestamp', ''), reverse=True) # Sort by submission
+    context.user_data['review_list'] = sorted(apps_with_target_status, key=lambda x: x.get('timestamp', ''), reverse=True)
     context.user_data['review_page_num'] = 0
     context.user_data['current_view_status'] = target_status
 
-    logger.info(f"Found {len(apps_with_target_status)} applications with status '{target_status}'. Starting specific view session for chat_id {update.effective_chat.id}.")
+    logger.info(f"Found {len(apps_with_target_status)} applications with status '{target_status}'. Starting session for chat_id {update.effective_chat.id}.")
 
     session_start_message = f"Viewing {len(apps_with_target_status)} application(s) with status: {status_display_name}. Use navigation buttons below."
     if is_review_session and target_status == 'new':
@@ -201,17 +204,14 @@ async def start_view_specific_status_session(update: Update, context: ContextTyp
 
     await reply_target.reply_text(session_start_message, reply_markup=review_mode_keyboard)
 
-    if target_status == 'new':
-        await display_application_page_new(update, context) # Use dedicated function for 'new'
-    else:
-        await display_application_page_for_status_view(update, context)
+    await _display_application_page_common(update, context, "initial_view")
 
 
 async def _display_application_page_common(update: Update, context: ContextTypes.DEFAULT_TYPE, page_type: str):
     logger.info(f"Attempting to display an application page for type: {page_type}")
     review_list = context.user_data.get('review_list', [])
     page_num = context.user_data.get('review_page_num', 0)
-    current_view_status = context.user_data.get('current_view_status', 'N/A') # This is the status of the list being viewed
+    current_view_status = context.user_data.get('current_view_status', 'N/A')
     chat_id = update.effective_chat.id
 
     reply_target = update.effective_message
@@ -221,8 +221,7 @@ async def _display_application_page_common(update: Update, context: ContextTypes
     if not review_list:
         logger.info(f"_display_application_page_common: no review_list for chat_id {chat_id}, type {page_type}.")
         msg_content = f"No applications to display in the current '{STATUS_DISPLAY_NAMES.get(current_view_status, current_view_status)}' view."
-        if reply_target: await reply_target.reply_text(msg_content, reply_markup=main_menu_keyboard)
-        else: await context.bot.send_message(chat_id=chat_id, text=msg_content, reply_markup=main_menu_keyboard)
+        await (reply_target.reply_text if reply_target else context.bot.send_message)(chat_id=chat_id, text=msg_content, reply_markup=main_menu_keyboard)
         return
 
     start_index = page_num * APPS_PER_PAGE
@@ -232,8 +231,7 @@ async def _display_application_page_common(update: Update, context: ContextTypes
     if not apps_on_page:
         logger.info(f"No applications found for page {page_num} in chat {chat_id} (type {page_type}).")
         no_apps_message = f"You've reached the end of the '{STATUS_DISPLAY_NAMES.get(current_view_status, current_view_status)}' application list." if page_num > 0 else f"No '{STATUS_DISPLAY_NAMES.get(current_view_status, current_view_status)}' applications to display."
-        if reply_target: await reply_target.reply_text(no_apps_message, reply_markup=review_mode_keyboard)
-        else: await context.bot.send_message(chat_id=chat_id, text=no_apps_message, reply_markup=review_mode_keyboard)
+        await (reply_target.reply_text if reply_target else context.bot.send_message)(chat_id=chat_id, text=no_apps_message, reply_markup=review_mode_keyboard)
         return
 
     total_apps = len(review_list)
@@ -261,22 +259,34 @@ async def _display_application_page_common(update: Update, context: ContextTypes
             f"*Email:* {escape_markdown_v2(app_data.get('email', 'N/A'))}\n"
             f"*Job Title:* {escape_markdown_v2(str(app_data.get('job_title', 'N/A')))}\n"
         )
-        cover_letter_raw = app_data.get('cover_letter', '')
-        if cover_letter_raw and cover_letter_raw.strip():
-            snippet_length = 200
-            cover_letter_snippet_text = cover_letter_raw[:snippet_length] + ("..." if len(cover_letter_raw) > snippet_length else "")
-            message_text += f"*Cover Letter Snippet:*\n{escape_markdown_v2(cover_letter_snippet_text)}\n\n"
+
+        cover_letter_text = app_data.get('cover_letter', '')
+        if cover_letter_text and cover_letter_text.strip():
+            snippet = cover_letter_text[:200]
+            if len(cover_letter_text) > 200:
+                snippet += "..."
+            message_text += f"\n📄 *Cover Letter Snippet:*\n{escape_markdown_v2(snippet)}\n"
+
         message_text += (
-            f"*Original CV Name:* {escape_markdown_v2(original_cv_name_for_display)}\n"
+            f"\n*Original CV Name:* {escape_markdown_v2(original_cv_name_for_display)}\n"
             f"*Submitted:* {escape_markdown_v2(str(app_data.get('timestamp', 'N/A')))}\n"
         )
+
         reviewed_timestamp_raw = app_data.get('reviewed_timestamp')
-        reviewed_by_raw = app_data.get('reviewed_by')
+        reviewed_by_id_raw = app_data.get('reviewed_by')
+        reviewed_by_name_raw = app_data.get('reviewed_by_name', 'N/A')
+
         if reviewed_timestamp_raw:
-            message_text += f"*Last Action:* {escape_markdown_v2(str(reviewed_timestamp_raw))}"
-            if reviewed_by_raw:
-                message_text += f" by UserID: {escape_markdown_v2(str(reviewed_by_raw))}"
-            message_text += "\n"
+            try:
+                dt_object = datetime.fromisoformat(reviewed_timestamp_raw.replace('Z', '+00:00'))
+                formatted_timestamp = escape_markdown_v2(dt_object.strftime('%Y-%m-%d %H:%M UTC'))
+            except ValueError:
+                formatted_timestamp = escape_markdown_v2(reviewed_timestamp_raw)
+
+            actor_info_display = escape_markdown_v2(reviewed_by_name_raw)
+            if reviewed_by_id_raw:
+                 actor_info_display += f" (ID: {escape_markdown_v2(str(reviewed_by_id_raw))})"
+            message_text += f"*Last Action:* {formatted_timestamp} by {actor_info_display}\n"
 
         keyboard_buttons = []
         if app_actual_status == 'new':
@@ -298,6 +308,20 @@ async def _display_application_page_common(update: Update, context: ContextTypes
             keyboard_buttons.append([
                 InlineKeyboardButton("Mark as Employed", callback_data=f"set_status:employed:{app_id_for_callback}"),
                 InlineKeyboardButton("Offer Declined by Candidate", callback_data=f"set_status:offer_declined:{app_id_for_callback}")
+            ])
+        elif app_actual_status == 'reviewed_declined':
+            keyboard_buttons.append([
+                InlineKeyboardButton("⬅️ Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_for_callback}"),
+            ])
+            keyboard_buttons.append([
+                InlineKeyboardButton("👍 Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_for_callback}")
+            ])
+        elif app_actual_status == 'offer_declined':
+            keyboard_buttons.append([
+                InlineKeyboardButton("⬅️ Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_for_callback}")
+            ])
+            keyboard_buttons.append([
+                InlineKeyboardButton("👍 Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_for_callback}")
             ])
 
         if app_actual_status not in ['new', 'employed', 'reviewed_declined', 'offer_declined']:
@@ -324,7 +348,7 @@ async def display_application_page_for_status_view(update: Update, context: Cont
 
 async def review_applications_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await restricted_access(update, context): return
-    await start_review_session(update, context) # This now calls start_view_specific_status_session with 'new'
+    await start_review_session(update, context)
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await restricted_access(update, context): return
@@ -342,19 +366,19 @@ async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Custom keyboard removed. Send /start to show it again.", reply_markup=ReplyKeyboardRemove())
     logger.info(f"Custom keyboard removed, review state cleared for chat_id: {update.effective_chat.id}")
 
-async def view_accepted_apps_command(update: Update, context: ContextTypes.DEFAULT_TYPE): # Renamed for clarity based on new button
+async def view_accepted_apps_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await restricted_access(update, context): return
     logger.info(f"'View Accepted (Pending Interview)' triggered by chat_id: {update.effective_chat.id}")
     await start_view_specific_status_session(update, context, "reviewed_accepted")
 
-async def view_declined_company_apps_command(update: Update, context: ContextTypes.DEFAULT_TYPE): # Renamed for clarity
+async def view_declined_company_apps_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await restricted_access(update, context): return
     logger.info(f"'View Declined by Company' triggered by chat_id: {update.effective_chat.id}")
     await start_view_specific_status_session(update, context, "reviewed_declined")
 
-async def help_command_menu_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None: # For main menu "Help" button
+async def help_command_menu_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await restricted_access(update, context): return
-    status_list_md = "\n".join([f"- *{name}* (`{key}`)" for key, name in STATUS_DISPLAY_NAMES.items()])
+    status_list_md = "\n".join([f"- *{escape_markdown_v2(name)}* (`{escape_markdown_v2(key)}`)" for key, name in STATUS_DISPLAY_NAMES.items()]) # Escaped here
 
     help_text = (
         "Welcome to the HR Application Management Bot!\n\n"
@@ -366,8 +390,11 @@ async def help_command_menu_entry(update: Update, context: ContextTypes.DEFAULT_
         "**Managing Applications:**\n"
         "When you view a list of applications (e.g., 'Review New Applications' or 'View Interviewing'):\n"
         "- Each application will be displayed as a separate message.\n"
+        "- Applicant details now include a 'Last Action' section, showing who made the most recent status change and when it occurred (formatted as YYYY-MM-DD HH:MM UTC by User Name (ID: UserID)).\n"
+        "- A 200-character snippet of the cover letter is now shown with applicant details, if provided.\n"
         "- Below each application, you'll find inline buttons for actions relevant to its current status (e.g., 'Accept for Review', 'Start Interviewing', 'Extend Offer', 'Mark as Employed', 'Decline', etc.).\n"
         "- Click these buttons to change an applicant's status. The message will update to show the new status and relevant next actions.\n"
+        "- For applications in 'Declined by Company' or 'Offer Declined by Candidate' statuses, you will now see buttons to '⬅️ Set as New (Undo Decline)' or '👍 Re-evaluate (Accept)' allowing you to move them back into an active review cycle.\n"
         "- The *Get CV* button allows you to download the applicant's CV.\n"
         "- Use the 'Previous Page' and 'Next Page' buttons (on the main keyboard, when active) to navigate through lists of applications.\n"
         "- 'Back to Main Menu' (on the main keyboard) will always take you back to the main selection menu.\n\n"
@@ -378,17 +405,16 @@ async def help_command_menu_entry(update: Update, context: ContextTypes.DEFAULT_
         "- `/view_employed Virtual Assistant`\n\n"
         "Type /stop to hide the main menu keyboard if needed."
     )
-    # Ensure the reply target is correct for both command and menu button presses
     reply_target = update.effective_message
-    if not reply_target and update.callback_query: # Should not happen for help from menu button
+    if not reply_target and update.callback_query:
         reply_target = update.callback_query.message
 
-    await reply_target.reply_text(help_text, parse_mode='Markdown', reply_markup=main_menu_keyboard)
+    await reply_target.reply_text(help_text, parse_mode='MarkdownV2', reply_markup=main_menu_keyboard) # Changed to MarkdownV2
 
 
 async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    await query.answer() # Answer callback query early
+    await query.answer()
 
     callback_parts = query.data.split(":", 2)
     action_prefix = callback_parts[0]
@@ -457,12 +483,14 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
         if final_new_status == 'new':
             all_applications[target_app_index].pop('reviewed_timestamp', None)
             all_applications[target_app_index].pop('reviewed_by', None)
+            all_applications[target_app_index].pop('reviewed_by_name', None)
         else:
             all_applications[target_app_index]['reviewed_timestamp'] = datetime.utcnow().isoformat() + 'Z'
             all_applications[target_app_index]['reviewed_by'] = str(query.from_user.id)
+            all_applications[target_app_index]['reviewed_by_name'] = query.from_user.first_name or query.from_user.username or 'N/A'
 
         if save_applications(all_applications):
-            logger.info(f"Application {full_cv_filename} status updated to {final_new_status} by {query.from_user.id}.")
+            logger.info(f"Application {full_cv_filename} status updated to {final_new_status} by user {query.from_user.id} ({all_applications[target_app_index].get('reviewed_by_name', 'N/A')}).")
 
             updated_app_data = all_applications[target_app_index]
             status_display_name_updated = STATUS_DISPLAY_NAMES.get(updated_app_data.get('status', 'N/A'), "N/A")
@@ -475,18 +503,29 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
             )
             cover_letter_raw_updated = updated_app_data.get('cover_letter', '')
             if cover_letter_raw_updated and cover_letter_raw_updated.strip():
-                message_text_updated += f"*Cover Letter Snippet:*\n{escape_markdown_v2(cover_letter_raw_updated[:200] + ('...' if len(cover_letter_raw_updated) > 200 else ''))}\n\n"
+                snippet_updated = cover_letter_raw_updated[:200]
+                if len(cover_letter_raw_updated) > 200:
+                    snippet_updated += "..."
+                message_text_updated += f"\n📄 *Cover Letter Snippet:*\n{escape_markdown_v2(snippet_updated)}\n"
             message_text_updated += (
-                f"*Original CV Name:* {escape_markdown_v2(original_cv_name_display_raw)}\n"
+                f"\n*Original CV Name:* {escape_markdown_v2(original_cv_name_display_raw)}\n"
                 f"*Submitted:* {escape_markdown_v2(str(updated_app_data.get('timestamp', 'N/A')))}\n"
             )
             reviewed_timestamp_raw_updated = updated_app_data.get('reviewed_timestamp')
-            reviewed_by_raw_updated = updated_app_data.get('reviewed_by')
+            reviewed_by_id_updated = updated_app_data.get('reviewed_by')
+            reviewed_by_name_updated = updated_app_data.get('reviewed_by_name', 'N/A')
+
             if reviewed_timestamp_raw_updated:
-                message_text_updated += f"*Last Action:* {escape_markdown_v2(str(reviewed_timestamp_raw_updated))}"
-                if reviewed_by_raw_updated:
-                    message_text_updated += f" by UserID: {escape_markdown_v2(str(reviewed_by_raw_updated))}"
-                message_text_updated += "\n"
+                try:
+                    dt_object = datetime.fromisoformat(reviewed_timestamp_raw_updated.replace('Z', '+00:00'))
+                    formatted_timestamp = escape_markdown_v2(dt_object.strftime('%Y-%m-%d %H:%M UTC'))
+                except ValueError:
+                    formatted_timestamp = escape_markdown_v2(reviewed_timestamp_raw_updated)
+
+                actor_info = escape_markdown_v2(reviewed_by_name_updated)
+                if reviewed_by_id_updated:
+                    actor_info += f" (ID: {escape_markdown_v2(str(reviewed_by_id_updated))})"
+                message_text_updated += f"*Last Action:* {formatted_timestamp} by {actor_info}\n"
 
             keyboard_buttons_updated = []
             current_status_updated = updated_app_data.get('status')
@@ -499,17 +538,31 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
             elif current_status_updated == 'reviewed_accepted':
                 keyboard_buttons_updated.append([
                     InlineKeyboardButton("Start Interviewing", callback_data=f"set_status:interviewing:{app_id_from_callback}"),
-                    InlineKeyboardButton("Decline", callback_data=f"set_status:declined_company:{app_id_for_callback}")
+                    InlineKeyboardButton("Decline", callback_data=f"set_status:declined_company:{app_id_from_callback}")
                 ])
             elif current_status_updated == 'interviewing':
                 keyboard_buttons_updated.append([
-                    InlineKeyboardButton("Extend Offer", callback_data=f"set_status:offer_extended:{app_id_for_callback}"),
-                    InlineKeyboardButton("Decline", callback_data=f"set_status:declined_company:{app_id_for_callback}")
+                    InlineKeyboardButton("Extend Offer", callback_data=f"set_status:offer_extended:{app_id_from_callback}"),
+                    InlineKeyboardButton("Decline", callback_data=f"set_status:declined_company:{app_id_from_callback}")
                 ])
             elif current_status_updated == 'offer_extended':
                 keyboard_buttons_updated.append([
-                    InlineKeyboardButton("Mark as Employed", callback_data=f"set_status:employed:{app_id_for_callback}"),
-                    InlineKeyboardButton("Offer Declined by Candidate", callback_data=f"set_status:offer_declined:{app_id_for_callback}")
+                    InlineKeyboardButton("Mark as Employed", callback_data=f"set_status:employed:{app_id_from_callback}"),
+                    InlineKeyboardButton("Offer Declined by Candidate", callback_data=f"set_status:offer_declined:{app_id_from_callback}")
+                ])
+            elif current_status_updated == 'reviewed_declined':
+                keyboard_buttons_updated.append([
+                    InlineKeyboardButton("⬅️ Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_from_callback}"),
+                ])
+                keyboard_buttons_updated.append([
+                    InlineKeyboardButton("👍 Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_from_callback}")
+                ])
+            elif current_status_updated == 'offer_declined':
+                keyboard_buttons_updated.append([
+                    InlineKeyboardButton("⬅️ Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_from_callback}")
+                ])
+                keyboard_buttons_updated.append([
+                    InlineKeyboardButton("👍 Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_from_callback}")
                 ])
 
             if current_status_updated not in ['new', 'employed', 'reviewed_declined', 'offer_declined']:
@@ -519,9 +572,9 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
             reply_markup_updated = InlineKeyboardMarkup(keyboard_buttons_updated)
 
             try:
-                if query.message: # Ensure there's a message to edit
+                if query.message:
                     await query.edit_message_text(text=message_text_updated, reply_markup=reply_markup_updated, parse_mode='MarkdownV2')
-                await query.answer(text=f"Status updated to: {status_display_name_for_confirmation}") # Always answer
+                await query.answer(text=f"Status updated to: {status_display_name_for_confirmation}")
             except telegram.error.BadRequest as e:
                 logger.info(f"Message not modified (likely content identical), or other minor error: {e}. Answering callback.")
                 await query.answer(text=f"Status is now: {status_display_name_for_confirmation}")
@@ -533,7 +586,6 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
             if 'review_list' in context.user_data and current_session_view_status and current_session_view_status != final_new_status:
                 if not (current_session_view_status == 'new' and final_new_status == 'reviewed_accepted') and \
                    not (current_session_view_status == 'new' and final_new_status == 'reviewed_declined'):
-                     # More specific conditions might be needed if some views should retain items after specific changes
                     context.user_data['review_list'] = [app for app in context.user_data['review_list'] if app.get('cv_filename') != full_cv_filename]
                     logger.info(f"Removed {full_cv_filename} from current view list ({current_session_view_status}) as status changed to '{final_new_status}'.")
         else:
@@ -549,13 +601,13 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
                 logger.info(f"Sent CV {full_cv_filename} as {original_cv_name_display_raw} to chat_id {query.message.chat.id}")
             except Exception as e:
                 logger.error(f"Failed to send CV {full_cv_filename}: {e}", exc_info=True)
-                unescaped_text = f"Sorry, could not send CV {original_cv_name_display_raw} for {applicant_name_raw}."
+                unescaped_text = f"Sorry, could not send CV {original_cv_name_display_raw} for {target_app_obj.get('full_name', 'N/A')}."
                 await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(unescaped_text), parse_mode='MarkdownV2')
         else:
             logger.warning(f"CV file {full_cv_filename} not found at path {cv_path} for get_cv action.")
-            unescaped_text = f"Sorry, CV file {original_cv_name_display_raw} for {applicant_name_raw} not found on server."
+            unescaped_text = f"Sorry, CV file {original_cv_name_display_raw} for {target_app_obj.get('full_name', 'N/A')} not found on server."
             await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(unescaped_text), parse_mode='MarkdownV2')
-    await query.answer() # Ensure callback is always answered if not done earlier
+    await query.answer()
 
 async def handle_next_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await restricted_access(update, context): return
@@ -605,16 +657,16 @@ def main():
 
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("stop", stop_command))
-    application.add_handler(CommandHandler("review_applications", review_applications_command)) # For 'new'
+    application.add_handler(CommandHandler("review_applications", review_applications_command))
     application.add_handler(CommandHandler("view_accepted", lambda u,c: start_view_specific_status_session(u,c,"reviewed_accepted")))
     application.add_handler(CommandHandler("view_interviewing", lambda u,c: start_view_specific_status_session(u,c,"interviewing")))
     application.add_handler(CommandHandler("view_offer_extended", lambda u,c: start_view_specific_status_session(u,c,"offer_extended")))
     application.add_handler(CommandHandler("view_employed", lambda u,c: start_view_specific_status_session(u,c,"employed")))
     application.add_handler(CommandHandler("view_declined_company", lambda u,c: start_view_specific_status_session(u,c,"reviewed_declined")))
     application.add_handler(CommandHandler("view_offer_declined", lambda u,c: start_view_specific_status_session(u,c,"offer_declined")))
-    application.add_handler(CommandHandler("help", help_command_menu_entry)) # For /help command
+    application.add_handler(CommandHandler("help", help_command_menu_entry))
 
-    application.add_handler(CallbackQueryHandler(button_callback_handler)) # Handles ALL inline button presses
+    application.add_handler(CallbackQueryHandler(button_callback_handler))
 
     # MessageHandlers for main menu buttons
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex("^Review New Applications$"), start_review_session))

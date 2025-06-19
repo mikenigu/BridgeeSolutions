@@ -267,7 +267,7 @@ async def _display_application_page_common(update: Update, context: ContextTypes
             snippet = cover_letter_text[:200]
             if len(cover_letter_text) > 200:
                 snippet += "..."
-            message_text += f"\n📄 *Cover Letter Snippet:*\n{escape_markdown_v2(snippet)}\n"
+            message_text += f"\n*Cover Letter Snippet:*\n{escape_markdown_v2(snippet)}\n"
 
         # Process submission timestamp
         submitted_ts_iso = app_data.get('timestamp')
@@ -327,27 +327,42 @@ async def _display_application_page_common(update: Update, context: ContextTypes
             ])
         elif app_actual_status == 'reviewed_declined':
             keyboard_buttons.append([
-                InlineKeyboardButton("⬅️ Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_for_callback}"),
+                InlineKeyboardButton("Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_for_callback}"),
             ])
             keyboard_buttons.append([
-                InlineKeyboardButton("👍 Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_for_callback}")
+                InlineKeyboardButton("Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_for_callback}")
             ])
         elif app_actual_status == 'offer_declined':
             keyboard_buttons.append([
-                InlineKeyboardButton("⬅️ Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_for_callback}")
+                InlineKeyboardButton("Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_for_callback}")
             ])
             keyboard_buttons.append([
-                InlineKeyboardButton("👍 Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_for_callback}")
+                InlineKeyboardButton("Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_for_callback}")
             ])
 
         if app_actual_status not in ['new', 'employed', 'reviewed_declined', 'offer_declined']:
              keyboard_buttons.append([InlineKeyboardButton("Set as New (Undo)", callback_data=f"set_status:new:{app_id_for_callback}")])
 
-        keyboard_buttons.append([InlineKeyboardButton("Get CV", callback_data=f"get_cv:{app_id_for_callback}")])
-        reply_markup = InlineKeyboardMarkup(keyboard_buttons)
+        # Removed "Get CV" button from here: keyboard_buttons.append([InlineKeyboardButton("Get CV", callback_data=f"get_cv:{app_id_for_callback}")])
+        reply_markup = InlineKeyboardMarkup(keyboard_buttons) if keyboard_buttons else None # Ensure markup is None if no buttons
 
         try:
             await context.bot.send_message(chat_id=chat_id, text=message_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
+
+            # Proactively send CV after sending the application details
+            cv_path = os.path.join(UPLOAD_FOLDER, cv_filename_stored)
+            if os.path.exists(cv_path):
+                try:
+                    with open(cv_path, 'rb') as cv_doc:
+                        await context.bot.send_document(chat_id=chat_id, document=cv_doc, filename=original_cv_name_for_display)
+                    logger.info(f"Proactively sent CV {cv_filename_stored} as {original_cv_name_for_display} to chat_id {chat_id} for application {app_id_for_callback}")
+                except Exception as e_doc:
+                    logger.error(f"Failed to proactively send CV {cv_filename_stored} for app {app_id_for_callback}: {e_doc}", exc_info=True)
+                    await context.bot.send_message(chat_id=chat_id, text=escape_markdown_v2(f"Could not send CV document ({original_cv_name_for_display}) for this applicant due to an error."), parse_mode='MarkdownV2')
+            else:
+                logger.warning(f"CV file {cv_filename_stored} not found at {cv_path} for proactive send (app {app_id_for_callback}).")
+                await context.bot.send_message(chat_id=chat_id, text=escape_markdown_v2(f"CV file ({original_cv_name_for_display}) not found on server for this applicant."), parse_mode='MarkdownV2')
+
         except Exception as e:
             logger.error(f"Error sending app details for {cv_filename_stored} (type {page_type}): {e}. Text: {message_text}", exc_info=True)
             error_content = f"Error displaying application: {app_data.get('full_name', 'N/A')} (CV: {cv_filename_stored})."
@@ -410,7 +425,7 @@ async def help_command_menu_entry(update: Update, context: ContextTypes.DEFAULT_
         "- A 200-character snippet of the cover letter is now shown with applicant details, if provided.\n"
         "- Below each application, you'll find inline buttons for actions relevant to its current status (e.g., 'Accept for Review', 'Start Interviewing', 'Extend Offer', 'Mark as Employed', 'Decline', etc.).\n"
         "- Click these buttons to change an applicant's status. The message will update to show the new status and relevant next actions.\n"
-        "- For applications in 'Declined by Company' or 'Offer Declined by Candidate' statuses, you will now see buttons to '⬅️ Set as New (Undo Decline)' or '👍 Re-evaluate (Accept)' allowing you to move them back into an active review cycle.\n"
+        "- For applications in 'Declined by Company' or 'Offer Declined by Candidate' statuses, you will now see buttons to 'Set as New (Undo Decline)' or 'Re-evaluate (Accept)' allowing you to move them back into an active review cycle.\n"
         "- The *Get CV* button allows you to download the applicant's CV.\n"
         "- Use the 'Previous Page' and 'Next Page' buttons (on the main keyboard, when active) to navigate through lists of applications.\n"
         "- 'Back to Main Menu' (on the main keyboard) will always take you back to the main selection menu.\n\n"
@@ -440,14 +455,8 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
     app_id_from_callback = None
     new_short_status_key = None
 
-    if action_prefix == "get_cv":
-        if len(callback_parts) == 2:
-            app_id_from_callback = callback_parts[1]
-        else:
-            logger.error(f"Invalid format for get_cv: {query.data}")
-            if query.message: await query.edit_message_text("Error: Invalid CV request format.")
-            return
-    elif action_prefix == "set_status":
+    # Removed get_cv block
+    if action_prefix == "set_status": # Adjusted from elif to if
         if len(callback_parts) == 3:
             new_short_status_key = callback_parts[1]
             app_id_from_callback = callback_parts[2]
@@ -478,6 +487,7 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
     full_cv_filename = target_app_obj.get('cv_filename')
     original_cv_name_display_raw = full_cv_filename.split('-', 1)[1] if isinstance(full_cv_filename, str) and '-' in full_cv_filename else full_cv_filename
 
+    # The get_cv block was here and has been removed.
 
     if action_prefix == "set_status":
         status_map = {
@@ -522,7 +532,7 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
                 snippet_updated = cover_letter_raw_updated[:200]
                 if len(cover_letter_raw_updated) > 200:
                     snippet_updated += "..."
-                message_text_updated += f"\n📄 *Cover Letter Snippet:*\n{escape_markdown_v2(snippet_updated)}\n"
+                message_text_updated += f"\n*Cover Letter Snippet:*\n{escape_markdown_v2(snippet_updated)}\n"
             message_text_updated += (
                 f"\n*Original CV Name:* {escape_markdown_v2(original_cv_name_display_raw)}\n"
                 f"*Submitted:* {escape_markdown_v2(str(updated_app_data.get('timestamp', 'N/A')))}\n"
@@ -568,24 +578,25 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
                 ])
             elif current_status_updated == 'reviewed_declined':
                 keyboard_buttons_updated.append([
-                    InlineKeyboardButton("⬅️ Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_from_callback}"),
+                    InlineKeyboardButton("Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_from_callback}"),
                 ])
                 keyboard_buttons_updated.append([
-                    InlineKeyboardButton("👍 Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_from_callback}")
+                    InlineKeyboardButton("Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_from_callback}")
                 ])
             elif current_status_updated == 'offer_declined':
                 keyboard_buttons_updated.append([
-                    InlineKeyboardButton("⬅️ Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_from_callback}")
+                    InlineKeyboardButton("Set as New (Undo Decline)", callback_data=f"set_status:new:{app_id_from_callback}")
                 ])
                 keyboard_buttons_updated.append([
-                    InlineKeyboardButton("👍 Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_from_callback}")
+                    InlineKeyboardButton("Re-evaluate (Accept)", callback_data=f"set_status:accepted:{app_id_from_callback}")
                 ])
 
             if current_status_updated not in ['new', 'employed', 'reviewed_declined', 'offer_declined']:
                  keyboard_buttons_updated.append([InlineKeyboardButton("Set as New (Undo)", callback_data=f"set_status:new:{app_id_from_callback}")])
 
-            keyboard_buttons_updated.append([InlineKeyboardButton("Get CV", callback_data=f"get_cv:{app_id_from_callback}")])
-            reply_markup_updated = InlineKeyboardMarkup(keyboard_buttons_updated)
+            # Removed "Get CV" button from here as well for consistency, CV is sent proactively.
+            # keyboard_buttons_updated.append([InlineKeyboardButton("Get CV", callback_data=f"get_cv:{app_id_from_callback}")])
+            reply_markup_updated = InlineKeyboardMarkup(keyboard_buttons_updated) if keyboard_buttons_updated else None
 
             try:
                 if query.message:
@@ -608,22 +619,10 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
             logger.error(f"Failed to save application status update for {full_cv_filename} (set_status).")
             if query.message: await query.edit_message_text("Error updating application status in log.", reply_markup=query.message.reply_markup if query.message else None)
 
-    elif action_prefix == "get_cv":
-        cv_path = os.path.join(UPLOAD_FOLDER, full_cv_filename)
-        if os.path.exists(cv_path):
-            try:
-                with open(cv_path, 'rb') as cv_doc:
-                    await context.bot.send_document(chat_id=query.message.chat.id, document=cv_doc, filename=original_cv_name_display_raw)
-                logger.info(f"Sent CV {full_cv_filename} as {original_cv_name_display_raw} to chat_id {query.message.chat.id}")
-            except Exception as e:
-                logger.error(f"Failed to send CV {full_cv_filename}: {e}", exc_info=True)
-                unescaped_text = f"Sorry, could not send CV {original_cv_name_display_raw} for {target_app_obj.get('full_name', 'N/A')}."
-                await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(unescaped_text), parse_mode='MarkdownV2')
-        else:
-            logger.warning(f"CV file {full_cv_filename} not found at path {cv_path} for get_cv action.")
-            unescaped_text = f"Sorry, CV file {original_cv_name_display_raw} for {target_app_obj.get('full_name', 'N/A')} not found on server."
-            await context.bot.send_message(chat_id=query.message.chat.id, text=escape_markdown_v2(unescaped_text), parse_mode='MarkdownV2')
-    await query.answer()
+    # The elif action_prefix == "get_cv" block was here and has been completely removed.
+    # CVs are now sent proactively by _display_application_page_common.
+
+    await query.answer() # This needs to be called for all callback queries handled.
 
 async def handle_next_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await restricted_access(update, context): return

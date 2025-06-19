@@ -493,7 +493,7 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                 <a href="index.html" class="flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-lg">
-                    <img src="Solutions.png" alt="Bridgee Solutions Logo" class="h-12 w-auto" />
+                    <img src="Solutions.png" alt="Bridgee Solutions Logo" class="h-12 w-auto" id="navbar-logo-image" />
                     <span class="ml-2 text-xl font-semibold text-gray-800">Bridgee <span class="text-blue-600">Solutions</span></span>
                 </a>
                 </div>
@@ -530,7 +530,7 @@
     <!-- Hero Section -->
     <section class="hero-gradient pb-28 md:pb-40"> {/* Removed py-28, md:py-40; Added pb-28, md:pb-40 */}
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
-            <div class="md:w-full flex flex-col items-start max-w-4xl pt-24 mt-10 md:mt-0" style="position: relative; z-index: 1;"> {/* Added pt-24 */}
+            <div class="md:w-full flex flex-col items-start max-w-4xl pt-32 mt-10 md:mt-0" style="position: relative; z-index: 1;"> {/* Changed pt-24 to pt-32 */}
                 <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-8">Your Bridge to <span class="underline decoration-blue-300">Scalable, Skilled</span> and <span class="underline decoration-blue-300">Smart</span> Outsourcing</h1>
                 <p class="text-lg md:text-xl mb-10 leading-relaxed">Virtual Assistants. Software Development. Custom BPO. All tailored from Addis Ababa to power your business growth.</p>
                 <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
@@ -1214,15 +1214,18 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const navbar = document.getElementById('main-navbar');
+      const logoImg = document.getElementById('navbar-logo-image');
       // Store original link colors or rely on Tailwind to re-apply when .navbar-transparent is removed.
       // For simplicity, this script will just toggle the .navbar-transparent class.
 
       function updateNavbarStyle() {
         if (window.scrollY > 50) { // Threshold of 50px
           navbar.classList.remove('navbar-transparent');
+          if (logoImg) logoImg.src = 'Solutions.png';
           // Tailwind classes like bg-white, shadow-lg, text-gray-700, etc., will take effect.
         } else {
           navbar.classList.add('navbar-transparent');
+          if (logoImg) logoImg.src = 'Solutions_darkmode.png';
         }
       }
 

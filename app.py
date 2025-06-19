@@ -348,12 +348,17 @@ def submit_application(): # Synchronous route
         # The function will now unconditionally return success if all prior steps (CV save, logging) are fine.
         # The logging to submitted_applications.log.json which includes 'status': 'new' happens before this.
         return jsonify({
-            'message': 'Application received successfully and logged.',
+            'success': True,
+            'message': 'Your application has been submitted successfully!', # Standardized message
             'filename': filename # The unique CV filename
         }), 200
 
-    else: # Should not be reached if methods are POST, OPTIONS for this specific route
-        return jsonify({'error': 'Method not allowed for /api/submit-application'}), 405
+    except Exception as e: # Catch any unexpected errors during the process
+        app.logger.error(f"An unexpected error occurred in /api/submit-application: {str(e)}")
+        # It's good practice to log the full exception for debugging:
+        # import traceback
+        # app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'message': 'An unexpected error occurred. Please try again later.'}), 500
 
 @app.route('/api/submit-service-request', methods=['POST'])
 @cross_origin() # Apply CORS for this new route as well

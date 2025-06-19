@@ -43,6 +43,12 @@
       100% { background-position: 0% 50%; }
     } */
 
+    .hero-gradient h1,
+    .hero-gradient p,
+    .hero-gradient a[href="services.html"] { /* Target the specific secondary link for default color */
+      color: #2D3748; /* Dark gray, similar to Tailwind's gray-800 */
+    }
+
     .cta-button {
       position: relative;
       overflow: hidden;
@@ -452,19 +458,21 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-gradient text-white py-28 md:py-40">
-        <div class="container mx-auto px-6 flex flex-col-reverse md:flex-row items-center">
-            <div class="md:w-1/2 flex flex-col items-start mt-10 md:mt-0">
-                <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-8">Your Bridge to <span class="underline decoration-blue-300">Scalable, Skilled</span> and <span class="underline decoration-blue-300">Smart</span> Outsourcing</h1>
-                <p class="text-lg md:text-xl mb-10 text-white leading-relaxed">Virtual Assistants. Software Development. Custom BPO. All tailored from Addis Ababa to power your business growth.</p>
+    <section class="hero-gradient py-28 md:py-40"> {/* Removed text-white from section tag */}
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
+            <div class="md:w-full flex flex-col items-center mt-10 md:mt-0 text-center"> {/* Changed md:w-1/2 to md:w-full, items-start to items-center, added text-center */}
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-8">Your Bridge to <span class="underline decoration-blue-300">Scalable, Skilled</span> and <span class="underline decoration-blue-300">Smart</span> Outsourcing</h1> {/* Removed text-white */}
+                <p class="text-lg md:text-xl mb-10 leading-relaxed">Virtual Assistants. Software Development. Custom BPO. All tailored from Addis Ababa to power your business growth.</p> {/* Removed text-white */}
                 <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                     <a href="contact.html" class="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 text-center shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-blue-800">Let's Talk! </a>
-                    <a href="services.html" class="px-8 py-3 border-2 border-white text-gray-100 rounded-lg font-semibold text-lg hover:bg-white hover:text-blue-600 transition duration-300 text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-800">View Services</a>
+                    <a href="services.html" class="px-8 py-3 border-2 border-gray-700 rounded-lg font-semibold text-lg hover:bg-white hover:text-blue-600 transition duration-300 text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-800">View Services</a> {/* Removed text-gray-100, changed border-white to border-gray-700 */}
                 </div>
             </div>
+            {/* Removed the image div:
             <div class="md:w-1/2 flex justify-center">
                 <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Laptop displaying data analytics dashboard, representing Bridgee Solutions' smart outsourcing and software capabilities." class="rounded-lg shadow-2xl max-h-96 w-auto object-cover">
             </div>
+            */}
         </div>
     </section>
 

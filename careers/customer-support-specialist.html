@@ -458,53 +458,92 @@
   <script>
     AOS.init();
   </script>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          const applicationForm = document.getElementById('applicationForm');
-          const formStatusMessage = document.getElementById('formStatusMessage');
-          const submitButton = applicationForm.querySelector('button[type="submit"]');
+    <script>
+    // Ensure this runs after the DOM is loaded, or that elements are available
+    // For safety, wrap in DOMContentLoaded if not sure
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('careerApplicationForm');
+        const successMessageContainer = document.getElementById('successMessageContainerCareers');
+        const feedbackDiv = document.getElementById('formFeedbackCareers');
 
-          if (applicationForm) {
-            applicationForm.addEventListener('submit', async function (event) {
-              event.preventDefault();
-              const originalButtonText = submitButton.innerHTML;
-              submitButton.disabled = true;
-              submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
-              formStatusMessage.textContent = ''; // Clear previous messages
-              formStatusMessage.className = 'mt-4 text-center'; // Reset classes
+        // Important: Check if form exists before adding listener
+        if (form) {
+            const submitButton = form.querySelector('button[type="submit"]');
 
-              const formData = new FormData(applicationForm);
+            if (!successMessageContainer || !feedbackDiv || !submitButton) {
+                console.error('Inline script: Missing one or more required feedback/button elements.');
+                return;
+            }
 
-              try {
-                const response = await fetch('http://127.0.0.1:5000/api/submit-application', {
-                  method: 'POST',
-                  body: formData,
-                  // Headers are not typically needed for FormData with fetch,
-                  // as the browser sets Content-Type to multipart/form-data correctly.
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const originalButtonText = submitButton.innerHTML;
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...'; // Or add a spinner
+
+                const formData = new FormData(form);
+
+                fetch('/api/submit-application', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    // It's good practice to check if response.ok before response.json()
+                    if (!response.ok) {
+                        // Try to get error message from backend if possible,
+                        // otherwise, a generic one.
+                        return response.json().catch(() => ({ // Catch if .json() itself fails
+                           success: false,
+                           message: `Server error: ${response.status} ${response.statusText}`
+                        })).then(errData => Promise.reject(errData)); // Make it a rejected promise
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                    feedbackDiv.textContent = '';
+                    feedbackDiv.className = 'mt-4 text-center';
+
+                    if (data.success) {
+                        form.classList.add('opacity-0', 'transition-opacity', 'duration-500', 'ease-out');
+                        setTimeout(() => {
+                            form.classList.add('hidden');
+                            form.classList.remove('opacity-0');
+                            successMessageContainer.classList.remove('hidden');
+                            successMessageContainer.classList.add('opacity-0', 'transition-opacity', 'duration-500', 'ease-in');
+                            setTimeout(() => {
+                                successMessageContainer.classList.remove('opacity-0');
+                            }, 20);
+                            form.reset();
+                        }, 500);
+                    } else {
+                        form.classList.remove('hidden', 'opacity-0');
+                        successMessageContainer.classList.add('hidden');
+                        feedbackDiv.className = 'text-red-600 mt-4 text-center p-2 bg-red-100 rounded'; // Added text-center here for consistency
+                        feedbackDiv.textContent = data.message || 'An unknown error occurred.';
+                    }
+                })
+                .catch(error => { // Catches network errors and errors from response.ok check
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                    form.classList.remove('hidden', 'opacity-0');
+                    successMessageContainer.classList.add('hidden');
+                    feedbackDiv.className = 'text-red-600 mt-4 text-center p-2 bg-red-100 rounded'; // Added text-center here for consistency
+                    // If error is an object with a message property (from our rejected promise)
+                    if (error && error.message) {
+                        feedbackDiv.textContent = error.message;
+                    } else {
+                        feedbackDiv.textContent = 'A network error or unexpected issue occurred. Please try again.';
+                    }
+                    console.error('Error submitting form:', error);
                 });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                  formStatusMessage.textContent = result.message || 'Application submitted successfully!';
-                  formStatusMessage.classList.add('text-green-600');
-                  applicationForm.reset(); // Clear the form on success
-                } else {
-                  formStatusMessage.textContent = result.error || 'An unknown error occurred.';
-                  formStatusMessage.classList.add('text-red-600');
-                }
-              } catch (error) {
-                console.error('Submission error:', error);
-                formStatusMessage.textContent = 'An error occurred while submitting the form. Please try again.';
-                formStatusMessage.classList.add('text-red-600');
-              } finally {
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
-              }
             });
-          }
-        });
-      </script>
+        } else {
+            console.error('Inline script: Form with ID "careerApplicationForm" not found.');
+        }
+    });
+    </script>
 </body>
 </html>
 

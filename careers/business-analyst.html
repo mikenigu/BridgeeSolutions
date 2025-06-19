@@ -458,53 +458,16 @@
   <script>
     AOS.init();
   </script>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          const applicationForm = document.getElementById('applicationForm');
-          const formStatusMessage = document.getElementById('formStatusMessage');
-          const submitButton = applicationForm.querySelector('button[type="submit"]');
-
-          if (applicationForm) {
-            applicationForm.addEventListener('submit', async function (event) {
-              event.preventDefault();
-              const originalButtonText = submitButton.innerHTML;
-              submitButton.disabled = true;
-              submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
-              formStatusMessage.textContent = ''; // Clear previous messages
-              formStatusMessage.className = 'mt-4 text-center'; // Reset classes
-
-              const formData = new FormData(applicationForm);
-
-              try {
-                const response = await fetch('http://127.0.0.1:5000/api/submit-application', {
-                  method: 'POST',
-                  body: formData,
-                  // Headers are not typically needed for FormData with fetch,
-                  // as the browser sets Content-Type to multipart/form-data correctly.
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                  formStatusMessage.textContent = result.message || 'Application submitted successfully!';
-                  formStatusMessage.classList.add('text-green-600');
-                  applicationForm.reset(); // Clear the form on success
-                } else {
-                  formStatusMessage.textContent = result.error || 'An unknown error occurred.';
-                  formStatusMessage.classList.add('text-red-600');
-                }
-              } catch (error) {
-                console.error('Submission error:', error);
-                formStatusMessage.textContent = 'An error occurred while submitting the form. Please try again.';
-                formStatusMessage.classList.add('text-red-600');
-              } finally {
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
-              }
-            });
-          }
+    <!-- Old inline script removed -->
+    <script src="../static/js/career_form_handler.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure the function is called only if the form exists on this page.
+            if (document.getElementById('careerApplicationForm')) {
+                handleCareerFormSubmit('careerApplicationForm', 'successMessageContainerCareers', 'formFeedbackCareers');
+            }
         });
-      </script>
+    </script>
 </body>
 </html>
 

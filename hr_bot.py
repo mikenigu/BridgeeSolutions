@@ -286,8 +286,7 @@ async def _display_application_page_common(update: Update, context: ContextTypes
                 formatted_timestamp = escape_markdown_v2(reviewed_timestamp_raw)
 
             actor_info_display = escape_markdown_v2(reviewed_by_name_raw)
-            if reviewed_by_id_raw:
-                 actor_info_display += f" \\(ID: {escape_markdown_v2(str(reviewed_by_id_raw))}\\)" # Escaped parentheses
+            # Removed ID display: if reviewed_by_id_raw: actor_info_display += f" \\(ID: {escape_markdown_v2(str(reviewed_by_id_raw))}\\)"
             message_text += f"*Last Action:* {formatted_timestamp} by {actor_info_display}\n"
 
         keyboard_buttons = []
@@ -525,8 +524,7 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
                     formatted_timestamp = escape_markdown_v2(reviewed_timestamp_raw_updated)
 
                 actor_info = escape_markdown_v2(reviewed_by_name_updated)
-                if reviewed_by_id_updated:
-                    actor_info += f" \\(ID: {escape_markdown_v2(str(reviewed_by_id_updated))}\\)" # Escaped parentheses
+                # Removed ID display: if reviewed_by_id_updated: actor_info += f" \\(ID: {escape_markdown_v2(str(reviewed_by_id_updated))}\\)"
                 message_text_updated += f"*Last Action:* {formatted_timestamp} by {actor_info}\n"
 
             keyboard_buttons_updated = []

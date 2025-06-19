@@ -269,9 +269,23 @@ async def _display_application_page_common(update: Update, context: ContextTypes
                 snippet += "..."
             message_text += f"\n📄 *Cover Letter Snippet:*\n{escape_markdown_v2(snippet)}\n"
 
+        # Process submission timestamp
+        submitted_ts_iso = app_data.get('timestamp')
+        submitted_ts_display_formatted = "N/A" # Default
+        if submitted_ts_iso:
+            try:
+                if submitted_ts_iso.endswith('Z'):
+                    dt_submitted_obj = datetime.fromisoformat(submitted_ts_iso.replace('Z', '+00:00'))
+                else:
+                    dt_submitted_obj = datetime.fromisoformat(submitted_ts_iso)
+                submitted_ts_display_formatted = escape_markdown_v2(dt_submitted_obj.strftime('%Y-%m-%d %H:%M'))
+            except ValueError:
+                logger.warning(f"Could not parse submission timestamp: {submitted_ts_iso} for app {cv_filename_stored}")
+                submitted_ts_display_formatted = escape_markdown_v2(submitted_ts_iso) # Fallback
+
         message_text += (
             f"\n*Original CV Name:* {escape_markdown_v2(original_cv_name_for_display)}\n"
-            f"*Submitted:* {escape_markdown_v2(str(app_data.get('timestamp', 'N/A')))}\n"
+            f"*Submitted:* {submitted_ts_display_formatted}\n" # Use new formatted timestamp
         )
 
         reviewed_timestamp_raw = app_data.get('reviewed_timestamp')
@@ -283,7 +297,8 @@ async def _display_application_page_common(update: Update, context: ContextTypes
                 dt_object = datetime.fromisoformat(reviewed_timestamp_raw.replace('Z', '+00:00'))
                 formatted_timestamp = escape_markdown_v2(dt_object.strftime('%Y-%m-%d %H:%M UTC'))
             except ValueError:
-                formatted_timestamp = escape_markdown_v2(reviewed_timestamp_raw)
+                logger.warning(f"Could not parse reviewed timestamp: {reviewed_timestamp_raw} for app {cv_filename_stored}")
+                formatted_timestamp = escape_markdown_v2(reviewed_timestamp_raw) # Fallback
 
             actor_info_display = escape_markdown_v2(reviewed_by_name_raw)
             # Removed ID display: if reviewed_by_id_raw: actor_info_display += f" \\(ID: {escape_markdown_v2(str(reviewed_by_id_raw))}\\)"
@@ -521,7 +536,8 @@ async def button_callback_handler(update: Update, context: ContextTypes.DEFAULT_
                     dt_object = datetime.fromisoformat(reviewed_timestamp_raw_updated.replace('Z', '+00:00'))
                     formatted_timestamp = escape_markdown_v2(dt_object.strftime('%Y-%m-%d %H:%M UTC'))
                 except ValueError:
-                    formatted_timestamp = escape_markdown_v2(reviewed_timestamp_raw_updated)
+                    logger.warning(f"Could not parse reviewed timestamp (updated): {reviewed_timestamp_raw_updated} for app {full_cv_filename}")
+                    formatted_timestamp = escape_markdown_v2(reviewed_timestamp_raw_updated) # Fallback
 
                 actor_info = escape_markdown_v2(reviewed_by_name_updated)
                 # Removed ID display: if reviewed_by_id_updated: actor_info += f" \\(ID: {escape_markdown_v2(str(reviewed_by_id_updated))}\\)"

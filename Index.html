@@ -32,6 +32,17 @@
       padding: 0 !important;
     }
 
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    body {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
     .hero-gradient {
       /* background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); */
       /* animation: gradient 15s ease infinite; */
@@ -49,7 +60,7 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 100px; /* Reverted to 100px */
+      height: 100px; /* Verified and kept at 100px */
       background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
       pointer-events: none; /* Ensure it doesn't interfere with mouse events */
     }
@@ -101,6 +112,25 @@
     #main-navbar:not(.navbar-transparent) .text-blue-600 { color: #2563eb !important; }
     #main-navbar:not(.navbar-transparent) .md\:flex.items-center.hidden a:not(.bg-blue-600) { color: #374151 !important; }
     */
+
+    @keyframes fadeInBlur {
+      0% {
+        opacity: 0;
+        filter: blur(5px);
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+      }
+    }
+
+    .hero-text-animate {
+      opacity: 0; /* Initial state before animation starts or if animations are off */
+      animation: fadeInBlur 1s ease-out 0.5s forwards;
+      /* Animation properties: name, duration, timing-function, delay, fill-mode */
+    }
 
     .hero-gradient::before {
       content: '';
@@ -530,7 +560,7 @@
     <!-- Hero Section -->
     <section class="hero-gradient pb-28 md:pb-40"> {/* Removed py-28, md:py-40; Added pb-28, md:pb-40 */}
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
-            <div class="md:w-full flex flex-col items-start max-w-4xl pt-48 mt-10 md:mt-0" style="position: relative; z-index: 1;"> {/* Changed pt-64 to pt-48 */}
+            <div class="md:w-full flex flex-col items-start max-w-4xl pt-64 mt-10 md:mt-0 hero-text-animate" style="position: relative; z-index: 1;"> {/* Changed pt-48 to pt-64 */}
                 <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-8">Your Bridge to <span class="underline decoration-blue-300">Scalable, Skilled</span> and <span class="underline decoration-blue-300">Smart</span> Outsourcing</h1>
                 <p class="text-lg md:text-xl mb-10 leading-relaxed">Virtual Assistants. Software Development. Custom BPO. All tailored from Addis Ababa to power your business growth.</p>
                 <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">

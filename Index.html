@@ -129,6 +129,7 @@
     .hero-text-animate {
       opacity: 0; /* Initial state before animation starts or if animations are off */
       animation: fadeInBlur 1s ease-out 0.2s forwards;
+
       /* Animation properties: name, duration, timing-function, delay, fill-mode */
     }
 
@@ -531,7 +532,17 @@
                 <div class="md:flex items-center hidden space-x-8">
                     <a href="index.html" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
                     <a href="about.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
-                    <a href="services.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
+                    <!-- Services Dropdown -->
+                    <div class="relative group">
+                        <button class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md inline-flex items-center">
+                            Services <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-20 hidden group-hover:block group-focus-within:block">
+                            <a href="service-virtual-assistance.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Virtual Assistance</a>
+                            <a href="service-software-development.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Software Development</a>
+                            <a href="service-bpo.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Custom BPO Services</a>
+                        </div>
+                    </div>
                     <a href="careers.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
                     <a href="index.html#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
                     <a href="contact.html" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -548,7 +559,18 @@
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
                     <a href="index.html" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
                     <a href="about.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
-                    <a href="services.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
+                    <!-- Mobile Services Dropdown -->
+                    <div>
+                        <button class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50" onclick="toggleMobileServicesDropdown(event)">
+                            Services
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="mobile-services-dropdown" class="hidden pl-4 border-l border-gray-200 ml-3">
+                            <a href="service-virtual-assistance.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Virtual Assistance</a>
+                            <a href="service-software-development.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Software Development</a>
+                            <a href="service-bpo.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Custom BPO Services</a>
+                        </div>
+                    </div>
                     <a href="careers.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
                     <a href="index.html#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
                     <a href="contact.html" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -587,7 +609,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-4">Virtual Assistance</h3>
                     <p class="text-gray-600 mb-6 leading-relaxed">Boost productivity with skilled remote assistants handling admin, inboxes, research & more.</p>
-                    <a href="services.html#virtual-assistance" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Learn More <i class="fas fa-arrow-right ml-2"></i></a>
+                    <a href="service-virtual-assistance.html" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Learn More <i class="fas fa-arrow-right ml-2"></i></a>
                 </div>
                 
                 <!-- Service 2 -->
@@ -597,7 +619,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-4">Software Development</h3>
                     <p class="text-gray-600 mb-6 leading-relaxed">Full-stack web & mobile solutions — custom-built by our agile, experienced dev teams.</p>
-                    <a href="services.html#software-development" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Learn More <i class="fas fa-arrow-right ml-2"></i></a>
+                    <a href="service-software-development.html" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Learn More <i class="fas fa-arrow-right ml-2"></i></a>
                 </div>
                 
                 <!-- Service 3 -->
@@ -607,7 +629,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-4">Custom BPO Services</h3>
                     <p class="text-gray-600 mb-6 leading-relaxed">Outsource customer support, lead gen, data entry, or accounting — tailored to your needs.</p>
-                    <a href="services.html#bpo-services" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Learn More <i class="fas fa-arrow-right ml-2"></i></a>
+                    <a href="service-bpo.html" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Learn More <i class="fas fa-arrow-right ml-2"></i></a>
                 </div>
             </div>
         </div>
@@ -639,6 +661,16 @@
                             <div>
                                 <h4 class="font-semibold text-gray-800 mb-1">Skilled local talent</h4>
                                 <p class="text-gray-600 leading-relaxed">Handpicked professionals from Addis Ababa with rigorous vetting.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 p-2 rounded-full mr-4">
+                                <i class="fas fa-rocket text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-1">Fast Onboarding</h4>
+                                <p class="text-gray-600 leading-relaxed">Our streamlined processes ensure your new team members are integrated and productive in record time.</p>
                             </div>
                         </div>
                         
@@ -691,55 +723,76 @@
             </div>
             
             <div class="tech-logo-scroller-container" style="overflow: hidden; padding: 20px 0;">
-                <div class="tech-logo-row" id="tech-logo-row-1">
+                <p class="text-lg text-gray-700 font-semibold mb-6 text-center">CRM</p>
+                <div class="tech-logo-row" id="tech-logo-row-crm">
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">React</span>
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/hubspot/hubspot-original.svg" alt="HubSpot" class="h-16 w-16 mb-2">
+                        <span class="text-sm font-medium text-gray-700">HubSpot</span>
                     </div>
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Node.js</span>
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/salesforce/salesforce-original.svg" alt="Salesforce" class="h-16 w-16 mb-2">
+                        <span class="text-sm font-medium text-gray-700">Salesforce</span>
                     </div>
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-plain.svg" alt="Laravel" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Laravel</span>
+                        <img src="https://i.imgur.com/eQ9hPF9.png" alt="Pipedrive" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
+                        <span class="text-sm font-medium text-gray-700">Pipedrive</span>
                     </div>
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" alt="Django" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Django</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" alt="Flutter" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Flutter</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">PostgreSQL</span>
+                        <img src="https://i.imgur.com/n9g8c9L.png" alt="Zoho CRM" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
+                        <span class="text-sm font-medium text-gray-700">Zoho CRM</span>
                     </div>
                 </div>
-                <div class="tech-logo-row" id="tech-logo-row-2" style="margin-top: 20px;">
+                <p class="text-lg text-gray-700 font-semibold mt-10 mb-6 text-center">Outreach</p>
+                <div class="tech-logo-row" id="tech-logo-row-outreach" style="margin-top: 20px;">
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" alt="Figma" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Figma</span>
+                        <img src="https://i.imgur.com/VpLd47N.png" alt="LinkedIn Sales Navigator" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
+                        <span class="text-sm font-medium text-gray-700">LinkedIn Sales Navigator</span>
                     </div>
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Python</span>
+                        <img src="https://i.imgur.com/9k8Gj4Z.png" alt="Apollo.io" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
+                        <span class="text-sm font-medium text-gray-700">Apollo.io</span>
                     </div>
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">JavaScript</span>
+                        <img src="https://i.imgur.com/6yZzA9k.png" alt="Lemlist" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
+                        <span class="text-sm font-medium text-gray-700">Lemlist</span>
                     </div>
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">PHP</span>
+                        <img src="https://i.imgur.com/j4xOR3W.png" alt="Mailshake" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
+                        <span class="text-sm font-medium text-gray-700">Mailshake</span>
                     </div>
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" alt="Vue.js" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Vue.js</span>
+                        <img src="https://i.imgur.com/3YtB0rW.png" alt="Hunter.io" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
+                        <span class="text-sm font-medium text-gray-700">Hunter.io</span>
+                    </div>
+                </div>
+                <p class="text-lg text-gray-700 font-semibold mt-10 mb-6 text-center">Scheduling</p>
+                <div class="tech-logo-row" id="tech-logo-row-scheduling" style="margin-top: 20px;">
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
+                        <img src="https://i.imgur.com/x0n9fp0.png" alt="Calendly" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
+                        <span class="text-sm font-medium text-gray-700">Calendly</span>
                     </div>
                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <span class="text-2xl font-bold text-gray-700">+ more</span>
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecalendar/googlecalendar-original.svg" alt="Google Calendar" class="h-16 w-16 mb-2">
+                        <span class="text-sm font-medium text-gray-700">Google Calendar</span>
+                    </div>
+                </div>
+                <p class="text-lg text-gray-700 font-semibold mt-10 mb-6 text-center">Reporting</p>
+                 <div class="tech-logo-row" id="tech-logo-row-reporting" style="margin-top: 20px;">
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlesheets/googlesheets-original.svg" alt="Google Sheets" class="h-16 w-16 mb-2">
+                        <span class="text-sm font-medium text-gray-700">Google Sheets</span>
+                    </div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftexcel/microsoftexcel-original.svg" alt="Excel" class="h-16 w-16 mb-2">
+                        <span class="text-sm font-medium text-gray-700">Excel</span>
+                    </div>
+                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/notion/notion-original.svg" alt="Notion" class="h-16 w-16 mb-2">
+                        <span class="text-sm font-medium text-gray-700">Notion</span>
+                    </div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/airtable/airtable-original.svg" alt="Airtable" class="h-16 w-16 mb-2">
+                        <span class="text-sm font-medium text-gray-700">Airtable</span>
                     </div>
                 </div>
             </div>
@@ -758,7 +811,7 @@
             <div class="max-w-3xl mx-auto bg-gray-50 p-8 rounded-xl shadow-lg text-center" data-aos="fade-up" data-aos-duration="700" data-aos-offset="100" data-aos-easing="ease-out-cubic">
                 <h3 class="text-2xl font-semibold text-gray-800 mb-4">Why Work With Us?</h3>
                 <p class="text-gray-600 mb-8 leading-relaxed">At Bridgee Solutions, we foster a culture of innovation, collaboration, and continuous learning. We believe in empowering our team members and providing opportunities for professional development in a supportive environment.</p>
-                <a href="mailto:careers@bridgeesolutions.com?subject=Career%20Inquiry" class="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 inline-flex items-center shadow-md  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">
+                <a href="careers.html" class="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 inline-flex items-center shadow-md  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">
                     Inquire About Careers <i class="fas fa-paper-plane ml-2"></i>
                 </a>
             </div>
@@ -779,32 +832,32 @@
                     <!-- Testimonial 1 -->
                     <div class="swiper-slide testimonial-card p-8 rounded-xl">
                         <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">MC</div>
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">AS</div>
                             <div>
-                                <h4 class="font-bold">Michael Chen</h4>
-                                <p class="text-blue-200 text-sm">Founder, Startup Innovators Inc.</p>
+                                <h4 class="font-bold">Aisha S.</h4>
+                                <p class="text-blue-200 text-sm">Owner, Bloom & Grow E-commerce</p>
                             </div>
                         </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"Bridgee Solutions provided an incredibly skilled virtual assistant who transformed our administrative workflow. Tasks that used to take hours are now done in minutes. Highly recommend their professionalism and efficiency!"</p>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"Our Bridgee VA, Meron, has been a game-changer. She handles all our customer inquiries with such grace and efficiency, and her proactive approach to organizing our schedule has freed up so much of my time. We've seen a noticeable improvement in customer response times."</p>
                         <div class="flex">
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star-half-alt text-yellow-300"></i>
                         </div>
                     </div>
 
                     <!-- Testimonial 2 -->
                     <div class="swiper-slide testimonial-card p-8 rounded-xl">
                         <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">PS</div>
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">RJ</div>
                             <div>
-                                <h4 class="font-bold">Priya Sharma</h4>
-                                <p class="text-blue-200 text-sm">Marketing Director, GlobalReach Ltd.</p>
+                                <h4 class="font-bold">Robert J.</h4>
+                                <p class="text-blue-200 text-sm">Lead Developer, Innovatech Solutions</p>
                             </div>
                         </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"The custom BPO services we received for lead generation were top-notch. The Bridgee team quickly understood our targets and delivered quality leads that have significantly boosted our sales pipeline. Their team integrated seamlessly with ours."</p>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"We partnered with Bridgee for a complex web app build. Their development team, led by Dawit, was not only technically proficient with Python and React but also fantastic communicators. They integrated with our JIRA and Slack, and it felt like they were part of our in-house team. Project delivered on schedule and the code quality was impressive."</p>
                         <div class="flex">
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
@@ -817,49 +870,49 @@
                     <!-- Testimonial 3 -->
                     <div class="swiper-slide testimonial-card p-8 rounded-xl">
                         <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">JK</div>
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">KF</div>
                             <div>
-                                <h4 class="font-bold">James Kalu</h4>
-                                <p class="text-blue-200 text-sm">CTO, Enterprise Solutions Hub</p>
+                                <h4 class="font-bold">Karen F.</h4>
+                                <p class="text-blue-200 text-sm">Marketing Manager, SparkleClean Services</p>
                             </div>
                         </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"We needed a flexible team of developers for a critical project, and Bridgee Solutions delivered. Their full-stack expertise and agile approach were key to our success. They are a reliable technology partner."</p>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"Bridgee's BPO team took over our appointment setting and follow-up calls. The onboarding was smooth, and they quickly learned our CRM. We've seen a 20% increase in qualified appointments in just three months. Their professionalism with our potential clients is exactly what we hoped for."</p>
                         <div class="flex">
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="far fa-star text-yellow-300"></i>
                         </div>
                     </div>
-                    <!-- New Testimonial 1 (Previously added) -->
+                    <!-- New Testimonial 4 -->
                     <div class="swiper-slide testimonial-card p-8 rounded-xl">
                         <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">LW</div>
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">MT</div>
                             <div>
-                                <h4 class="font-bold">Lisa Wong</h4>
-                                <p class="text-blue-200 text-sm">Operations Manager, TechStrive Solutions</p>
+                                <h4 class="font-bold">Marcus T.</h4>
+                                <p class="text-blue-200 text-sm">Founder, QuickFix IT Support</p>
                             </div>
                         </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"The software development team from Bridgee Solutions was exceptional. They delivered our project on time, under budget, and the quality was outstanding. Their communication throughout the process was proactive and clear."</p>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"The virtual assistant service has been invaluable. My VA helps manage my overflowing inbox, schedules client meetings using Calendly, and even handles basic social media updates. This has allowed me to focus on the technical side of my business. The cost-effectiveness is a huge plus for a small business like mine."</p>
                         <div class="flex">
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
+                            <i class="fas fa-star-half-alt text-yellow-300"></i>
                         </div>
                     </div>
-                    <!-- New Testimonial 2 (Previously added) -->
+                    <!-- New Testimonial 5 -->
                     <div class="swiper-slide testimonial-card p-8 rounded-xl">
                         <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">DM</div>
+                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">SB</div>
                             <div>
-                                <h4 class="font-bold">David Miller</h4>
-                                <p class="text-blue-200 text-sm">CEO, GreenLeaf Organics</p>
+                                <h4 class="font-bold">Sarah B.</h4>
+                                <p class="text-blue-200 text-sm">Project Manager, ConstructWell Ltd.</p>
                             </div>
                         </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"Outsourcing our customer service to Bridgee has allowed us to focus on our core business. Our customer satisfaction rates have improved, and the Bridgee team feels like a true extension of our own."</p>
+                        <p class="text-blue-100 mb-6 leading-relaxed">"We needed a team for data entry and document management for a large construction project. Bridgee provided a dedicated team that was accurate, efficient, and adapted quickly to our proprietary software. Their reporting via Google Sheets was clear and timely, making project tracking much easier."</p>
                         <div class="flex">
                             <i class="fas fa-star text-yellow-300"></i>
                             <i class="fas fa-star text-yellow-300"></i>
@@ -886,6 +939,12 @@
             <div class="text-center mb-16" data-aos="fade-up" data-aos-duration="600" data-aos-offset="100" data-aos-easing="ease-out-cubic">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">From Our <span class="text-blue-600">Blog</span></h2>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">Stay updated with our latest insights, news, and articles on outsourcing, technology, and business growth.</p>
+                <div class="mt-6 flex justify-center space-x-4">
+                    <a href="https://www.facebook.com/bridgeesolutions" target="_blank" class="text-gray-500 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50 rounded-md" aria-label="Bridgee Solutions on Facebook"><i class="fab fa-facebook-f text-2xl"></i></a>
+                    <a href="https://www.twitter.com/bridgeesolutions" target="_blank" class="text-gray-500 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50 rounded-md" aria-label="Bridgee Solutions on Twitter"><i class="fab fa-twitter text-2xl"></i></a>
+                    <a href="https://www.linkedin.com/company/bridgeesolutions" target="_blank" class="text-gray-500 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50 rounded-md" aria-label="Bridgee Solutions on LinkedIn"><i class="fab fa-linkedin-in text-2xl"></i></a>
+                    <a href="https://www.instagram.com/bridgeesolutions" target="_blank" class="text-gray-500 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50 rounded-md" aria-label="Bridgee Solutions on Instagram"><i class="fab fa-instagram text-2xl"></i></a>
+                </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 <!-- Blog posts will be dynamically inserted here -->
@@ -934,7 +993,7 @@
                     <ul class="space-y-2">
                         <li><a href="privacy-policy.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
                         <li><a href="terms-of-service.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
-                        <li><a href="gdpr-compliance.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">GDPR Compliance</a></li>
+
                     </ul>
                 </div>
             </div>
@@ -992,6 +1051,17 @@
           menuButton.focus();
         }
       });
+
+      function toggleMobileServicesDropdown(event) {
+          event.preventDefault();
+          const dropdown = document.getElementById('mobile-services-dropdown');
+          dropdown.classList.toggle('hidden');
+          const icon = event.currentTarget.querySelector('i');
+          if (icon) {
+              icon.classList.toggle('fa-chevron-down');
+              icon.classList.toggle('fa-chevron-up');
+          }
+      }
     </script>
 
   <!-- AOS and other scripts -->

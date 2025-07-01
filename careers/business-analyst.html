@@ -105,7 +105,17 @@
                 <div class="md:flex items-center hidden space-x-8">
                     <a href="../index.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
                     <a href="../about.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
-                    <a href="../services.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
+                    <!-- Services Dropdown -->
+                    <div class="relative group">
+                        <button class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md inline-flex items-center">
+                            Services <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-20 hidden group-hover:block group-focus-within:block">
+                            <a href="../service-virtual-assistance.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Virtual Assistance</a>
+                            <a href="../service-software-development.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Software Development</a>
+                            <a href="../service-bpo.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Custom BPO Services</a>
+                        </div>
+                    </div>
                     <a href="../careers.html" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
                     <a href="../index.html#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
                     <a href="../contact.html" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -122,7 +132,18 @@
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
                     <a href="../index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
                     <a href="../about.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
-                    <a href="../services.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
+                    <!-- Mobile Services Dropdown -->
+                    <div>
+                        <button class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50" onclick="toggleMobileServicesDropdown(event)">
+                            Services
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="mobile-services-dropdown" class="hidden pl-4 border-l border-gray-200 ml-3">
+                            <a href="../service-virtual-assistance.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Virtual Assistance</a>
+                            <a href="../service-software-development.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Software Development</a>
+                            <a href="../service-bpo.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Custom BPO Services</a>
+                        </div>
+                    </div>
                     <a href="../careers.html" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
                     <a href="../index.html#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
                     <a href="../contact.html" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -395,7 +416,7 @@
                     <ul class="space-y-2">
                         <li><a href="../privacy-policy.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
                         <li><a href="../terms-of-service.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
-                        <li><a href="../gdpr-compliance.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">GDPR Compliance</a></li>
+
                     </ul>
                 </div>
             </div>
@@ -457,6 +478,17 @@
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
     AOS.init();
+
+    function toggleMobileServicesDropdown(event) {
+        event.preventDefault();
+        const dropdown = document.getElementById('mobile-services-dropdown');
+        dropdown.classList.toggle('hidden');
+        const icon = event.currentTarget.querySelector('i');
+        if (icon) {
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+    }
   </script>
     <!-- Old inline script removed -->
     <script src="../static/js/career_form_handler.js" defer></script>

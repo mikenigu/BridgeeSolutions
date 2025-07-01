@@ -15,6 +15,9 @@
   <!-- AOS (Animate on Scroll) -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
+  <!-- Swiper.js CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
   <!-- Fonts and Custom Styles -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -199,7 +202,17 @@
                 <div class="md:flex items-center hidden space-x-8">
                     <a href="index.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
                     <a href="about.html" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
-                    <a href="services.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
+                    <!-- Services Dropdown -->
+                    <div class="relative group">
+                        <button class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md inline-flex items-center">
+                            Services <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-20 hidden group-hover:block group-focus-within:block">
+                            <a href="service-virtual-assistance.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Virtual Assistance</a>
+                            <a href="service-software-development.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Software Development</a>
+                            <a href="service-bpo.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Custom BPO Services</a>
+                        </div>
+                    </div>
                     <a href="careers.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
                     <a href="index.html#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
                     <a href="contact.html" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -216,7 +229,18 @@
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
                     <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
                     <a href="about.html" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
-                    <a href="services.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
+                     <!-- Mobile Services Dropdown -->
+                    <div>
+                        <button class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50" onclick="toggleMobileServicesDropdown(event)">
+                            Services
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="mobile-services-dropdown" class="hidden pl-4 border-l border-gray-200 ml-3">
+                            <a href="service-virtual-assistance.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Virtual Assistance</a>
+                            <a href="service-software-development.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Software Development</a>
+                            <a href="service-bpo.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Custom BPO Services</a>
+                        </div>
+                    </div>
                     <a href="careers.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
                     <a href="index.html#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
                     <a href="contact.html" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -339,29 +363,48 @@
                 </div>
                 <div class="mt-12 bg-blue-50 p-8 rounded-lg shadow-xl" data-aos="fade-up" data-aos-delay="500">
                     <h4 class="font-bold text-blue-800 text-2xl mb-3 text-center">Our Commitment</h4>
-                    <p class="text-blue-700 text-center text-lg">Every Bridgee team member completes our 200-hour training program in communication, tools, and best practices before joining client projects, ensuring they are ready to deliver value from day one.</p>
+                    <p class="text-blue-700 text-center text-lg">We are dedicated to rigorous training and continuous professional development for all our team members. This includes comprehensive onboarding covering essential communication skills, proficiency in key business tools, and adherence to industry best practices, ensuring our team is well-prepared to deliver exceptional value to our clients from the outset.</p>
                 </div>
             </section>
 
             <section class="mb-12 md:mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-12 mb-10 text-center" data-aos="fade-up">Meet Our Leadership</h2>
-                <div class="grid md:grid-cols-2 gap-10">
-                    <div class="text-center p-6 bg-gray-50 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="100">
-                        <div class="w-36 h-36 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-gray-500 shadow-md">
-                            <i class="fas fa-user text-5xl"></i> <!-- Placeholder Icon -->
+                <!-- Swiper container for leadership -->
+                <div class="swiper leadership-swiper overflow-hidden" data-aos="fade-up" data-aos-delay="100">
+                    <div class="swiper-wrapper">
+                        <!-- Leadership Slide 1 -->
+                        <div class="swiper-slide">
+                            <div class="text-center p-6 bg-gray-50 rounded-xl shadow-lg h-full flex flex-col justify-between">
+                                <div>
+                                    <div class="w-36 h-36 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-gray-500 shadow-md">
+                                        <i class="fas fa-user text-5xl"></i> <!-- Placeholder Icon -->
+                                    </div>
+                                    <h4 class="text-xl font-semibold text-gray-800">Fiker Anteneh</h4>
+                                    <p class="text-blue-600 font-semibold">Founder & COO</p>
+                                    <p class="text-gray-600 mt-3 text-sm">With a passion for operational excellence and client success, Fiker ensures Bridgee's services consistently exceed expectations.</p>
+                                </div>
+                            </div>
                         </div>
-                        <h4 class="text-xl font-semibold text-gray-800">Fiker Anteneh</h4>
-                        <p class="text-blue-600 font-semibold">Founder & COO</p>
-                        <p class="text-gray-600 mt-3 text-sm">With a passion for operational excellence and client success, Fiker ensures Bridgee's services consistently exceed expectations.</p>
-                    </div>
-                    <div class="text-center p-6 bg-gray-50 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="200">
-                        <div class="w-36 h-36 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-gray-500 shadow-md">
-                             <i class="fas fa-user-tie text-5xl"></i> <!-- Placeholder Icon -->
+                        <!-- Leadership Slide 2 -->
+                        <div class="swiper-slide">
+                            <div class="text-center p-6 bg-gray-50 rounded-xl shadow-lg h-full flex flex-col justify-between">
+                                <div>
+                                    <div class="w-36 h-36 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-gray-500 shadow-md">
+                                        <i class="fas fa-user-tie text-5xl"></i> <!-- Placeholder Icon -->
+                                    </div>
+                                    <h4 class="text-xl font-semibold text-gray-800">Michael Nigussie</h4>
+                                    <p class="text-blue-600 font-semibold">Co-founder & CTO</p>
+                                    <p class="text-gray-600 mt-3 text-sm">Michael drives our technological innovation, leading our development teams to build cutting-edge solutions for our clients.</p>
+                                </div>
+                            </div>
                         </div>
-                        <h4 class="text-xl font-semibold text-gray-800">Michael Nigussie</h4>
-                        <p class="text-blue-600 font-semibold">Co-founder & CTO</p>
-                        <p class="text-gray-600 mt-3 text-sm">Michael drives our technological innovation, leading our development teams to build cutting-edge solutions for our clients.</p>
+                        <!-- Add more leadership slides here if needed -->
                     </div>
+                    <!-- Add Pagination -->
+                    <div class="swiper-pagination leadership-pagination"></div>
+                    <!-- Add Navigation Buttons -->
+                    <div class="swiper-button-prev leadership-button-prev"></div>
+                    <div class="swiper-button-next leadership-button-next"></div>
                 </div>
                 <p class="text-center text-gray-600 mt-12" data-aos="fade-up">More team member profiles coming soon!</p>
             </section>
@@ -418,7 +461,7 @@
                     <ul class="space-y-2">
                         <li><a href="privacy-policy.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
                         <li><a href="terms-of-service.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
-                        <li><a href="gdpr-compliance.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">GDPR Compliance</a></li>
+
                     </ul>
                 </div>
             </div>
@@ -481,14 +524,45 @@
 
   <!-- AOS and other scripts -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <!-- Swiper.js JS -->
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
   <script>
     AOS.init();
 
-    // Fade-in hero elements on page load (if this script is still needed and separate)
-    // window.addEventListener('DOMContentLoaded', () => {
-    //   document.getElementById('hero-text')?.classList.remove('opacity-0', 'translate-y-6');
-    //   document.getElementById('hero-image')?.classList.remove('opacity-0', 'translate-y-6');
-    // });
+    // Leadership Swiper Initialization
+    document.addEventListener('DOMContentLoaded', function () {
+      const leadershipSwiper = new Swiper('.leadership-swiper', {
+        loop: true, // Optional: enable continuous loop
+        slidesPerView: 1,
+        spaceBetween: 30,
+        navigation: {
+          nextEl: '.leadership-button-next',
+          prevEl: '.leadership-button-prev',
+        },
+        pagination: {
+          el: '.leadership-pagination',
+          clickable: true,
+        },
+        breakpoints: {
+          // when window width is >= 768px
+          768: {
+            slidesPerView: 2,
+            spaceBetween: 30
+          },
+        }
+      });
+    });
+
+    function toggleMobileServicesDropdown(event) {
+        event.preventDefault();
+        const dropdown = document.getElementById('mobile-services-dropdown');
+        dropdown.classList.toggle('hidden');
+        const icon = event.currentTarget.querySelector('i');
+        if (icon) {
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+    }
   </script>
 </body>
 </html>

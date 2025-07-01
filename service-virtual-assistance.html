@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GDPR Compliance | Bridgee Solutions</title>
-  <meta name="description" content="Learn about Bridgee Solutions' commitment to GDPR and data protection principles.">
+  <title>Virtual Assistance Services | Bridgee Solutions</title>
+  <meta name="description" content="Detailed information about Virtual Assistance services offered by Bridgee Solutions.">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,6 +15,9 @@
   <!-- AOS (Animate on Scroll) -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
+  <!-- Swiper.js CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
   <!-- Fonts and Custom Styles -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -22,10 +25,8 @@
       font-family: 'Poppins', sans-serif;
       scroll-behavior: smooth;
     }
-    /* Add other common styles if necessary */
   </style>
 </head>
-
 <body class="bg-gray-50">
 
     <!-- Navigation -->
@@ -42,7 +43,17 @@
                 <div class="md:flex items-center hidden space-x-8">
                     <a href="index.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
                     <a href="about.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
-                    <a href="services.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Services</a>
+                    <!-- Services Dropdown -->
+                    <div class="relative group">
+                        <button class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md inline-flex items-center">
+                            Services <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-20 hidden group-hover:block group-focus-within:block">
+                            <a href="service-virtual-assistance.html" class="block px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-md">Virtual Assistance</a>
+                            <a href="service-software-development.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Software Development</a>
+                            <a href="service-bpo.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Custom BPO Services</a>
+                        </div>
+                    </div>
                     <a href="careers.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
                     <a href="index.html#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
                     <a href="contact.html" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -59,7 +70,18 @@
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
                     <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
                     <a href="about.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
-                    <a href="services.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Services</a>
+                    <!-- Mobile Services Dropdown -->
+                    <div>
+                        <button class="w-full text-left px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50" onclick="toggleMobileServicesDropdown(event)">
+                            Services
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="mobile-services-dropdown" class="hidden pl-4 border-l border-gray-200 ml-3">
+                            <a href="service-virtual-assistance.html" class="block px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50">Virtual Assistance</a>
+                            <a href="service-software-development.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Software Development</a>
+                            <a href="service-bpo.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Custom BPO Services</a>
+                        </div>
+                    </div>
                     <a href="careers.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
                     <a href="index.html#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
                     <a href="contact.html" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
@@ -68,86 +90,44 @@
         </div>
     </nav>
 
-    <main class="container mx-auto px-6 py-12 md:py-16 bg-white shadow-md rounded-lg my-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center" data-aos="fade-up">GDPR Compliance Statement</h1>
-        <p class="text-center text-gray-600 mb-10" data-aos="fade-up" data-aos-delay="100">Last Updated: October 26, 2023</p>
-
-        <section class="mb-8" data-aos="fade-up" data-aos-delay="200">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-3">Our Commitment to GDPR</h2>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                Bridgee Solutions ('we', 'us', or 'our') is committed to ensuring the security and protection of the personal information that we process, and to provide a compliant and consistent approach to data protection under the General Data Protection Regulation (GDPR) and other relevant data protection laws. We recognize the importance of the GDPR and are dedicated to safeguarding the personal data of our clients, employees, and website users.
-            </p>
+    <main id="service-detail-content">
+        <section class="bg-gradient-to-r from-blue-700 to-blue-500 text-white py-16 md:py-24">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4" data-aos="fade-up">Virtual Assistance Services</h1>
+                <p class="text-lg md:text-xl text-blue-200" data-aos="fade-up" data-aos-delay="100">Dedicated support to streamline your operations and boost productivity.</p>
+            </div>
         </section>
 
-        <section class="mb-8" data-aos="fade-up" data-aos-delay="200">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-3">What is GDPR?</h2>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                The General Data Protection Regulation (GDPR) is a comprehensive data protection law that came into effect in the European Union (EU) on May 25, 2018. It replaced previous EU data protection directives and is designed to harmonize data privacy laws across Europe, to protect and empower all EU citizens' data privacy, and to reshape the way organizations across the region approach data privacy. Even though Bridgee Solutions is based in Ethiopia, we aim to adhere to GDPR principles for any personal data we may process from individuals in the EU.
-            </p>
-        </section>
+        <div class="py-12 md:py-16 bg-white">
+            <div class="container mx-auto px-6">
+                <section class="mb-12 md:mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center" data-aos="fade-up">Elevate Your Efficiency with Our VAs</h2>
+                    <div class="max-w-3xl mx-auto text-lg text-gray-700 space-y-4" data-aos="fade-up" data-aos-delay="100">
+                        <p>Our Virtual Assistance service provides skilled professionals to handle your administrative, technical, or creative tasks. Free up your valuable time to focus on core business activities while our VAs manage your day-to-day operations with precision and dedication.</p>
+                        <p class="mt-4">Placeholder content for Virtual Assistance details. This section will be expanded with specific tasks, benefits, and how we tailor our VA services to client needs.</p>
+                        <!-- Add more detailed content here -->
+                    </div>
+                </section>
 
-        <section class="mb-8" data-aos="fade-up" data-aos-delay="200">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-3">How We Comply</h2>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                Bridgee Solutions strives to ensure that our data processing activities are lawful, fair, and transparent. We have reviewed our data collection and storage practices to align with GDPR principles. Key aspects of our compliance approach include:
-            </p>
-            <ul class="list-disc list-inside text-gray-600 space-y-1 pl-4 leading-relaxed">
-                <li>Detailed information on what personal data we collect, how it is used, shared, and retained is provided in our <a href="privacy-policy.html" class="text-blue-600 hover:underline">Privacy Policy</a>.</li>
-                <li>We implement appropriate technical and organizational measures to ensure a level of security appropriate to the risk, including protecting data against unauthorized or unlawful processing and against accidental loss, destruction, or damage.</li>
-                <li>We provide mechanisms for data subjects to exercise their rights under GDPR.</li>
-                <li>We ensure that any third-party service providers who process personal data on our behalf are also compliant with GDPR or equivalent data protection standards.</li>
-            </ul>
-        </section>
+                <section class="mb-12 md:mb-16">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center" data-aos="fade-up">Key VA Service Areas:</h3>
+                    <ul class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700" data-aos="fade-up" data-aos-delay="100">
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Administrative Support</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Email & Calendar Management</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Customer Service</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Social Media Management</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Data Entry & Research</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Content Creation Support</li>
+                    </ul>
+                </section>
 
-        <section class="mb-8" data-aos="fade-up" data-aos-delay="200">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-3">Data Subject Rights under GDPR</h2>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                Under GDPR, individuals (data subjects) have several rights concerning their personal data. These include:
-            </p>
-            <ul class="list-disc list-inside text-gray-600 space-y-1 pl-4 leading-relaxed">
-                <li><strong>Right to access:</strong> You have the right to request copies of your personal data.</li>
-                <li><strong>Right to rectification:</strong> You have the right to request that we correct any information you believe is inaccurate or complete information you believe is incomplete.</li>
-                <li><strong>Right to erasure (‘right to be forgotten’):</strong> You have the right to request that we erase your personal data, under certain conditions.</li>
-                <li><strong>Right to restrict processing:</strong> You have the right to request that we restrict the processing of your personal data, under certain conditions.</li>
-                <li><strong>Right to data portability:</strong> You have the right to request that we transfer the data that we have collected to another organization, or directly to you, under certain conditions.</li>
-                <li><strong>Right to object:</strong> You have the right to object to our processing of your personal data, under certain conditions.</li>
-            </ul>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                To exercise any of these rights, please contact us using the details provided in our Privacy Policy or below.
-            </p>
-        </section>
-
-        <section class="mb-8" data-aos="fade-up" data-aos-delay="200">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-3">Data Processing Activities</h2>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                We process personal data for specific, legitimate purposes such as providing our outsourcing services, communicating with clients and potential clients, processing job applications, and maintaining our website. We only collect personal data that is necessary for these purposes and ensure it is processed securely. For more details, please refer to our Privacy Policy.
-            </p>
-        </section>
-
-        <section class="mb-8" data-aos="fade-up" data-aos-delay="200">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-3">Data Security Measures</h2>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                We have implemented appropriate technical and organizational security measures designed to protect the security of any personal information we process. These measures aim to prevent accidental or unlawful destruction, loss, alteration, unauthorized disclosure of, or access to, personal data.
-            </p>
-        </section>
-
-        <section class="mb-8" data-aos="fade-up" data-aos-delay="200">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-3">International Data Transfers</h2>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                As a company based in Ethiopia, if we transfer personal data originating from the EU/EEA to Ethiopia or other countries outside the EU/EEA, we will ensure that appropriate safeguards are in place to protect the data in accordance with GDPR requirements. This may include relying on adequacy decisions, Standard Contractual Clauses (SCCs), or other valid transfer mechanisms.
-            </p>
-        </section>
-
-        <section class="mb-8" data-aos="fade-up" data-aos-delay="200">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-3">Contact Information for Data Protection Queries</h2>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                For any questions regarding our GDPR compliance, your personal data, or to exercise your data subject rights, please refer to our <a href="privacy-policy.html" class="text-blue-600 hover:underline">Privacy Policy</a> for detailed contact information or reach out to our Data Protection Officer (or designated contact) at:
-            </p>
-            <p class="text-gray-600 mb-2 leading-relaxed">
-                Email: <a href="mailto:dpo@bridgeesolutions.com" class="text-blue-600 hover:underline">dpo@bridgeesolutions.com</a> (Please note: This is a placeholder email address for GDPR queries).
-            </p>
-        </section>
-
+                <section class="text-center" data-aos="fade-up">
+                    <a href="contact.html" class="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 inline-flex items-center shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">
+                        Request a VA Consultation <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </section>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -159,6 +139,7 @@
                     <img src="Solutions_darkmode.png" alt="Bridgee Solutions Logo" class="h-8 w-auto mr-2">
                     <span class="text-xl font-semibold">Bridgee <span class="text-blue-400">Solutions</span></span>
                     </a>
+
                     <p class="text-gray-300 mb-4">Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.</p>
                     <div class="flex space-x-4">
                         <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -178,11 +159,10 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Services</h3>
-                    <ul class="space-y-2">
-                        <li><a href="services.html#virtual-assistance" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
-                        <li><a href="services.html#software-development" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
-                        <li><a href="services.html#bpo-services" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
-                        <li><a href="services.html#custom-solutions" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom Solutions</a></li>
+                     <ul class="space-y-2">
+                        <li><a href="service-virtual-assistance.html" class="text-blue-400 font-semibold rounded-md">Virtual Assistants</a></li>
+                        <li><a href="service-software-development.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
+                        <li><a href="service-bpo.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
                     </ul>
                 </div>
                 <div>
@@ -190,7 +170,6 @@
                     <ul class="space-y-2">
                         <li><a href="privacy-policy.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
                         <li><a href="terms-of-service.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
-                        <li><a href="gdpr-compliance.html" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">GDPR Compliance</a></li>
                     </ul>
                 </div>
             </div>
@@ -210,7 +189,7 @@
         menu.classList.toggle('hidden');
         document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
 
-        if (!isExpanded && !menu.classList.contains('hidden')) {
+        if (!isExpanded && !menu.classList.contains('hidden')) { // If menu is now open
           const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
           if (focusableElements.length > 0) {
             focusableElements[0].focus();
@@ -226,12 +205,12 @@
         const firstFocusableElement = focusableElements[0];
         const lastFocusableElement = focusableElements[focusableElements.length - 1];
 
-        if (event.shiftKey) {
+        if (event.shiftKey) { // Shift + Tab
           if (document.activeElement === firstFocusableElement) {
             lastFocusableElement.focus();
             event.preventDefault();
           }
-        } else {
+        } else { // Tab
           if (document.activeElement === lastFocusableElement) {
             firstFocusableElement.focus();
             event.preventDefault();
@@ -247,9 +226,21 @@
           menuButton.focus();
         }
       });
+
+      function toggleMobileServicesDropdown(event) {
+          event.preventDefault();
+          const dropdown = document.getElementById('mobile-services-dropdown');
+          dropdown.classList.toggle('hidden');
+          const icon = event.currentTarget.querySelector('i');
+          if (icon) {
+              icon.classList.toggle('fa-chevron-down');
+              icon.classList.toggle('fa-chevron-up');
+          }
+      }
     </script>
 
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
   <script>
     AOS.init();
   </script>

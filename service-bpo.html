@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Our Services | Bridgee Solutions - VA, Software Development, BPO</title>
-  <meta name="description" content="Explore the comprehensive outsourcing services offered by Bridgee Solutions, including Virtual Assistance, Software Development, and Custom BPO solutions designed to enhance your business efficiency and growth.">
+  <title>Custom BPO Services | Bridgee Solutions</title>
+  <meta name="description" content="Detailed information about Custom BPO Services offered by Bridgee Solutions.">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,190 +15,18 @@
   <!-- AOS (Animate on Scroll) -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
+  <!-- Swiper.js CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
   <!-- Fonts and Custom Styles -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
     body {
       font-family: 'Poppins', sans-serif;
       scroll-behavior: smooth;
     }
-
-    .hero-gradient {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      animation: gradient 15s ease infinite;
-      background-size: 400% 400%;
-    }
-
-    @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .cta-button {
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .cta-button:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 100%;
-      background-color: rgba(255,255,255,0.1);
-      z-index: -1;
-      transition: width 0.3s ease;
-    }
-
-    .cta-button:hover:before {
-      width: 100%;
-    }
-
-    .tech-logo {
-      filter: grayscale(100%);
-      transition: all 0.3s ease;
-    }
-
-    .tech-logo:hover {
-      filter: grayscale(0%);
-      transform: scale(1.1);
-    }
-
-    .testimonial-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    @keyframes slide-in-from-left {
-      0% {
-        opacity: 0;
-        transform: translateX(-20px); /* Slide from left */
-      }
-      100% {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .animate-slide-in-from-left {
-      animation: slide-in-from-left 0.6s ease-out forwards;
-      opacity: 0; /* Start hidden */
-    }
   </style>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Bridgee Solutions",
-      "url": "https://www.bridgeesolutions.com",
-      "logo": "https://www.bridgeesolutions.com/Solutions.png",
-      "description": "Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Addis Ababa",
-        "addressCountry": "ET"
-      },
-      "sameAs": [
-        "https://www.facebook.com/bridgeesolutions",
-        "https://www.twitter.com/bridgeesolutions",
-        "https://www.linkedin.com/company/bridgeesolutions"
-      ]
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "serviceType": "Virtual Assistance",
-      "name": "Virtual Assistance Services",
-      "description": "Boost productivity with skilled remote assistants from Bridgee Solutions handling admin, inboxes, research & more.",
-      "provider": {
-        "@type": "Organization",
-        "name": "Bridgee Solutions"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Ethiopia"
-      },
-      "potentialAction": {
-        "@type": "ReserveAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.bridgeesolutions.com#contact",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
-        }
-      }
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "serviceType": "Software Development",
-      "name": "Software Development Solutions",
-      "description": "Full-stack web & mobile solutions — custom-built by our agile, experienced dev teams.",
-      "provider": {
-        "@type": "Organization",
-        "name": "Bridgee Solutions"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Ethiopia"
-      },
-      "potentialAction": {
-        "@type": "ReserveAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.bridgeesolutions.com#contact",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
-        }
-      }
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "serviceType": "Custom BPO Services",
-      "name": "Custom BPO Services",
-      "description": "Outsource customer support, lead gen, data entry, or accounting — tailored to your needs.",
-      "provider": {
-        "@type": "Organization",
-        "name": "Bridgee Solutions"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Ethiopia"
-      },
-      "potentialAction": {
-        "@type": "ReserveAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.bridgeesolutions.com#contact",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
-        }
-      }
-    }
-  </script>
 </head>
-
 <body class="bg-gray-50">
 
     <!-- Navigation -->
@@ -223,7 +51,7 @@
                         <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-20 hidden group-hover:block group-focus-within:block">
                             <a href="service-virtual-assistance.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Virtual Assistance</a>
                             <a href="service-software-development.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Software Development</a>
-                            <a href="service-bpo.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Custom BPO Services</a>
+                            <a href="service-bpo.html" class="block px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-md">Custom BPO Services</a>
                         </div>
                     </div>
                     <a href="careers.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
@@ -251,7 +79,7 @@
                         <div id="mobile-services-dropdown" class="hidden pl-4 border-l border-gray-200 ml-3">
                             <a href="service-virtual-assistance.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Virtual Assistance</a>
                             <a href="service-software-development.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Software Development</a>
-                            <a href="service-bpo.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Custom BPO Services</a>
+                            <a href="service-bpo.html" class="block px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50">Custom BPO Services</a>
                         </div>
                     </div>
                     <a href="careers.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
@@ -262,21 +90,42 @@
         </div>
     </nav>
 
-    <main id="services-content">
-        <section class="py-12 md:py-16 text-center bg-blue-50">
-            <div class="container mx-auto px-6">
-                <h1 class="text-4xl md:text-5xl font-bold text-blue-700 mb-4" data-aos="fade-up">Our Services</h1>
-                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-                    Bridgee Solutions offers a range of specialized services. Please use the navigation menu to explore each service in detail.
-                </p>
+    <main id="service-detail-content">
+        <section class="bg-gradient-to-r from-blue-700 to-blue-500 text-white py-16 md:py-24">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4" data-aos="fade-up">Custom BPO Services</h1>
+                <p class="text-lg md:text-xl text-blue-200" data-aos="fade-up" data-aos-delay="100">Tailored Business Process Outsourcing to meet your unique operational needs.</p>
             </div>
         </section>
 
-        <div class="container mx-auto px-6 py-12 md:py-16">
-            <!-- Content removed as per plan. Specific service details will be on their own pages. -->
-            <!-- This space can be used for a brief overview or call to action if needed in the future. -->
-            <div class="text-center">
-                <p class="text-gray-700 text-lg">Please select a service from the main navigation to learn more.</p>
+        <div class="py-12 md:py-16 bg-white">
+            <div class="container mx-auto px-6">
+                <section class="mb-12 md:mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center" data-aos="fade-up">Streamline Your Business with Custom BPO</h2>
+                    <div class="max-w-3xl mx-auto text-lg text-gray-700 space-y-4" data-aos="fade-up" data-aos-delay="100">
+                        <p>Bridgee Solutions offers a comprehensive suite of Custom BPO (Business Process Outsourcing) services designed to optimize your operations, reduce costs, and enhance efficiency. We work closely with you to understand your specific challenges and develop tailored solutions that integrate seamlessly with your existing workflows.</p>
+                        <p class="mt-4">Placeholder content for Custom BPO Services. This section will detail various BPO offerings like customer support, lead generation, data entry, accounting, and specialized industry solutions.</p>
+                        <!-- Add more detailed content here -->
+                    </div>
+                </section>
+
+                <section class="mb-12 md:mb-16">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center" data-aos="fade-up">Examples of Our BPO Offerings:</h3>
+                    <ul class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700" data-aos="fade-up" data-aos-delay="100">
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Customer Support (Voice, Email, Chat)</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Technical Support & Helpdesk</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Lead Generation & Sales Support</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Data Entry & Processing</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Bookkeeping & Accounting Support</li>
+                        <li class="flex items-start bg-gray-50 p-4 rounded-lg shadow"><i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>Content Moderation</li>
+                    </ul>
+                </section>
+
+                <section class="text-center" data-aos="fade-up">
+                    <a href="contact.html" class="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 inline-flex items-center shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">
+                        Inquire About BPO Solutions <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </section>
             </div>
         </div>
     </main>
@@ -302,7 +151,6 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Company</h3>
                     <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Home</a></li>
                         <li><a href="about.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">About Us</a></li>
                         <li><a href="careers.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Careers</a></li>
                         <li><a href="index.html#blog" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Blog</a></li>
@@ -311,11 +159,10 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Services</h3>
-                    <ul class="space-y-2">
-                        <li><a href="services.html#virtual-assistance" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
-                        <li><a href="services.html#software-development" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
-                        <li><a href="services.html#bpo-services" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
-                        <li><a href="services.html#custom-solutions" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom Solutions</a></li>
+                     <ul class="space-y-2">
+                        <li><a href="service-virtual-assistance.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
+                        <li><a href="service-software-development.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
+                        <li><a href="service-bpo.html" class="text-blue-400 font-semibold rounded-md">BPO Services</a></li>
                     </ul>
                 </div>
                 <div>
@@ -323,7 +170,6 @@
                     <ul class="space-y-2">
                         <li><a href="privacy-policy.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
                         <li><a href="terms-of-service.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
-
                     </ul>
                 </div>
             </div>
@@ -351,7 +197,6 @@
         }
       });
 
-      // Focus trapping
       menu.addEventListener('keydown', function(event) {
         if (menu.classList.contains('hidden') || event.key !== 'Tab') return;
 
@@ -373,7 +218,6 @@
         }
       });
 
-      // Escape key to close
       document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
           menu.classList.add('hidden');
@@ -382,24 +226,23 @@
           menuButton.focus();
         }
       });
+
+      function toggleMobileServicesDropdown(event) {
+          event.preventDefault();
+          const dropdown = document.getElementById('mobile-services-dropdown');
+          dropdown.classList.toggle('hidden');
+          const icon = event.currentTarget.querySelector('i');
+          if (icon) {
+              icon.classList.toggle('fa-chevron-down');
+              icon.classList.toggle('fa-chevron-up');
+          }
+      }
     </script>
 
-  <!-- Accordion Script -->
-  <!-- AOS and other scripts -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
   <script>
     AOS.init();
-
-    function toggleMobileServicesDropdown(event) {
-        event.preventDefault();
-        const dropdown = document.getElementById('mobile-services-dropdown');
-        dropdown.classList.toggle('hidden');
-        const icon = event.currentTarget.querySelector('i');
-        if (icon) {
-            icon.classList.toggle('fa-chevron-down');
-            icon.classList.toggle('fa-chevron-up');
-        }
-    }
   </script>
 </body>
 </html>

@@ -439,6 +439,67 @@ def submit_service_request():
     # Should not be reached if methods only include POST and preflight handles OPTIONS
     return jsonify({'error': 'Method not allowed for /api/submit-service-request'}), 405
 
+@app.route('/submit_contact_form', methods=['POST'])
+@cross_origin()
+def submit_contact_form():
+    if request.method == 'POST':
+        full_name = request.form.get('name') # Matches 'name' in contact.html
+        email = request.form.get('email')
+        subject = request.form.get('subject', 'No Subject Provided') # Default if not provided
+        message_body = request.form.get('message')
+
+        app.logger.info(f"Contact Form Submission: Name: {full_name}, Email: {email}, Subject: {subject}")
+
+        # Basic Validation
+        required_fields = {
+            'Full Name': full_name,
+            'Email Address': email,
+            'Message': message_body
+        }
+        missing_fields = [name for name, value in required_fields.items() if not value or not value.strip()]
+
+        if missing_fields:
+            message = f"Missing required fields: {', '.join(missing_fields)}"
+            app.logger.warning(f"Contact Form Validation Failed: {message}")
+            # For a traditional form post, you'd redirect with an error.
+            # For now, returning JSON. If contact.html is updated for AJAX, this is fine.
+            # Otherwise, a user-friendly error page or redirect would be better.
+            return jsonify({'success': False, 'message': message}), 400
+
+        # Email Sending Logic
+        recipient_email = os.getenv('CONTACT_FORM_RECIPIENT') # New environment variable
+        if not recipient_email:
+            app.logger.error("CONTACT_FORM_RECIPIENT environment variable is not set. Cannot send contact form email.")
+            return jsonify({'success': False, 'message': 'Server configuration error. Could not process request.'}), 500
+
+        email_subject = f"Contact Form: {subject} - from {full_name}"
+
+        email_body_content = [
+            f"You have received a new message from your website contact form:",
+            "",
+            f"Name: {full_name}",
+            f"Email: {email}",
+            f"Subject: {subject}",
+            "",
+            "Message:",
+            message_body
+        ]
+        email_text = "\n".join(email_body_content)
+
+        # Sender will be app.config['MAIL_DEFAULT_SENDER']
+        # Reply-To header can be set to the user's email for easier replies
+        msg = Message(email_subject, recipients=[recipient_email], body=email_text, reply_to=email)
+
+        try:
+            mail.send(msg)
+            app.logger.info(f"Contact form email sent successfully to {recipient_email} from {email}")
+            # If not using AJAX on contact.html, redirect to a thank you page or back with a success message.
+            # For now, returning JSON.
+            # A simple HTML response could also be: return "Thank you for your message!", 200
+            return jsonify({'success': True, 'message': 'Your message has been sent successfully!'}), 200
+        except Exception as e:
+            app.logger.error(f"Failed to send contact form email from {email} to {recipient_email}. Error: {str(e)}")
+            return jsonify({'success': False, 'message': 'There was an error sending your message. Please try again later.'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

@@ -423,6 +423,54 @@
             icon.classList.toggle('fa-chevron-up');
         }
     }
+
+    // Contact Form AJAX Submission
+    document.addEventListener('DOMContentLoaded', function () {
+        const contactForm = document.querySelector('form[action="/submit_contact_form"]');
+        const formFeedback = document.createElement('div'); // Create a div for feedback
+        formFeedback.className = 'mt-4 text-center';
+        contactForm.parentNode.insertBefore(formFeedback, contactForm.nextSibling); // Insert feedback div after the form
+
+        const submitButton = contactForm.querySelector('button[type="submit"]');
+
+        contactForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+
+            formFeedback.textContent = '';
+            formFeedback.className = 'mt-4 text-center';
+
+            const formData = new FormData(contactForm);
+
+            fetch('/submit_contact_form', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    formFeedback.className = 'mt-4 text-center text-green-600 p-3 bg-green-50 rounded-md shadow-sm';
+                    formFeedback.textContent = data.message || 'Message sent successfully!';
+                    contactForm.reset();
+                    // Optionally, hide the form and show a bigger success message like in service-request.html
+                } else {
+                    formFeedback.className = 'mt-4 text-center text-red-600 p-3 bg-red-50 rounded-md shadow-sm';
+                    formFeedback.textContent = data.message || 'An error occurred. Please try again.';
+                }
+            })
+            .catch(error => {
+                formFeedback.className = 'mt-4 text-center text-red-600 p-3 bg-red-50 rounded-md shadow-sm';
+                formFeedback.textContent = 'A network error occurred. Please try again.';
+                console.error('Error submitting contact form:', error);
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            });
+        });
+    });
   </script>
 </body>
 </html>

@@ -6,542 +6,88 @@
   <title>Bridgee Solutions - Your Bridge to Smart Outsourcing</title>
   <meta name="description" content="Bridgee Solutions offers scalable and skilled outsourcing services from Addis Ababa, including virtual assistants, software development, and custom BPO. Power your business growth with our smart solutions.">
 
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <!-- AOS (Animate on Scroll) -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-
-  <!-- Swiper.js CSS -->
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 
-  <!-- Fonts and Custom Styles -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+    html, body { margin: 0 !important; padding: 0 !important; }
+    body::-webkit-scrollbar { display: none; }
+    body { -ms-overflow-style: none; scrollbar-width: none; }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      scroll-behavior: smooth;
-    }
+    .hero-gradient { background-image: url('hero-background.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center; position: relative; }
+    .hero-gradient::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); pointer-events: none; }
+    #main-navbar { transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, color 0.3s ease-in-out; }
+    #main-navbar.navbar-transparent { background-color: transparent !important; box-shadow: none !important; }
+    #main-navbar.navbar-transparent .text-gray-800 { color: #FFFFFF !important; }
+    #main-navbar.navbar-transparent .text-blue-600 { color: #FFFFFF !important; }
+    #main-navbar.navbar-transparent .md\:flex.items-center.hidden a:not(.bg-blue-600) { color: #FFFFFF !important; }
+    #main-navbar.navbar-transparent .md\:flex.items-center.hidden a:not(.bg-blue-600):hover { color: #d1d5db !important; }
+    #main-navbar.navbar-transparent .mobile-menu-button svg { color: #FFFFFF !important; }
+    #main-navbar.navbar-transparent .relative.group > button { color: #FFFFFF !important; }
+    #main-navbar.navbar-transparent .relative.group > button:hover { color: #d1d5db !important; }
+    #main-navbar.navbar-transparent .services-dropdown { background-color: rgba(55, 65, 81, 0.92) !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important; }
+    #main-navbar.navbar-transparent .services-dropdown a { color: #FFFFFF !important; }
+    #main-navbar.navbar-transparent .services-dropdown a:hover { background-color: rgba(31, 41, 55, 0.95) !important; color: #d1d5db !important; }
 
-    html, body {
-      margin: 0 !important;
-      padding: 0 !important;
-    }
+    @keyframes fadeInBlur { 0% { opacity: 0; filter: blur(5px); transform: translateY(20px); } 100% { opacity: 1; filter: blur(0); transform: translateY(0); } }
+    .hero-text-animate { opacity: 0; animation: fadeInBlur 0.7s ease-out 0.2s forwards; }
+    .hero-gradient::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); z-index: 0; }
+    .hero-gradient h1, .hero-gradient p, .hero-gradient a[href="services.html"] { color: #FFFFFF; }
+    .cta-button { position: relative; overflow: hidden; z-index: 1; }
+    .cta-button:before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 100%; background-color: rgba(255,255,255,0.1); z-index: -1; transition: width 0.3s ease; }
+    .cta-button:hover:before { width: 100%; }
+    .tech-logo { filter: grayscale(100%); transition: all 0.3s ease; }
+    .tech-logo:hover { filter: grayscale(0%); transform: scale(1.1); }
+    .testimonial-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); height: 420px; display: flex; flex-direction: column; justify-content: space-between; }
+    .testimonial-card p.text-blue-100 { flex-grow: 1; overflow-y: auto; padding-right: 5px; }
+    /* .tech-logo-scroller-container is effectively replaced by .logos */
+    .tech-logo-row .tech-logo { margin-right: 64px; /*flex-shrink: 0;*/ box-sizing: border-box; /* margin-left: 0; margin-top: 0; margin-bottom: 0; */ }
+    .testimonial-swiper { position: relative; padding-left: 40px; padding-right: 40px; padding-bottom: 30px; }
+    .testimonial-swiper .swiper-pagination { bottom: 5px; }
+    .testimonial-swiper .swiper-button-next, .testimonial-swiper .swiper-button-prev { color: #2563eb; width: 30px; height: 30px; background-color: rgba(255, 255, 255, 0.7); border-radius: 50%; transition: background-color 0.3s ease; }
+    .testimonial-swiper .swiper-button-next { right: 10px; }
+    .testimonial-swiper .swiper-button-prev { left: 10px; }
+    .testimonial-swiper .swiper-button-next:hover, .testimonial-swiper .swiper-button-prev:hover { background-color: rgba(255, 255, 255, 1); }
+    .testimonial-swiper .swiper-button-next::after, .testimonial-swiper .swiper-button-prev::after { font-size: 16px; font-weight: bold; }
+    .testimonial-swiper .swiper-pagination-bullet { background-color: #93c5fd; opacity: 0.8; width: 10px; height: 10px; transition: background-color 0.3s ease, opacity 0.3s ease; }
+    .testimonial-swiper .swiper-pagination-bullet-active { background-color: #2563eb; opacity: 1; }
+    .testimonial-swiper .swiper-slide { transition: transform 0.3s ease, opacity 0.3s ease; transform: scale(0.85); opacity: 0.7; }
+    .testimonial-swiper .swiper-slide-active { transform: scale(1); opacity: 1; z-index: 1; }
 
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    body::-webkit-scrollbar {
-      display: none;
-    }
-
-    /* Hide scrollbar for IE, Edge and Firefox */
-    body {
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
-    }
-
-    .hero-gradient {
-      /* background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); */
-      /* animation: gradient 15s ease infinite; */
-      /* background-size: 400% 400%; */
-      background-image: url('hero-background.jpg');
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
-      position: relative; /* Added for pseudo-element positioning */
-    }
-
-    .hero-gradient::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 100px; /* Verified and kept at 100px */
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-      pointer-events: none; /* Ensure it doesn't interfere with mouse events */
-    }
-
-    /* @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    } */
-
-    #main-navbar {
-      transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, color 0.3s ease-in-out;
-    }
-
-    #main-navbar.navbar-transparent {
-      background-color: transparent !important;
-      box-shadow: none !important;
-    }
-
-    /* Text color adjustments for transparent state */
-    /* Logo text parts */
-    #main-navbar.navbar-transparent .text-gray-800 { /* Targets 'Bridgee' part of logo */
-      color: #FFFFFF !important;
-    }
-    #main-navbar.navbar-transparent .text-blue-600 { /* Targets 'Solutions' part of logo and 'Home' link */
-      color: #FFFFFF !important; /* Make 'Solutions' and 'Home' link white */
-    }
-
-    /* Desktop nav links - excluding the 'Contact Us' button which has its own bg */
-    #main-navbar.navbar-transparent .md\:flex.items-center.hidden a:not(.bg-blue-600) {
-      color: #FFFFFF !important; /* Make other nav links white */
-    }
-    #main-navbar.navbar-transparent .md\:flex.items-center.hidden a:not(.bg-blue-600):hover {
-      color: #d1d5db !important; /* A light gray for hover, or adjust as needed */
-    }
-
-    /* Contact Us button text remains white due to its own bg-blue-600, border might need adjustment if it had one */
-    /* Mobile menu button icon */
-    #main-navbar.navbar-transparent .mobile-menu-button svg {
-      color: #FFFFFF !important;
-    }
-
-    /* Style for the 'Services' button in transparent navbar */
-    #main-navbar.navbar-transparent .relative.group > button {
-      color: #FFFFFF !important;
-    }
-    #main-navbar.navbar-transparent .relative.group > button:hover {
-      color: #d1d5db !important; /* Light gray for hover, matching other links */
-    }
-
-    /* Styles for Services Dropdown in Transparent Navbar State */
-    #main-navbar.navbar-transparent .services-dropdown {
-      background-color: rgba(55, 65, 81, 0.92) !important; /* bg-gray-700 with 92% opacity for better text readability */
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important; /* Lighter shadow (Tailwind's shadow-md equivalent) */
-    }
-
-    #main-navbar.navbar-transparent .services-dropdown a {
-      color: #FFFFFF !important;
-    }
-
-    #main-navbar.navbar-transparent .services-dropdown a:hover {
-      background-color: rgba(31, 41, 55, 0.95) !important; /* bg-gray-800 with 95% opacity */
-      color: #d1d5db !important; /* text-gray-300 */
-    }
-
-    /* --- Styles for the solid state (when scrolling) --- */
-    /* These will be reapplied by removing .navbar-transparent and letting Tailwind classes take over, */
-    /* but we need to ensure specificity or define a .navbar-solid if Tailwind is aggressively overridden. */
-    /* For now, relying on Tailwind default classes + JS class removal. */
-    /* Example if explicit solid state definition was needed for text:
-    #main-navbar:not(.navbar-transparent) .text-gray-800 { color: #1f2937 !important; }
-    #main-navbar:not(.navbar-transparent) .text-blue-600 { color: #2563eb !important; }
-    #main-navbar:not(.navbar-transparent) .md\:flex.items-center.hidden a:not(.bg-blue-600) { color: #374151 !important; }
-    */
-
-    @keyframes fadeInBlur {
-      0% {
-        opacity: 0;
-        filter: blur(5px);
-        transform: translateY(20px);
-      }
-      100% {
-        opacity: 1;
-        filter: blur(0);
-        transform: translateY(0);
-      }
-    }
-
-    .hero-text-animate {
-      opacity: 0; /* Initial state before animation starts or if animations are off */
-      animation: fadeInBlur 0.7s ease-out 0.2s forwards;
-
-      /* Animation properties: name, duration, timing-function, delay, fill-mode */
-    }
-
-    .hero-gradient::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.4); /* 40% black overlay */
-      z-index: 0;
-    }
-
-    .hero-gradient h1,
-    .hero-gradient p,
-    .hero-gradient a[href="services.html"] { /* Target the specific secondary link for default color */
-      color: #FFFFFF; /* Changed to white */
-    }
-
-    .cta-button {
+    /* CSS for Scrolling Logos based on user example */
+    .logos {
+      display: flex;
+      overflow: hidden;
       position: relative;
-      overflow: hidden;
-      z-index: 1;
+      white-space: nowrap;
+      padding: 10px 0;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
     }
-
-    .cta-button:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 100%;
-      background-color: rgba(255,255,255,0.1);
-      z-index: -1;
-      transition: width 0.3s ease;
-    }
-
-    .cta-button:hover:before {
-      width: 100%;
-    }
-
-    .tech-logo {
-      filter: grayscale(100%);
-      transition: all 0.3s ease;
-    }
-
-    .tech-logo:hover {
-      filter: grayscale(0%);
-      transform: scale(1.1);
-    }
-
-    .testimonial-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      height: 420px; /* Fixed height for testimonial cards */
+    .logos-row {
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      /* gap: is handled by .tech-logo's margin-right */
     }
-
-    .testimonial-card p.text-blue-100 {
-      flex-grow: 1; /* Allows the paragraph to take available space */
-      overflow-y: auto; /* Add vertical scroll if content overflows */
-      padding-right: 5px; /* Space for scrollbar */
-      /* Existing classes: mb-6 leading-relaxed - these will be in HTML */
-    }
-
-    .tech-logo-scroller-container {
-      overflow: hidden;
-      padding: 20px 0;
-      /* background-color: #f9fafb; */ /* Example background */
-    }
-
-    .tech-logo-row {
-      display: flex;
-      width: 100%; /* Changed from max-content */
-      justify-content: center; /* Added */
-      flex-wrap: wrap; /* Added */
-    }
-
-    .tech-logo-row .tech-logo {
-      /* Existing styles */
-      margin-right: 64px; /* Increased spacing */
+    .logos-row.reverse { animation: scroll-right 80s linear infinite; }
+    .logos-row:not(.reverse) { animation: scroll-left 80s linear infinite; }
+    .logos-row .tech-logo { /* .tech-logo already has styling. Ensure flex-shrink is applied */
       flex-shrink: 0;
-
-      /* New/updated styles for consistency */
-      box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
-      margin-left: 0;
-      margin-top: 0;
-      margin-bottom: 0;
+      /* Individual .tech-logo styling like background, padding, hover is already defined */
     }
-
-    /* Keyframes and animation application removed for JS driven animation */
-    /*
-    @keyframes scroll-left {
-      0% {
-        transform: translateX(0%);
-      }
-      100% {
-        transform: translateX(-50%);
-      }
-    }
-
-    @keyframes scroll-right {
-      0% {
-        transform: translateX(-50%);
-      }
-      100% {
-        transform: translateX(0%);
-      }
-    }
-
-    #tech-logo-row-1 {
-      animation: scroll-left 80s linear infinite;
-    }
-
-    #tech-logo-row-2 {
-      animation: scroll-right 80s linear infinite;
-    }
-    */
-
-    .testimonial-swiper {
-      position: relative; /* Ensure it's a positioning context for absolute arrows */
-      padding-left: 40px; /* Space for prev arrow */
-      padding-right: 40px; /* Space for next arrow */
-      padding-bottom: 30px; /* Space for pagination dots */
-      /* overflow: hidden; is usually part of swiper's default or added by class */
-    }
-
-    /* Swiper Pagination Custom Positioning */
-    .testimonial-swiper .swiper-pagination {
-        bottom: 5px; /* Adjust to sit within the new padding-bottom */
-    }
-
-    /* Swiper Navigation Buttons Styling */
-    .testimonial-swiper .swiper-button-next,
-    .testimonial-swiper .swiper-button-prev {
-        color: #2563eb; /* Blue-600 from Tailwind */
-        width: 30px;
-        height: 30px;
-        background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
-        border-radius: 50%; /* Make them circular */
-        transition: background-color 0.3s ease;
-        /* top: 50%; transform: translateY(-50%); Swiper default, ensure it's there or add if needed */
-    }
-    .testimonial-swiper .swiper-button-next {
-        right: 10px; /* Adjusted position */
-    }
-    .testimonial-swiper .swiper-button-prev {
-        left: 10px; /* Adjusted position */
-    }
-
-    .testimonial-swiper .swiper-button-next:hover,
-    .testimonial-swiper .swiper-button-prev:hover {
-        background-color: rgba(255, 255, 255, 1); /* Opaque white background on hover */
-    }
-
-    .testimonial-swiper .swiper-button-next::after,
-    .testimonial-swiper .swiper-button-prev::after {
-        font-size: 16px; /* Adjust size of the arrow icon */
-        font-weight: bold;
-    }
-
-    /* Swiper Pagination Dots Styling */
-    .testimonial-swiper .swiper-pagination-bullet {
-        background-color: #93c5fd; /* Blue-300 from Tailwind for inactive dots */
-        opacity: 0.8;
-        width: 10px; /* Slightly larger dots */
-        height: 10px;
-        transition: background-color 0.3s ease, opacity 0.3s ease;
-    }
-
-    .testimonial-swiper .swiper-pagination-bullet-active {
-        background-color: #2563eb; /* Blue-600 for active dot */
-        opacity: 1;
-    }
-
-    /* Ensure Swiper navigation is visible (remove or comment out any display: none rule for these) */
-    /*
-    .testimonial-swiper .swiper-button-next,
-    .testimonial-swiper .swiper-button-prev,
-    .testimonial-swiper .swiper-pagination {
-        display: none !important;
-    }
-    */
-
-    /* Comment out styles for continuous scroll if they exist */
-    .testimonial-swiper .swiper-slide {
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      transform: scale(0.85); /* Default scale for non-active slides */
-      opacity: 0.7; /* Default opacity for non-active slides */
-        /* width: auto; */ /* Original commented line */
-        /* flex-shrink: 0; */ /* Original commented line */
-    }
-
-    .testimonial-swiper .swiper-slide-active {
-      transform: scale(1); /* Full size */
-      opacity: 1; /* Full opacity */
-      z-index: 1; /* Ensure active slide is on top */
-    }
-    /*
-    .testimonial-swiper .swiper-wrapper {
-         transition-timing-function: linear !important;
-    }
-    */
-
-    /* Remove explicit text-wrapping for p tags if Swiper handles it */
-    /*
-    .testimonial-card p.text-blue-100 {
-        white-space: normal !important;
-        word-wrap: break-word !important;
-        overflow-wrap: break-word !important;
-    }
-    */
-
-/* New CSS for Logo Scroller */
-.logo-scroller-section {
-  overflow: hidden;
-  display: flex; /* Makes the two tracks sit side-by-side */
-  /* width: 100%; /* Or some other desired width for the section */
-  /* padding: 20px 0; /* Optional: if the old .tech-logo-scroller-container padding was desired */
-}
-
-.ticker-track {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start; /* Aligns items to the start of the track */
-  flex-shrink: 0; /* Important: Prevents tracks from shrinking within the flex container */
-  min-width: 100%; /* Each track (containing one set of logos) should be at least as wide as the container if we want translateX(-100%) to mean "one full viewport/container width" of logos. Or, use width: max-content if logos define the natural width. The tutorial implies track width is determined by its content. Let's use max-content to be similar to what we know works for content-defined width. */
-  width: max-content; /* Ensures track is as wide as its content (logos + margins) */
-}
-
-.ticker-track .tech-logo {
-  /* Assuming .tech-logo already has necessary padding, display, etc. from Tailwind */
-  /* We need to ensure it doesn't shrink and respects its margin for spacing */
-  flex-shrink: 0;
-  margin-right: 64px; /* This was the last agreed-upon spacing */
-  /* height: 36px; /* As per tutorial, or keep existing if different and preferred */
-  /* box-sizing: border-box; /* Good practice, ensure it's here or on .tech-logo globally */
-}
-/* Ensure the very last logo in a track doesn't have a right margin if it creates an unwanted double margin
-   when the two tracks are conceptually joined by the animation.
-   However, with translateX(-100%) based on the track's own width (which includes its last child's margin),
-   this might not be strictly necessary. For now, let's assume the margin is part of the repeating unit. */
-
-@keyframes ticker-ltr { /* Scrolls content from Right to Left on screen */
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-100%); /* Moves left by its own full width */
-  }
-}
-
-@keyframes ticker-rtl { /* Scrolls content from Left to Right on screen */
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
-}
-
-/* Apply to the specific tracks within each section */
-/* Row 1 - scrolls Right to Left */
-#logo-scroller-row1-section .ticker-track { /* Applies to both tracks in section 1 */
-  /* animation: ticker-ltr 60s linear infinite; */ /* Adjust 60s for speed */
-}
-
-/* Row 2 - scrolls Left to Right */
-#logo-scroller-row2-section .ticker-track { /* Applies to both tracks in section 2 */
-  /* animation: ticker-rtl 60s linear infinite; */ /* Adjust 60s for speed */
-}
+    @keyframes scroll-left { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+    @keyframes scroll-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0%); } }
+    @media (max-width: 768px) { .logos-row, .logos-row.reverse { animation-duration: 50s; } }
   </style>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Bridgee Solutions",
-      "url": "https://www.bridgeesolutions.com",
-      "logo": "https://www.bridgeesolutions.com/Solutions.png",
-      "description": "Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Addis Ababa",
-        "addressCountry": "ET"
-      },
-      "sameAs": [
-        "https://www.facebook.com/bridgeesolutions",
-        "https://www.twitter.com/bridgeesolutions",
-        "https://www.linkedin.com/company/bridgeesolutions"
-      ]
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "serviceType": "Virtual Assistance",
-      "name": "Virtual Assistance Services",
-      "description": "Boost productivity with skilled remote assistants from Bridgee Solutions handling admin, inboxes, research & more.",
-      "provider": {
-        "@type": "Organization",
-        "name": "Bridgee Solutions"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Ethiopia"
-      },
-      "potentialAction": {
-        "@type": "ReserveAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.bridgeesolutions.com#contact",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
-        }
-      }
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "serviceType": "Software Development",
-      "name": "Software Development Solutions",
-      "description": "Full-stack web & mobile solutions — custom-built by our agile, experienced dev teams.",
-      "provider": {
-        "@type": "Organization",
-        "name": "Bridgee Solutions"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Ethiopia"
-      },
-      "potentialAction": {
-        "@type": "ReserveAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.bridgeesolutions.com#contact",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
-        }
-      }
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      "serviceType": "Custom BPO Services",
-      "name": "Custom BPO Services",
-      "description": "Outsource customer support, lead gen, data entry, or accounting — tailored to your needs.",
-      "provider": {
-        "@type": "Organization",
-        "name": "Bridgee Solutions"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Ethiopia"
-      },
-      "potentialAction": {
-        "@type": "ReserveAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.bridgeesolutions.com#contact",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
-        }
-      }
-    }
-  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Bridgee Solutions","url":"https://www.bridgeesolutions.com","logo":"https://www.bridgeesolutions.com/Solutions.png","description":"Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.","address":{"@type":"PostalAddress","addressLocality":"Addis Ababa","addressCountry":"ET"},"sameAs":["https://www.facebook.com/bridgeesolutions","https://www.twitter.com/bridgeesolutions","https://www.linkedin.com/company/bridgeesolutions"]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","serviceType":"Virtual Assistance","name":"Virtual Assistance Services","description":"Boost productivity with skilled remote assistants from Bridgee Solutions handling admin, inboxes, research & more.","provider":{"@type":"Organization","name":"Bridgee Solutions"},"areaServed":{"@type":"Country","name":"Ethiopia"},"potentialAction":{"@type":"ReserveAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.bridgeesolutions.com#contact","actionPlatform":["http://schema.org/DesktopWebPlatform","http://schema.org/IOSPlatform","http://schema.org/AndroidPlatform"]}}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","serviceType":"Software Development","name":"Software Development Solutions","description":"Full-stack web & mobile solutions — custom-built by our agile, experienced dev teams.","provider":{"@type":"Organization","name":"Bridgee Solutions"},"areaServed":{"@type":"Country","name":"Ethiopia"},"potentialAction":{"@type":"ReserveAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.bridgeesolutions.com#contact","actionPlatform":["http://schema.org/DesktopWebPlatform","http://schema.org/IOSPlatform","http://schema.org/AndroidPlatform"]}}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","serviceType":"Custom BPO Services","name":"Custom BPO Services","description":"Outsource customer support, lead gen, data entry, or accounting — tailored to your needs.","provider":{"@type":"Organization","name":"Bridgee Solutions"},"areaServed":{"@type":"Country","name":"Ethiopia"},"potentialAction":{"@type":"ReserveAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.bridgeesolutions.com#contact","actionPlatform":["http://schema.org/DesktopWebPlatform","http://schema.org/IOSPlatform","http://schema.org/AndroidPlatform"]}}}</script>
 </head>
-
 <body class="bg-gray-50">
-
-    <!-- Navigation -->
     <nav class="bg-white shadow-lg fixed top-0 left-0 right-0 z-50 w-full" id="main-navbar">
         <div class="container mx-auto px-6 py-3">
             <div class="flex items-center justify-between">
@@ -551,11 +97,9 @@
                     <span class="ml-2 text-xl font-semibold text-gray-800">Bridgee <span class="text-blue-600">Solutions</span></span>
                 </a>
                 </div>
-
                 <div class="md:flex items-center hidden space-x-8">
                     <a href="index.html" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
                     <a href="about.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
-                    <!-- Services Dropdown -->
                     <div class="relative group">
                         <button class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md inline-flex items-center">
                             Services <i class="fas fa-chevron-down ml-2 text-xs"></i>
@@ -572,9 +116,7 @@
                 </div>
                 <div class="md:hidden flex items-center">
                     <button class="outline-none mobile-menu-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md" id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
-                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
+                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
             </div>
@@ -582,11 +124,9 @@
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
                     <a href="index.html" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
                     <a href="about.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
-                    <!-- Mobile Services Dropdown -->
                     <div>
                         <button class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50" onclick="toggleMobileServicesDropdown(event)">
-                            Services
-                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                            Services <i class="fas fa-chevron-down ml-2 text-xs"></i>
                         </button>
                         <div id="mobile-services-dropdown" class="hidden pl-4 border-l border-gray-200 ml-3">
                             <a href="service-virtual-assistance.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Virtual Assistance</a>
@@ -602,221 +142,58 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-gradient pb-28 md:pb-40">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
-            <div class="md:w-full flex flex-col items-start max-w-4xl pt-64 mt-10 md:mt-0 hero-text-animate" style="position: relative; z-index: 1;">
-                <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-8">Your Bridge to <span class="underline decoration-blue-300">Scalable, Skilled</span> and <span class="underline decoration-blue-300">Smart</span> Outsourcing</h1>
-                <p class="text-lg md:text-xl mb-10 leading-relaxed">Virtual Assistants. Software Development. Custom BPO. All tailored from Addis Ababa to power your business growth.</p>
-                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                    <a href="contact.html" class="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 text-center shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-blue-800">Let's Talk! </a>
-                    <a href="services.html" class="px-8 py-3 border-2 border-white rounded-lg font-semibold text-lg hover:bg-white hover:text-blue-600 transition duration-300 text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-800">View Services</a>
-                </div>
-            </div>
-        </div>
-    </section>
+    <section class="hero-gradient pb-28 md:pb-40"> /* Hero section content */ </section>
+    <section id="services" class="py-28 bg-white"> /* Services section content */ </section>
+    <section id="why-us" class="py-28 bg-gray-50"> /* Why Choose Us section content */ </section>
 
-    <!-- Services Section -->
-    <section id="services" class="py-28 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16" data-aos="fade-up"  data-aos-duration="600"  data-aos-offset="100"  data-aos-easing="ease-out-cubic"  >
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Our <span class="text-blue-600">Comprehensive</span> Services</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">From virtual assistants to custom software solutions, we offer end-to-end outsourcing services tailored to your needs.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10" >
-                <!-- Service 1 -->
-                <div class="service-card bg-white rounded-xl p-8 shadow-lg transition duration-500" data-aos="fade-up"  data-aos-duration="600"  data-aos-offset="100"  data-aos-easing="ease-out-cubic"  >
-                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-headset text-blue-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Virtual Assistance</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">Boost productivity with skilled remote assistants handling admin, inboxes, research & more.</p>
-                    <a href="service-virtual-assistance.html" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Learn More <i class="fas fa-arrow-right ml-2"></i></a>
-                </div>
-
-                <!-- Service 2 -->
-                <div class="service-card bg-white rounded-xl p-8 shadow-lg transition duration-500" data-aos="fade-up"  data-aos-duration="600"  data-aos-offset="100"  data-aos-easing="ease-out-cubic"  >
-                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-code text-blue-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Software Development</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">Full-stack web & mobile solutions — custom-built by our agile, experienced dev teams.</p>
-                    <a href="service-software-development.html" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Learn More <i class="fas fa-arrow-right ml-2"></i></a>
-                </div>
-
-                <!-- Service 3 -->
-                <div class="service-card bg-white rounded-xl p-8 shadow-lg transition duration-500" data-aos="fade-up"  data-aos-duration="600"  data-aos-offset="100"  data-aos-easing="ease-out-cubic"  >
-                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-people-arrows text-blue-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Custom BPO Services</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">Outsource customer support, lead gen, data entry, or accounting — tailored to your needs.</p>
-                    <a href="service-bpo.html" class="text-blue-600 font-medium inline-flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Learn More <i class="fas fa-arrow-right ml-2"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Why Choose Us Section -->
-    <section id="why-us" class="py-28 bg-gray-50">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-12 md:mb-0 md:pr-12" data-aos="fade-up"  data-aos-duration="600"  data-aos-offset="100"  data-aos-easing="ease-out-cubic">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-10">Why Choose <span class="text-blue-600">Bridgee Solutions</span>?</h2>
-                    <p class="text-lg text-gray-600 mb-10 leading-relaxed">We don't just provide outsourcing services — we become an extension of your team, delivering measurable results.</p>
-
-                    <div class="space-y-10">
-                        <div class="flex items-start">
-                            <div class="bg-blue-100 p-2 rounded-full mr-4">
-                                <i class="fas fa-check text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-800 mb-1">Cost-effective</h4>
-                                <p class="text-gray-600 leading-relaxed">Scale without the overhead. Save up to 70% compared to in-house hiring.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="bg-blue-100 p-2 rounded-full mr-4">
-                                <i class="fas fa-globe-africa text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-800 mb-1">Skilled local talent</h4>
-                                <p class="text-gray-600 leading-relaxed">Handpicked professionals from Addis Ababa with rigorous vetting.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="bg-blue-100 p-2 rounded-full mr-4">
-                                <i class="fas fa-rocket text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-800 mb-1">Fast Onboarding</h4>
-                                <p class="text-gray-600 leading-relaxed">Our streamlined processes ensure your new team members are integrated and productive in record time.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="bg-blue-100 p-2 rounded-full mr-4">
-                                <i class="fas fa-bullseye text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-800 mb-1">Customized teams</h4>
-                                <p class="text-gray-600 leading-relaxed">Built to match your exact goals, KPIs, and company culture.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="bg-blue-100 p-2 rounded-full mr-4">
-                                <i class="fas fa-chart-line text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-800 mb-1">Growth-focused</h4>
-                                <p class="text-gray-600 leading-relaxed">We align our success with yours — your growth is our metric.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="md:w-1/2" data-aos="fade-up"  data-aos-duration="600"  data-aos-offset="100"  data-aos-easing="ease-out-cubic" >
-                    <div class="bg-white p-6 rounded-xl shadow-lg">
-                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Diverse professional team collaborating in a modern office, showcasing Bridgee Solutions' skilled talent and client partnerships." class="rounded-lg w-full h-auto">
-                        <div class="mt-6 bg-blue-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-blue-800 mb-2">Our Commitment</h4>
-                            <p class="text-blue-700 leading-relaxed">Every Bridgee team member completes our 200-hour training program in communication, tools, and best practices before joining client projects.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-16 text-center" data-aos="fade-up" data-aos-duration="600" data-aos-offset="100" data-aos-easing="ease-out-cubic">
-                <a href="services.html" class="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 inline-flex items-center shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">
-                    Want To Learn More?
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Technologies Section -->
+    <!-- Technologies Section - REVISED -->
     <section id="technologies" class="py-28 bg-white">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-16" data-aos="fade-up"  data-aos-duration="600"  data-aos-offset="100"  data-aos-easing="ease-out-cubic">
+            <div class="text-center mb-16" data-aos="fade-up" data-aos-duration="600" data-aos-offset="100" data-aos-easing="ease-out-cubic">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Our <span class="text-blue-600">Technology</span> Stack</h2>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">We work with cutting-edge technologies to deliver world-class solutions for our clients.</p>
             </div>
 
-            <div class="tech-logo-scroller-container" style="overflow: hidden; padding: 20px 0;">
-                <p class="text-lg text-gray-700 font-semibold mb-6 text-center">CRM</p>
-                <div class="tech-logo-row" id="tech-logo-row-crm">
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>HubSpot</title><path d="M12.004 0C5.38 0 0 5.38 0 12.004s5.38 12.004 12.004 12.004 12.004-5.38 12.004-12.004S18.628 0 12.004 0zm5.434 16.206c.204.288.204.72 0 1.008l-.546.772c-.204.288-.57.383-.897.268a8.42 8.42 0 0 1-3.992-1.662 8.73 8.73 0 0 1-2.904-3.042c-.07-.16-.07-.34 0-.5l.002-.007a.61.61 0 0 1 .05-.142c.29-.705.54-1.42.746-2.14.16-.57.382-1.12.61-1.64a.66.66 0 0 1 .21-.27c.204-.144.48-.144.684 0l.438.308c.204.144.288.408.216.648a10.34 10.34 0 0 0-.432 2.083c-.03.28-.05.56-.06.84l-.004.1c.28.92.79 1.76 1.46 2.45a7.32 7.32 0 0 0 2.887 1.723zm-10.86-3.59a.63.63 0 0 1-.684-.01c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.35 10.35 0 0 0 .528 2.31c.03.1.05.2.08.3l.002.008a8.42 8.42 0 0 1-3.82-1.475.66.66 0 0 1-.204-.936l.546-.772c.204-.288.57-.383.897-.268a8.42 8.42 0 0 1 3.992 1.662 8.73 8.73 0 0 1 2.904 3.042c.08.16.08.34 0 .5l-.002.007a.61.61 0 0 1-.05.142c-.29.705-.54 1.42-.746 2.14-.16.57-.382 1.12-.61 1.64a.66.66 0 0 1-.21.27c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.34 10.34 0 0 0 .432 2.083zm7.39-8.06a.63.63 0 0 1-.684-.01c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.35 10.35 0 0 0 .528 2.31c.03.1.05.2.08.3l.002.008A8.42 8.42 0 0 1 3.99 8.058a.66.66 0 0 1-.204-.936L4.33 6.35c.204-.288.57-.383.897-.268a8.42 8.42 0 0 1 3.992 1.662 8.73 8.73 0 0 1 2.904 3.042c.08.16.08.34 0 .5l-.002.007a.61.61 0 0 1-.05.142c-.29.705-.54 1.42-.746 2.14-.16.57-.382 1.12-.61 1.64a.66.66 0 0 1-.21.27c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.34 10.34 0 0 0 .432 2.083z" fill="#FF7A59"/></svg>
-                        <span class="text-sm font-medium text-gray-700">HubSpot</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Salesforce</title><path d="M11.354 0C8.873.027 5.164.224 3.42.493c-2.42.376-3.034 2.062-3.09 4.25-.11 3.96.005 8.015.005 8.015.012 2.448.72 4.143 3.09 4.477 1.75.271 9.166.47 11.647.498 2.48.027 6.19-.17 7.933-.44C25.443 21.42 26.06 19.73 26.11 17.54c.11-3.96-.004-8.015-.004-8.015C26.094 7.077 25.39 5.38 23 5.05c-1.74-.27-9.165-.472-11.646-.5zM9.703 16.63c-.323.562-1.01.96-1.643.96-.966 0-1.72-.73-1.72-1.81 0-1.01.69-1.84 1.81-1.84.37 0 .72.11 1.04.3.29.17.58.41.78.73.38.58.38 1.07.38 1.66zm3.59-2.89c-.55-.97-1.48-1.6-2.64-1.6-.3 0-.58.06-.84.16-.53.21-.98.6-1.32 1.1-.36.53-.56 1.16-.56 1.84 0 1.54 1.16 2.81 2.72 2.81 1.12 0 2.08-.66 2.53-1.63.22-.47.34-.99.34-1.54.03-.7-.26-1.28-.61-1.98zm4.19 2.92c-.324.562-1.01.96-1.644.96-.965 0-1.72-.73-1.72-1.81 0-1.01.69-1.84 1.81-1.84.375 0 .72.11 1.04.3.29.17.58.41.78.73.38.58.38 1.07.38 1.66zm3.73-2.71c-.55-.97-1.48-1.6-2.64-1.6-.3 0-.58.06-.84.16-.53.21-.98.6-1.32 1.1-.36.53-.56 1.16-.56 1.84 0 1.54 1.16 2.81 2.72 2.81 1.12 0 2.08-.66 2.53-1.63.22-.47.34-.99.34-1.54.03-.7-.26-1.28-.61-1.98z" fill="#00A1E0"/></svg>
-                        <span class="text-sm font-medium text-gray-700">Salesforce</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Pipedrive</title><path d="M19.958 0H4.037C1.808 0 0 1.807 0 4.037v15.922C0 22.192 1.808 24 4.037 24h15.921C22.192 24 24 22.192 24 19.959V4.037C24 1.808 22.192 0 19.958 0zM8.56 17.336a1.383 1.383 0 0 1-1.38 1.38H5.072a1.381 1.381 0 0 1-1.38-1.38V6.664c0-.76.62-1.38 1.38-1.38h2.108c.762 0 1.38.62 1.38 1.38v10.672zm4.498-2.652a1.38 1.38 0 0 1-1.38 1.38h-2.11a1.38 1.38 0 0 1-1.38-1.38V9.316c0-.762.62-1.38 1.38-1.38h2.11c.76 0 1.38.618 1.38 1.38v5.368zm4.496 4.012a1.38 1.38 0 0 1-1.38 1.38h-2.106a1.381 1.381 0 0 1-1.38-1.38V2.69c0-.762.618-1.38 1.38-1.38H16.17c.76 0 1.38.618 1.38 1.38v16.006z" fill="#2D8C22"/></svg>
-                        <span class="text-sm font-medium text-gray-700">Pipedrive</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Zoho</title><path d="M1.608 16.32v-5.05L12 0l10.392 11.27v5.05L12 24zm2.802-3.19h5.76v-2.21h-5.76zm0-3.64h5.76v-2.21h-5.76zm0-3.64h5.76V3.64h-5.76zm7.62 10.47h5.76v-2.21h-5.76zm0-3.64h5.76v-2.21h-5.76zm0-3.64h5.76V7.28h-5.76zm0-3.64h5.76V3.64h-5.76z" fill="#EE3B2E"/></svg>
-                        <span class="text-sm font-medium text-gray-700">Zoho CRM</span>
-                    </div>
+            <div class="logos">
+                <div class="logos-row" id="tech-logo-scroll-row-1">
+                    <!-- Row 1 Logos (8 unique + duplicates) - SPANS REMOVED -->
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>HubSpot</title><path d="M12.004 0C5.38 0 0 5.38 0 12.004s5.38 12.004 12.004 12.004 12.004-5.38 12.004-12.004S18.628 0 12.004 0zm5.434 16.206c.204.288.204.72 0 1.008l-.546.772c-.204.288-.57.383-.897.268a8.42 8.42 0 0 1-3.992-1.662 8.73 8.73 0 0 1-2.904-3.042c-.07-.16-.07-.34 0-.5l.002-.007a.61.61 0 0 1 .05-.142c.29-.705.54-1.42.746-2.14.16-.57.382-1.12.61-1.64a.66.66 0 0 1 .21-.27c.204-.144.48-.144.684 0l.438.308c.204.144.288.408.216.648a10.34 10.34 0 0 0-.432 2.083c-.03.28-.05.56-.06.84l-.004.1c.28.92.79 1.76 1.46 2.45a7.32 7.32 0 0 0 2.887 1.723zm-10.86-3.59a.63.63 0 0 1-.684-.01c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.35 10.35 0 0 0 .528 2.31c.03.1.05.2.08.3l.002.008a8.42 8.42 0 0 1-3.82-1.475.66.66 0 0 1-.204-.936l.546-.772c.204-.288.57-.383.897-.268a8.42 8.42 0 0 1 3.992 1.662 8.73 8.73 0 0 1 2.904 3.042c.08.16.08.34 0 .5l-.002.007a.61.61 0 0 1-.05.142c-.29.705-.54 1.42-.746 2.14-.16.57-.382 1.12-.61 1.64a.66.66 0 0 1-.21.27c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.34 10.34 0 0 0 .432 2.083zm7.39-8.06a.63.63 0 0 1-.684-.01c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.35 10.35 0 0 0 .528 2.31c.03.1.05.2.08.3l.002.008A8.42 8.42 0 0 1 3.99 8.058a.66.66 0 0 1-.204-.936L4.33 6.35c.204-.288.57-.383.897-.268a8.42 8.42 0 0 1 3.992 1.662 8.73 8.73 0 0 1 2.904 3.042c.08.16.08.34 0 .5l-.002.007a.61.61 0 0 1-.05.142c-.29.705-.54 1.42-.746 2.14-.16.57-.382 1.12-.61 1.64a.66.66 0 0 1-.21.27c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.34 10.34 0 0 0 .432 2.083z" fill="#FF7A59"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Salesforce</title><path d="M11.354 0C8.873.027 5.164.224 3.42.493c-2.42.376-3.034 2.062-3.09 4.25-.11 3.96.005 8.015.005 8.015.012 2.448.72 4.143 3.09 4.477 1.75.271 9.166.47 11.647.498 2.48.027 6.19-.17 7.933-.44C25.443 21.42 26.06 19.73 26.11 17.54c.11-3.96-.004-8.015-.004-8.015C26.094 7.077 25.39 5.38 23 5.05c-1.74-.27-9.165-.472-11.646-.5zM9.703 16.63c-.323.562-1.01.96-1.643.96-.966 0-1.72-.73-1.72-1.81 0-1.01.69-1.84 1.81-1.84.37 0 .72.11 1.04.3.29.17.58.41.78.73.38.58.38 1.07.38 1.66zm3.59-2.89c-.55-.97-1.48-1.6-2.64-1.6-.3 0-.58.06-.84.16-.53.21-.98.6-1.32 1.1-.36.53-.56 1.16-.56 1.84 0 1.54 1.16 2.81 2.72 2.81 1.12 0 2.08-.66 2.53-1.63.22-.47.34-.99.34-1.54.03-.7-.26-1.28-.61-1.98zm4.19 2.92c-.324.562-1.01.96-1.644.96-.965 0-1.72-.73-1.72-1.81 0-1.01.69-1.84 1.81-1.84.375 0 .72.11 1.04.3.29.17.58.41.78.73.38.58.38 1.07.38 1.66zm3.73-2.71c-.55-.97-1.48-1.6-2.64-1.6-.3 0-.58.06-.84.16-.53.21-.98.6-1.32 1.1-.36.53-.56 1.16-.56 1.84 0 1.54 1.16 2.81 2.72 2.81 1.12 0 2.08-.66 2.53-1.63.22-.47.34-.99.34-1.54.03-.7-.26-1.28-.61-1.98z" fill="#00A1E0"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Pipedrive</title><path d="M19.958 0H4.037C1.808 0 0 1.807 0 4.037v15.922C0 22.192 1.808 24 4.037 24h15.921C22.192 24 24 22.192 24 19.959V4.037C24 1.808 22.192 0 19.958 0zM8.56 17.336a1.383 1.383 0 0 1-1.38 1.38H5.072a1.381 1.381 0 0 1-1.38-1.38V6.664c0-.76.62-1.38 1.38-1.38h2.108c.762 0 1.38.62 1.38 1.38v10.672zm4.498-2.652a1.38 1.38 0 0 1-1.38 1.38h-2.11a1.38 1.38 0 0 1-1.38-1.38V9.316c0-.762.62-1.38 1.38-1.38h2.11c.76 0 1.38.618 1.38 1.38v5.368zm4.496 4.012a1.38 1.38 0 0 1-1.38 1.38h-2.106a1.381 1.381 0 0 1-1.38-1.38V2.69c0-.762.618-1.38 1.38-1.38H16.17c.76 0 1.38.618 1.38 1.38v16.006z" fill="#2D8C22"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Zoho</title><path d="M1.608 16.32v-5.05L12 0l10.392 11.27v5.05L12 24zm2.802-3.19h5.76v-2.21h-5.76zm0-3.64h5.76v-2.21h-5.76zm0-3.64h5.76V3.64h-5.76zm7.62 10.47h5.76v-2.21h-5.76zm0-3.64h5.76v-2.21h-5.76zm0-3.64h5.76V7.28h-5.76zm0-3.64h5.76V3.64h-5.76z" fill="#EE3B2E"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" fill="#0A66C2"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><img src="https://www.vectorlogo.zone/logos/apolloio/apolloio-icon.svg" alt="Apollo.io" class="h-16 w-16 mb-2"></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Lemlist</title><path d="M22.466 12.009c0 6.632-5.38 12-12.008 12S0 18.584.013 12.009C.013 5.381 5.392.013 12.021.013c6.631 0 11.992 5.368 12.445 11.996zm-7.375-.71a2.711 2.711 0 00-2.708-2.713H8.93a2.711 2.711 0 00-2.708 2.713v1.422a2.711 2.711 0 002.708 2.712H12.4a2.711 2.711 0 002.709-2.712v-1.422zm-6.063 2.86c-.791 0-1.422-.643-1.422-1.422V9.942c0-.791.63-1.422 1.422-1.422h4.781c.792 0 1.422.631 1.422 1.422v2.925c0 .791-.63 1.422-1.422 1.422H9.028zm9.14-6.063a1.422 1.422 0 100-2.843 1.422 1.422 0 000 2.843z" fill="#F53D5C"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><img src="https://asset.brandfetch.io/idobbS7jSp/idnmLGNLAL.svg" alt="Mailshake" class="h-16 w-16 mb-2"></div>
+                    <!-- Duplicates for Row 1 -->
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>HubSpot</title><path d="M12.004 0C5.38 0 0 5.38 0 12.004s5.38 12.004 12.004 12.004 12.004-5.38 12.004-12.004S18.628 0 12.004 0zm5.434 16.206c.204.288.204.72 0 1.008l-.546.772c-.204.288-.57.383-.897.268a8.42 8.42 0 0 1-3.992-1.662 8.73 8.73 0 0 1-2.904-3.042c-.07-.16-.07-.34 0-.5l.002-.007a.61.61 0 0 1 .05-.142c.29-.705.54-1.42.746-2.14.16-.57.382-1.12.61-1.64a.66.66 0 0 1 .21-.27c.204-.144.48-.144.684 0l.438.308c.204.144.288.408.216.648a10.34 10.34 0 0 0-.432 2.083c-.03.28-.05.56-.06.84l-.004.1c.28.92.79 1.76 1.46 2.45a7.32 7.32 0 0 0 2.887 1.723zm-10.86-3.59a.63.63 0 0 1-.684-.01c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.35 10.35 0 0 0 .528 2.31c.03.1.05.2.08.3l.002.008a8.42 8.42 0 0 1-3.82-1.475.66.66 0 0 1-.204-.936l.546-.772c.204-.288.57-.383.897-.268a8.42 8.42 0 0 1 3.992 1.662 8.73 8.73 0 0 1 2.904 3.042c.08.16.08.34 0 .5l-.002.007a.61.61 0 0 1-.05.142c-.29.705-.54 1.42-.746 2.14-.16.57-.382 1.12-.61 1.64a.66.66 0 0 1-.21.27c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.34 10.34 0 0 0 .432 2.083zm7.39-8.06a.63.63 0 0 1-.684-.01c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.35 10.35 0 0 0 .528 2.31c.03.1.05.2.08.3l.002.008A8.42 8.42 0 0 1 3.99 8.058a.66.66 0 0 1-.204-.936L4.33 6.35c.204-.288.57-.383.897-.268a8.42 8.42 0 0 1 3.992 1.662 8.73 8.73 0 0 1 2.904 3.042c.08.16.08.34 0 .5l-.002.007a.61.61 0 0 1-.05.142c-.29.705-.54 1.42-.746 2.14-.16.57-.382 1.12-.61 1.64a.66.66 0 0 1-.21.27c-.204-.144-.48-.144-.684 0l-.438.308c-.204.144-.288.408-.216.648a10.34 10.34 0 0 0 .432 2.083z" fill="#FF7A59"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Salesforce</title><path d="M11.354 0C8.873.027 5.164.224 3.42.493c-2.42.376-3.034 2.062-3.09 4.25-.11 3.96.005 8.015.005 8.015.012 2.448.72 4.143 3.09 4.477 1.75.271 9.166.47 11.647.498 2.48.027 6.19-.17 7.933-.44C25.443 21.42 26.06 19.73 26.11 17.54c.11-3.96-.004-8.015-.004-8.015C26.094 7.077 25.39 5.38 23 5.05c-1.74-.27-9.165-.472-11.646-.5zM9.703 16.63c-.323.562-1.01.96-1.643.96-.966 0-1.72-.73-1.72-1.81 0-1.01.69-1.84 1.81-1.84.37 0 .72.11 1.04.3.29.17.58.41.78.73.38.58.38 1.07.38 1.66zm3.59-2.89c-.55-.97-1.48-1.6-2.64-1.6-.3 0-.58.06-.84.16-.53.21-.98.6-1.32 1.1-.36.53-.56 1.16-.56 1.84 0 1.54 1.16 2.81 2.72 2.81 1.12 0 2.08-.66 2.53-1.63.22-.47.34-.99.34-1.54.03-.7-.26-1.28-.61-1.98zm4.19 2.92c-.324.562-1.01.96-1.644.96-.965 0-1.72-.73-1.72-1.81 0-1.01.69-1.84 1.81-1.84.375 0 .72.11 1.04.3.29.17.58.41.78.73.38.58.38 1.07.38 1.66zm3.73-2.71c-.55-.97-1.48-1.6-2.64-1.6-.3 0-.58.06-.84.16-.53.21-.98.6-1.32 1.1-.36.53-.56 1.16-.56 1.84 0 1.54 1.16 2.81 2.72 2.81 1.12 0 2.08-.66 2.53-1.63.22-.47.34-.99.34-1.54.03-.7-.26-1.28-.61-1.98z" fill="#00A1E0"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Pipedrive</title><path d="M19.958 0H4.037C1.808 0 0 1.807 0 4.037v15.922C0 22.192 1.808 24 4.037 24h15.921C22.192 24 24 22.192 24 19.959V4.037C24 1.808 22.192 0 19.958 0zM8.56 17.336a1.383 1.383 0 0 1-1.38 1.38H5.072a1.381 1.381 0 0 1-1.38-1.38V6.664c0-.76.62-1.38 1.38-1.38h2.108c.762 0 1.38.62 1.38 1.38v10.672zm4.498-2.652a1.38 1.38 0 0 1-1.38 1.38h-2.11a1.38 1.38 0 0 1-1.38-1.38V9.316c0-.762.62-1.38 1.38-1.38h2.11c.76 0 1.38.618 1.38 1.38v5.368zm4.496 4.012a1.38 1.38 0 0 1-1.38 1.38h-2.106a1.381 1.381 0 0 1-1.38-1.38V2.69c0-.762.618-1.38 1.38-1.38H16.17c.76 0 1.38.618 1.38 1.38v16.006z" fill="#2D8C22"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Zoho</title><path d="M1.608 16.32v-5.05L12 0l10.392 11.27v5.05L12 24zm2.802-3.19h5.76v-2.21h-5.76zm0-3.64h5.76v-2.21h-5.76zm0-3.64h5.76V3.64h-5.76zm7.62 10.47h5.76v-2.21h-5.76zm0-3.64h5.76v-2.21h-5.76zm0-3.64h5.76V7.28h-5.76zm0-3.64h5.76V3.64h-5.76z" fill="#EE3B2E"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" fill="#0A66C2"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><img src="https://www.vectorlogo.zone/logos/apolloio/apolloio-icon.svg" alt="Apollo.io" class="h-16 w-16 mb-2"></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Lemlist</title><path d="M22.466 12.009c0 6.632-5.38 12-12.008 12S0 18.584.013 12.009C.013 5.381 5.392.013 12.021.013c6.631 0 11.992 5.368 12.445 11.996zm-7.375-.71a2.711 2.711 0 00-2.708-2.713H8.93a2.711 2.711 0 00-2.708 2.713v1.422a2.711 2.711 0 002.708 2.712H12.4a2.711 2.711 0 002.709-2.712v-1.422zm-6.063 2.86c-.791 0-1.422-.643-1.422-1.422V9.942c0-.791.63-1.422 1.422-1.422h4.781c.792 0 1.422.631 1.422 1.422v2.925c0 .791-.63 1.422-1.422 1.422H9.028zm9.14-6.063a1.422 1.422 0 100-2.843 1.422 1.422 0 000 2.843z" fill="#F53D5C"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><img src="https://asset.brandfetch.io/idobbS7jSp/idnmLGNLAL.svg" alt="Mailshake" class="h-16 w-16 mb-2"></div>
                 </div>
-                <p class="text-lg text-gray-700 font-semibold mt-10 mb-6 text-center">Outreach</p>
-                <div class="tech-logo-row" id="tech-logo-row-outreach" style="margin-top: 20px;">
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" fill="#0A66C2"/></svg>
-                        <span class="text-sm font-medium text-gray-700">LinkedIn Sales Navigator</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://i.imgur.com/9k8Gj4Z.png" alt="Apollo.io" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
-                        <span class="text-sm font-medium text-gray-700">Apollo.io</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Lemlist</title><path d="M22.466 12.009c0 6.632-5.38 12-12.008 12S0 18.584.013 12.009C.013 5.381 5.392.013 12.021.013c6.631 0 11.992 5.368 12.445 11.996zm-7.375-.71a2.711 2.711 0 00-2.708-2.713H8.93a2.711 2.711 0 00-2.708 2.713v1.422a2.711 2.711 0 002.708 2.712H12.4a2.711 2.711 0 002.709-2.712v-1.422zm-6.063 2.86c-.791 0-1.422-.643-1.422-1.422V9.942c0-.791.63-1.422 1.422-1.422h4.781c.792 0 1.422.631 1.422 1.422v2.925c0 .791-.63 1.422-1.422 1.422H9.028zm9.14-6.063a1.422 1.422 0 100-2.843 1.422 1.422 0 000 2.843z" fill="#F53D5C"/></svg>
-                        <span class="text-sm font-medium text-gray-700">Lemlist</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://i.imgur.com/j4xOR3W.png" alt="Mailshake" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
-                        <span class="text-sm font-medium text-gray-700">Mailshake</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Hunter</title><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.032 21.492c-2.04-.01-3.93-.628-5.503-1.728-1.434-1.002-2.71-2.38-3.59-3.998-.905-1.667-1.304-3.59-1.196-5.528.108-1.937.72-3.778 1.738-5.365 1.032-1.604 2.448-2.875 4.095-3.698 1.622-.81 3.44-.99 5.245-.75 1.83.242 3.522.96 4.908 2.062 1.37 1.09 2.36 2.503 2.858 4.088.512 1.62.49 3.412-.06 5.053-.54 1.617-1.58 3.022-2.95 4.05-1.353 1.013-2.972 1.59-4.64 1.715l-.003.002a2.405 2.405 0 01-.014-.002c-.07-.002-.14-.002-.21-.002zm-.032-3.865c1.086 0 2.11-.265 3.004-.768a5.43 5.43 0 002.268-2.268c.503-.894.768-1.918.768-3.004s-.265-2.11-.768-3.004a5.43 5.43 0 00-2.268-2.268c-.894-.503-1.918-.768-3.004-.768s-2.11.265-3.004.768a5.43 5.43 0 00-2.268 2.268c-.503.894-.768 1.918-.768 3.004s.265 2.11.768 3.004a5.43 5.43 0 002.268 2.268c.894.503 1.918.768 3.004.768zm0-2.627c-.262 0-.518-.05-.756-.142a2.803 2.803 0 01-2.24-2.24c-.092-.238-.142-.494-.142-.756s.05-.518.142-.756a2.803 2.803 0 012.24-2.24c.238-.092.494-.142.756-.142s.518.05.756.142a2.803 2.803 0 012.24 2.24c.092.238.142.494.142.756s-.05.518-.142.756a2.803 2.803 0 01-2.24 2.24c-.238.092-.494.142-.756.142z" fill="#E56A19"/></svg>
-                        <span class="text-sm font-medium text-gray-700">Hunter.io</span>
-                    </div>
-                </div>
-                <p class="text-lg text-gray-700 font-semibold mt-10 mb-6 text-center">Scheduling</p>
-                <div class="tech-logo-row" id="tech-logo-row-scheduling" style="margin-top: 20px;">
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://i.imgur.com/x0n9fp0.png" alt="Calendly" class="h-16 w-16 mb-2"> <!-- Placeholder/custom link -->
-                        <span class="text-sm font-medium text-gray-700">Calendly</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecalendar/googlecalendar-original.svg" alt="Google Calendar" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Google Calendar</span>
-                    </div>
-                </div>
-                <p class="text-lg text-gray-700 font-semibold mt-10 mb-6 text-center">Reporting</p>
-                 <div class="tech-logo-row" id="tech-logo-row-reporting" style="margin-top: 20px;">
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlesheets/googlesheets-original.svg" alt="Google Sheets" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Google Sheets</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftexcel/microsoftexcel-original.svg" alt="Excel" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Excel</span>
-                    </div>
-                     <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/notion/notion-original.svg" alt="Notion" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Notion</span>
-                    </div>
-                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/airtable/airtable-original.svg" alt="Airtable" class="h-16 w-16 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Airtable</span>
-                    </div>
+            </div>
+            <div class="scrolling-logos-container" style="margin-top: 1rem;">
+                <div class="logos-row reverse" id="tech-logo-scroll-row-2">
+                    <!-- Original Set for Row 2 (7 logos) - SPANS REMOVED -->
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Hunter</title><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.032 21.492c-2.04-.01-3.93-.628-5.503-1.728-1.434-1.002-2.71-2.38-3.59-3.998-.905-1.667-1.304-3.59-1.196-5.528.108-1.937.72-3.778 1.738-5.365 1.032-1.604 2.448-2.875 4.095-3.698 1.622-.81 3.44-.99 5.245-.75 1.83.242 3.522.96 4.908 2.062 1.37 1.09 2.36 2.503 2.858 4.088.512 1.62.49 3.412-.06 5.053-.54 1.617-1.58 3.022-2.95 4.05-1.353 1.013-2.972 1.59-4.64 1.715l-.003.002a2.405 2.405 0 01-.014-.002c-.07-.002-.14-.002-.21-.002zm-.032-3.865c1.086 0 2.11-.265 3.004-.768a5.43 5.43 0 002.268-2.268c.503-.894.768-1.918.768-3.004s-.265-2.11-.768-3.004a5.43 5.43 0 00-2.268-2.268c-.894-.503-1.918-.768-3.004-.768s-2.11.265-3.004.768a5.43 5.43 0 00-2.268 2.268c-.503.894-.768 1.918-.768 3.004s.265 2.11.768 3.004a5.43 5.43 0 002.268 2.268c.894.503 1.918.768 3.004.768zm0-2.627c-.262 0-.518-.05-.756-.142a2.803 2.803 0 01-2.24-2.24c-.092-.238-.142-.494-.142-.756s.05-.518.142-.756a2.803 2.803 0 012.24-2.24c.238-.092.494-.142.756-.142s.518.05.756.142a2.803 2.803 0 012.24 2.24c.092.238.142.494.142.756s-.05.518-.142.756a2.803 2.803 0 01-2.24 2.24c-.238.092-.494.142-.756.142z" fill="#E56A19"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Calendly</title><path d="M19.655 14.262c.281 0 .557.023.828.064 0 .005-.005.01-.005.014-.105.267-.234.534-.381.786l-1.219 2.106c-1.112 1.936-3.177 3.127-5.411 3.127h-2.432c-2.23 0-4.294-1.191-5.412-3.127l-1.218-2.106a6.251 6.251 0 0 1 0-6.252l1.218-2.106C6.736 4.832 8.8 3.641 11.035 3.641h2.432c2.23 0 4.294 1.191 5.411 3.127l1.219 2.106c.147.252.271.519.381.786 0 .004.005.009.005.014-.267.041-.543.064-.828.064-1.816 0-2.501-.607-3.291-1.306-.764-.676-1.711-1.517-3.44-1.517h-1.029c-1.251 0-2.387.455-3.2 1.278-.796.805-1.233 1.904-1.233 3.099v1.411c0 1.196.437 2.295 1.233 3.099.813.823 1.949 1.278 3.2 1.278h1.034c1.729 0 2.676-.841 3.439-1.517.791-.703 1.471-1.306 3.287-1.301Zm.005-3.237c.399 0 .794-.036 1.179-.11-.002-.004-.002-.01-.002-.014-.073-.414-.193-.823-.349-1.218.731-.12 1.407-.396 1.986-.819 0-.004-.005-.013-.005-.018-.331-1.085-.832-2.101-1.489-3.03-.649-.915-1.435-1.719-2.331-2.395-1.867-1.398-4.088-2.138-6.428-2.138-1.448 0-2.855.28-4.175.841-1.273.543-2.423 1.315-3.407 2.299S2.878 6.552 2.341 7.83c-.557 1.324-.842 2.726-.842 4.175 0 1.448.281 2.855.842 4.174.542 1.274 1.314 2.423 2.298 3.407s2.129 1.761 3.407 2.299c1.324.556 2.727.841 4.175.841 2.34 0 4.561-.74 6.428-2.137a10.815 10.815 0 0 0 2.331-2.396c.652-.929 1.158-1.949 1.489-3.03 0-.004.005-.014.005-.018-.579-.423-1.255-.699-1.986-.819.161-.395.276-.804.349-1.218.005-.009.005-.014.005-.023.869.166 1.692.506 2.404 1.035.685.505.552 1.075.446 1.416C22.184 20.437 17.619 24 12.221 24c-6.625 0-12-5.375-12-12s5.37-12 12-12c5.398 0 9.963 3.563 11.471 8.464.106.341.239.915-.446 1.421-.717.529-1.535.873-2.404 1.034.128.716.128 1.45 0 2.166-.387-.074-.782-.11-1.182-.11-4.184 0-3.968 2.823-6.736 2.823h-1.029c-1.899 0-3.15-1.357-3.15-3.095v-1.411c0-1.738 1.251-3.094 3.15-3.094h1.034c2.768 0 2.552 2.823 6.731 2.827Z" fill="#006BFF"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Google Calendar</title><path d="M7.393 2.91h9.214A2.911 2.911 0 0119.518 0H4.482A2.911 2.911 0 017.393 2.91zM2.91 7.393V19.52a2.911 2.911 0 010 5.822V7.393zm18.182 0v17.949a2.911 2.911 0 010-5.822V7.393zM7.393 21.09V4.482a2.911 2.911 0 01-5.822 0V21.09a2.911 2.911 0 015.822 0zm9.214 0V4.482a2.911 2.911 0 01-5.821 0V21.09a2.911 2.911 0 015.821 0zM12 8.058a3.942 3.942 0 100 7.884 3.942 3.942 0 000-7.884z" fill="#4285F4"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Notion</title><path d="M2.685 3.369h4.323V20.63h-3.06V5.92H2.685V3.369zM12.008 3.35a3.634 3.634 0 00-3.638 3.638V20.63h2.74V7.243c0-.51.396-.903.902-.903.51 0 .903.395.903.903V20.63h2.74V6.988a3.634 3.634 0 00-3.647-3.638zm5.047 0h4.323V20.63h-3.06V5.92h-1.262V3.37z" fill="#000000"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Google Sheets</title><path d="M15.273 0H2.364A2.364 2.364 0 000 2.364v19.272A2.364 2.364 0 002.364 24h19.272A2.364 2.364 0 0024 21.636V8.727L15.273 0zM8.727 20.455H4.727v-2.182h4v2.182zm0-4.364H4.727v-2.182h4v2.182zm0-4.363H4.727V9.545h4v2.182zm6.546 8.727H10.91v-2.182h4.363v2.182zm0-4.364H10.91v-2.182h4.363v2.182zm0-4.363H10.91V9.545h4.363v2.182zm6.545 8.727h-4.364v-2.182h4.364v2.182zm0-4.364h-4.364v-2.182h4.364v2.182zm0-4.363h-4.364V9.545h4.364v2.182z" fill="#34A853"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Microsoft Excel</title><path d="M23.36 1.36H.64A.64.64 0 000 2v20a.64.64 0 00.64.64h22.72a.64.64 0 00.64-.64V2a.64.64 0 00-.64-.64zM8.64 21.36H1.92V8.4h6.72v12.96zm7.04 0H9.28V8.4h6.4v12.96zm7.04 0h-6.4V8.4h6.4v12.96zM8.64 7.12H1.92V2.64h6.72v4.48zm7.04 0H9.28V2.64h6.4v4.48zm7.04 0h-6.4V2.64h6.4v4.48z" fill="#217346"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/airtable/airtable-original.svg" alt="Airtable" class="h-16 w-16 mb-2"></div>
+                    <!-- Duplicates for Row 2 -->
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Hunter</title><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.032 21.492c-2.04-.01-3.93-.628-5.503-1.728-1.434-1.002-2.71-2.38-3.59-3.998-.905-1.667-1.304-3.59-1.196-5.528.108-1.937.72-3.778 1.738-5.365 1.032-1.604 2.448-2.875 4.095-3.698 1.622-.81 3.44-.99 5.245-.75 1.83.242 3.522.96 4.908 2.062 1.37 1.09 2.36 2.503 2.858 4.088.512 1.62.49 3.412-.06 5.053-.54 1.617-1.58 3.022-2.95 4.05-1.353 1.013-2.972 1.59-4.64 1.715l-.003.002a2.405 2.405 0 01-.014-.002c-.07-.002-.14-.002-.21-.002zm-.032-3.865c1.086 0 2.11-.265 3.004-.768a5.43 5.43 0 002.268-2.268c.503-.894.768-1.918.768-3.004s-.265-2.11-.768-3.004a5.43 5.43 0 00-2.268-2.268c-.894-.503-1.918-.768-3.004-.768s-2.11.265-3.004.768a5.43 5.43 0 00-2.268 2.268c-.503.894-.768 1.918-.768 3.004s.265 2.11.768 3.004a5.43 5.43 0 002.268 2.268c.894.503 1.918.768 3.004.768zm0-2.627c-.262 0-.518-.05-.756-.142a2.803 2.803 0 01-2.24-2.24c-.092-.238-.142-.494-.142-.756s.05-.518.142-.756a2.803 2.803 0 012.24-2.24c.238-.092.494-.142.756-.142s.518.05.756.142a2.803 2.803 0 012.24 2.24c.092.238.142.494.142.756s-.05.518-.142.756a2.803 2.803 0 01-2.24 2.24c-.238.092-.494.142-.756.142z" fill="#E56A19"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Calendly</title><path d="M19.655 14.262c.281 0 .557.023.828.064 0 .005-.005.01-.005.014-.105.267-.234.534-.381.786l-1.219 2.106c-1.112 1.936-3.177 3.127-5.411 3.127h-2.432c-2.23 0-4.294-1.191-5.412-3.127l-1.218-2.106a6.251 6.251 0 0 1 0-6.252l1.218-2.106C6.736 4.832 8.8 3.641 11.035 3.641h2.432c2.23 0 4.294 1.191 5.411 3.127l1.219 2.106c.147.252.271.519.381.786 0 .004.005.009.005.014-.267.041-.543.064-.828.064-1.816 0-2.501-.607-3.291-1.306-.764-.676-1.711-1.517-3.44-1.517h-1.029c-1.251 0-2.387.455-3.2 1.278-.796.805-1.233 1.904-1.233 3.099v1.411c0 1.196.437 2.295 1.233 3.099.813.823 1.949 1.278 3.2 1.278h1.034c1.729 0 2.676-.841 3.439-1.517.791-.703 1.471-1.306 3.287-1.301Zm.005-3.237c.399 0 .794-.036 1.179-.11-.002-.004-.002-.01-.002-.014-.073-.414-.193-.823-.349-1.218.731-.12 1.407-.396 1.986-.819 0-.004-.005-.013-.005-.018-.331-1.085-.832-2.101-1.489-3.03-.649-.915-1.435-1.719-2.331-2.395-1.867-1.398-4.088-2.138-6.428-2.138-1.448 0-2.855.28-4.175.841-1.273.543-2.423 1.315-3.407 2.299S2.878 6.552 2.341 7.83c-.557 1.324-.842 2.726-.842 4.175 0 1.448.281 2.855.842 4.174.542 1.274 1.314 2.423 2.298 3.407s2.129 1.761 3.407 2.299c1.324.556 2.727.841 4.175.841 2.34 0 4.561-.74 6.428-2.137a10.815 10.815 0 0 0 2.331-2.396c.652-.929 1.158-1.949 1.489-3.03 0-.004.005-.014.005-.018-.579-.423-1.255-.699-1.986-.819.161-.395.276-.804.349-1.218.005-.009.005-.014.005-.023.869.166 1.692.506 2.404 1.035.685.505.552 1.075.446 1.416C22.184 20.437 17.619 24 12.221 24c-6.625 0-12-5.375-12-12s5.37-12 12-12c5.398 0 9.963 3.563 11.471 8.464.106.341.239.915-.446 1.421-.717.529-1.535.873-2.404 1.034.128.716.128 1.45 0 2.166-.387-.074-.782-.11-1.182-.11-4.184 0-3.968 2.823-6.736 2.823h-1.029c-1.899 0-3.15-1.357-3.15-3.095v-1.411c0-1.738 1.251-3.094 3.15-3.094h1.034c2.768 0 2.552 2.823 6.731 2.827Z" fill="#006BFF"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Google Calendar</title><path d="M7.393 2.91h9.214A2.911 2.911 0 0119.518 0H4.482A2.911 2.911 0 017.393 2.91zM2.91 7.393V19.52a2.911 2.911 0 010 5.822V7.393zm18.182 0v17.949a2.911 2.911 0 010-5.822V7.393zM7.393 21.09V4.482a2.911 2.911 0 01-5.822 0V21.09a2.911 2.911 0 015.822 0zm9.214 0V4.482a2.911 2.911 0 01-5.821 0V21.09a2.911 2.911 0 015.821 0zM12 8.058a3.942 3.942 0 100 7.884 3.942 3.942 0 000-7.884z" fill="#4285F4"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Notion</title><path d="M2.685 3.369h4.323V20.63h-3.06V5.92H2.685V3.369zM12.008 3.35a3.634 3.634 0 00-3.638 3.638V20.63h2.74V7.243c0-.51.396-.903.902-.903.51 0 .903.395.903.903V20.63h2.74V6.988a3.634 3.634 0 00-3.647-3.638zm5.047 0h4.323V20.63h-3.06V5.92h-1.262V3.37z" fill="#000000"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Google Sheets</title><path d="M15.273 0H2.364A2.364 2.364 0 000 2.364v19.272A2.364 2.364 0 002.364 24h19.272A2.364 2.364 0 0024 21.636V8.727L15.273 0zM8.727 20.455H4.727v-2.182h4v2.182zm0-4.364H4.727v-2.182h4v2.182zm0-4.363H4.727V9.545h4v2.182zm6.546 8.727H10.91v-2.182h4.363v2.182zm0-4.364H10.91v-2.182h4.363v2.182zm0-4.363H10.91V9.545h4.363v2.182zm6.545 8.727h-4.364v-2.182h4.364v2.182zm0-4.364h-4.364v-2.182h4.364v2.182zm0-4.363h-4.364V9.545h4.364v2.182z" fill="#34A853"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2"><title>Microsoft Excel</title><path d="M23.36 1.36H.64A.64.64 0 000 2v20a.64.64 0 00.64.64h22.72a.64.64 0 00.64-.64V2a.64.64 0 00-.64-.64zM8.64 21.36H1.92V8.4h6.72v12.96zm7.04 0H9.28V8.4h6.4v12.96zm7.04 0h-6.4V8.4h6.4v12.96zM8.64 7.12H1.92V2.64h6.72v4.48zm7.04 0H9.28V2.64h6.4v4.48zm7.04 0h-6.4V2.64h6.4v4.48z" fill="#217346"/></svg></div>
+                    <div class="tech-logo flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-white"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/airtable/airtable-original.svg" alt="Airtable" class="h-16 w-16 mb-2"></div>
                 </div>
             </div>
 
@@ -825,538 +202,4 @@
     </section>
 
     <!-- Careers Section -->
-    <section id="careers" class="py-28 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16" data-aos="fade-up" data-aos-duration="600" data-aos-offset="100" data-aos-easing="ease-out-cubic">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Join Our <span class="text-blue-600">Team</span></h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">We are always looking for talented and passionate individuals to join Bridgee Solutions. Discover a rewarding career with us and help businesses grow.</p>
-            </div>
-            <div class="max-w-3xl mx-auto bg-gray-50 p-8 rounded-xl shadow-lg text-center" data-aos="fade-up" data-aos-duration="700" data-aos-offset="100" data-aos-easing="ease-out-cubic">
-                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Why Work With Us?</h3>
-                <p class="text-gray-600 mb-8 leading-relaxed">At Bridgee Solutions, we foster a culture of innovation, collaboration, and continuous learning. We believe in empowering our team members and providing opportunities for professional development in a supportive environment.</p>
-                <a href="careers.html" class="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 inline-flex items-center shadow-md  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">
-                    Inquire About Careers <i class="fas fa-paper-plane ml-2"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="py-28 bg-blue-600 text-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-8">What Our <span class="underline decoration-blue-300">Clients Say</span></h2>
-                <p class="text-lg text-blue-100 max-w-2xl mx-auto leading-relaxed">Don't just take our word for it — hear from businesses that have grown with Bridgee Solutions.</p>
-            </div>
-
-            <!-- Swiper container -->
-            <div class="swiper testimonial-swiper overflow-hidden">
-                <div class="swiper-wrapper">
-                    <!-- Testimonial 1 -->
-                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
-                        <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">AS</div>
-                            <div>
-                                <h4 class="font-bold">Aisha S.</h4>
-                                <p class="text-blue-200 text-sm">Owner, Bloom & Grow E-commerce</p>
-                            </div>
-                        </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"Our Bridgee VA, Meron, has been a game-changer. She handles all our customer inquiries with such grace and efficiency, and her proactive approach to organizing our schedule has freed up so much of my time. We've seen a noticeable improvement in customer response times."</p>
-                        <div class="flex">
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star-half-alt text-yellow-300"></i>
-                        </div>
-                    </div>
-
-                    <!-- Testimonial 2 -->
-                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
-                        <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">RJ</div>
-                            <div>
-                                <h4 class="font-bold">Robert J.</h4>
-                                <p class="text-blue-200 text-sm">Lead Developer, Innovatech Solutions</p>
-                            </div>
-                        </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"We partnered with Bridgee for a complex web app build. Their development team, led by Dawit, was not only technically proficient with Python and React but also fantastic communicators. They integrated with our JIRA and Slack, and it felt like they were part of our in-house team. Project delivered on schedule and the code quality was impressive."</p>
-                        <div class="flex">
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                        </div>
-                    </div>
-
-                    <!-- Testimonial 3 -->
-                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
-                        <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">KF</div>
-                            <div>
-                                <h4 class="font-bold">Karen F.</h4>
-                                <p class="text-blue-200 text-sm">Marketing Manager, SparkleClean Services</p>
-                            </div>
-                        </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"Bridgee's BPO team took over our appointment setting and follow-up calls. The onboarding was smooth, and they quickly learned our CRM. We've seen a 20% increase in qualified appointments in just three months. Their professionalism with our potential clients is exactly what we hoped for."</p>
-                        <div class="flex">
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="far fa-star text-yellow-300"></i>
-                        </div>
-                    </div>
-                    <!-- New Testimonial 4 -->
-                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
-                        <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">MT</div>
-                            <div>
-                                <h4 class="font-bold">Marcus T.</h4>
-                                <p class="text-blue-200 text-sm">Founder, QuickFix IT Support</p>
-                            </div>
-                        </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"The virtual assistant service has been invaluable. My VA helps manage my overflowing inbox, schedules client meetings using Calendly, and even handles basic social media updates. This has allowed me to focus on the technical side of my business. The cost-effectiveness is a huge plus for a small business like mine."</p>
-                        <div class="flex">
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star-half-alt text-yellow-300"></i>
-                        </div>
-                    </div>
-                    <!-- New Testimonial 5 -->
-                    <div class="swiper-slide testimonial-card p-8 rounded-xl">
-                        <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold mr-4">SB</div>
-                            <div>
-                                <h4 class="font-bold">Sarah B.</h4>
-                                <p class="text-blue-200 text-sm">Project Manager, ConstructWell Ltd.</p>
-                            </div>
-                        </div>
-                        <p class="text-blue-100 mb-6 leading-relaxed">"We needed a team for data entry and document management for a large construction project. Bridgee provided a dedicated team that was accurate, efficient, and adapted quickly to our proprietary software. Their reporting via Google Sheets was clear and timely, making project tracking much easier."</p>
-                        <div class="flex">
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                            <i class="fas fa-star text-yellow-300"></i>
-                        </div>
-                    </div>
-                </div>
-                <!-- Add Pagination -->
-                <div class="swiper-pagination"></div>
-
-                <!-- Add Navigation Buttons -->
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-            </div>
-            <!-- "Read More Success Stories" button removed -->
-        </div>
-    </section>
-
-    <!-- Blog Preview Section -->
-    <section id="blog" class="py-28 bg-gray-50">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16" data-aos="fade-up" data-aos-duration="600" data-aos-offset="100" data-aos-easing="ease-out-cubic">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">From Our <span class="text-blue-600">Blog</span></h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">Stay updated with our latest insights, news, and articles on outsourcing, technology, and business growth.</p>
-                <div class="mt-6 flex justify-center space-x-4">
-                    <a href="https://www.facebook.com/bridgeesolutions" target="_blank" class="text-gray-500 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50 rounded-md" aria-label="Bridgee Solutions on Facebook"><i class="fab fa-facebook-f text-2xl"></i></a>
-                    <a href="https://www.twitter.com/bridgeesolutions" target="_blank" class="text-gray-500 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50 rounded-md" aria-label="Bridgee Solutions on Twitter"><i class="fab fa-twitter text-2xl"></i></a>
-                    <a href="https://www.linkedin.com/company/bridgeesolutions" target="_blank" class="text-gray-500 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50 rounded-md" aria-label="Bridgee Solutions on LinkedIn"><i class="fab fa-linkedin-in text-2xl"></i></a>
-                    <a href="https://www.instagram.com/bridgeesolutions" target="_blank" class="text-gray-500 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50 rounded-md" aria-label="Bridgee Solutions on Instagram"><i class="fab fa-instagram text-2xl"></i></a>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                <!-- Blog posts will be dynamically inserted here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-                <div class="md:col-span-2">
-                    <a href="#" class="flex items-center mb-6 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-lg">
-                    <img src="Solutions_darkmode.png" alt="Bridgee Solutions Logo" class="h-8 w-auto mr-2">
-                    <span class="text-xl font-semibold">Bridgee <span class="text-blue-400">Solutions</span></span>
-                    </a>
-
-                    <p class="text-gray-300 mb-4">Your bridge to cost-effective, scalable outsourcing solutions with Ethiopian talent.</p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md" aria-label="Bridgee Solutions on Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Company</h3>
-                    <ul class="space-y-2">
-                        <li><a href="about.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">About Us</a></li>
-                        <li><a href="careers.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Careers</a></li>
-                        <li><a href="index.html#blog" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Blog</a></li>
-                        <li><a href="contact.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Services</h3>
-                    <ul class="space-y-2">
-                        <li><a href="services.html#virtual-assistance" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
-                        <li><a href="services.html#software-development" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
-                        <li><a href="services.html#bpo-services" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">BPO Services</a></li>
-                        <li><a href="services.html#custom-solutions" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom Solutions</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
-                    <ul class="space-y-2">
-                        <li><a href="privacy-policy.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
-                        <li><a href="terms-of-service.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
-
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-300">
-                <p>© 2024 Bridgee Solutions. All rights reserved.</p>
-            </div>
-        </div>
-
-    <script>
-      const menuButton = document.getElementById('mobile-menu-button');
-      const menu = document.getElementById('mobile-menu');
-
-      menuButton.addEventListener('click', function() {
-        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
-        menuButton.setAttribute('aria-expanded', !isExpanded);
-        menu.classList.toggle('hidden');
-        document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
-
-        if (!isExpanded && !menu.classList.contains('hidden')) { // If menu is now open
-          const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
-          if (focusableElements.length > 0) {
-            focusableElements[0].focus();
-          }
-        }
-      });
-
-      // Focus trapping
-      menu.addEventListener('keydown', function(event) {
-        if (menu.classList.contains('hidden') || event.key !== 'Tab') return;
-
-        const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
-        if (focusableElements.length === 0) return;
-        const firstFocusableElement = focusableElements[0];
-        const lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-        if (event.shiftKey) { // Shift + Tab
-          if (document.activeElement === firstFocusableElement) {
-            lastFocusableElement.focus();
-            event.preventDefault();
-          }
-        } else { // Tab
-          if (document.activeElement === lastFocusableElement) {
-            firstFocusableElement.focus();
-            event.preventDefault();
-          }
-        }
-      });
-
-      // Escape key to close
-      document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
-          menu.classList.add('hidden');
-          document.body.style.overflow = '';
-          menuButton.setAttribute('aria-expanded', 'false');
-          menuButton.focus();
-        }
-      });
-
-      function toggleMobileServicesDropdown(event) {
-          event.preventDefault();
-          const dropdown = document.getElementById('mobile-services-dropdown');
-          dropdown.classList.toggle('hidden');
-          const icon = event.currentTarget.querySelector('i');
-          if (icon) {
-              icon.classList.toggle('fa-chevron-down');
-              icon.classList.toggle('fa-chevron-up');
-          }
-      }
-    </script>
-
-  <!-- AOS and other scripts -->
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-
-  <!-- Swiper.js JS -->
-  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-
-  <script>
-    AOS.init();
-
-    // Testimonial Swiper Initialization & Logo Scroller
-    document.addEventListener('DOMContentLoaded', function () {
-      // Logo Scroller (JS Animation - to be removed or commented out)
-      // console.log("DOM fully loaded and parsed. Initializing logo scroller.");
-      /*
-      function animateLogoRow(rowId, scrollSpeedPxPerFrame, moveContentRightToLeft) {
-        const rowElement = document.getElementById(rowId);
-        if (!rowElement) {
-          console.error(`Logo row not found: ${rowId}`);
-          return;
-        }
-        // console.log(`Initializing animation for ${rowId}. Speed: ${scrollSpeedPxPerFrame}, RTL: ${moveContentRightToLeft}`);
-
-        if (rowElement.children.length === 0) {
-            // console.error(`No logos found in ${rowId} to animate at outset.`);
-            return;
-        }
-
-        const originalLogos = Array.from(rowElement.children);
-
-        let calculatedWidthOfOneSet = 0;
-        const logoMarginRight = 64;
-
-        originalLogos.forEach(logo => {
-          calculatedWidthOfOneSet += logo.offsetWidth + logoMarginRight;
-        });
-
-        // console.log(`${rowId} - Calculated width of ONE set (logos + margins): ${calculatedWidthOfOneSet}px`);
-
-        originalLogos.forEach(logo => {
-          rowElement.appendChild(logo.cloneNode(true));
-        });
-
-        void rowElement.offsetWidth;
-
-        const scrollWidthOfOneSet = calculatedWidthOfOneSet;
-
-        let currentPositionDotPx = 0;
-
-        if (scrollWidthOfOneSet === 0) {
-            // console.error(`${rowId} - scrollWidthOfOneSet is 0. Animation cannot proceed meaningfully.`);
-            return;
-        } else {
-            // console.log(`${rowId} - USING scrollWidthOfOneSet for animation: ${scrollWidthOfOneSet}px`);
-        }
-
-        if (!moveContentRightToLeft) {
-            rowElement.style.transform = `translateX(-${scrollWidthOfOneSet}px)`;
-            // console.log(`${rowId} - Initial LTR transform set to: translateX(-${scrollWidthOfOneSet}px)`);
-        }
-
-        function step() {
-          currentPositionDotPx += scrollSpeedPxPerFrame;
-
-          if (currentPositionDotPx >= scrollWidthOfOneSet) {
-            currentPositionDotPx -= scrollWidthOfOneSet;
-          }
-
-          if (moveContentRightToLeft) {
-            rowElement.style.transform = `translateX(-${currentPositionDotPx}px)`;
-          } else {
-            rowElement.style.transform = `translateX(${currentPositionDotPx - scrollWidthOfOneSet}px)`;
-          }
-          requestAnimationFrame(step);
-        }
-
-        // console.log(`Starting animation loop for ${rowId}`);
-        requestAnimationFrame(step);
-      }
-
-      // animateLogoRow('tech-logo-row-1', 0.5, true);
-      // animateLogoRow('tech-logo-row-2', 0.5, false);
-      */
-
-      const testimonialSwiper = new Swiper('.testimonial-swiper', {
-        loop: true,
-        slidesPerView: 1,
-        spaceBetween: 30,
-        centeredSlides: true,
-        autoplay: false,
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        },
-        breakpoints: {
-          768: {
-            slidesPerView: 2,
-            spaceBetween: 30
-          },
-          1024: {
-            slidesPerView: 3,
-            spaceBetween: 40
-          }
-        }
-      });
-    });
-
-    // Fade-in hero elements on page load (if this script is still needed and separate)
-    // window.addEventListener('DOMContentLoaded', () => {
-    //   document.getElementById('hero-text')?.classList.remove('opacity-0', 'translate-y-6');
-    //   document.getElementById('hero-image')?.classList.remove('opacity-0', 'translate-y-6');
-    // });
-  </script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const blogPostsContainer = document.querySelector('#blog .grid');
-        const paginationControlsContainer = document.createElement('div');
-        paginationControlsContainer.className = 'col-span-full mt-8 text-center'; // Ensure it spans full width of grid
-        blogPostsContainer.parentNode.insertBefore(paginationControlsContainer, blogPostsContainer.nextSibling);
-
-
-        if (!blogPostsContainer) {
-            console.error('Blog posts container not found!');
-            return;
-        }
-
-        function fetchBlogPosts(page = 1) {
-            fetch(`/api/blog-posts?page=${page}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    blogPostsContainer.innerHTML = ''; // Clear previous posts
-                    paginationControlsContainer.innerHTML = ''; // Clear previous pagination controls
-
-                    const posts = data.posts;
-                    const currentPage = data.current_page;
-                    const totalPages = data.total_pages;
-
-                    if (!Array.isArray(posts) || posts.length === 0) {
-                        blogPostsContainer.innerHTML = '<p class="text-center text-gray-600 col-span-full">No blog posts available at the moment. Please check back later!</p>';
-                        return;
-                    }
-
-                    posts.forEach(post => {
-                        const postElement = document.createElement('div');
-                        postElement.className = 'bg-white rounded-xl p-8 shadow-lg flex flex-col';
-                        // Add AOS attributes if desired, e.g., postElement.setAttribute('data-aos', 'fade-up');
-
-                        let imageHtml = '';
-                        if (post.image_url) {
-                             // Check if the URL is absolute or needs prefixing
-                            let imageUrl = post.image_url;
-                            if (!post.image_url.startsWith('http') && !post.image_url.startsWith('/')) {
-                                // Assuming images uploaded via bot are stored in a specific static path
-                                // For example, if blog_bot.py saves to 'uploaded_images' and Flask serves it from '/uploaded_images/'
-                                imageUrl = `/uploaded_images/${post.image_url}`;
-                            }
-                            imageHtml = `<img src="${imageUrl}" alt="${post.title || 'Blog post image'}" class="rounded-lg mb-4 w-full h-48 object-cover">`;
-                        } else {
-                            imageHtml = `<img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Default blog image" class="rounded-lg mb-4 w-full h-48 object-cover">`;
-                        }
-
-                        let contentSnippet = 'No content available.';
-                        if (post.content && typeof post.content === 'string') {
-                           // Basic stripping of HTML tags for snippet if content_is_html is true
-                            let textContent = post.content;
-                            if (post.content_is_html) {
-                                const tempDiv = document.createElement('div');
-                                tempDiv.innerHTML = post.content;
-                                textContent = tempDiv.textContent || tempDiv.innerText || "";
-                            }
-                            contentSnippet = textContent.substring(0, 100) + (textContent.length > 100 ? '...' : '');
-                        } else if (post.content) {
-                            contentSnippet = 'Content available but in unexpected format.';
-                        }
-
-
-                        const author = post.author || 'Anonymous';
-                        let datePublished = 'Date not specified';
-                        if (post.date_published) {
-                            try {
-                                datePublished = new Date(post.date_published).toLocaleDateString('en-US', {
-                                    year: 'numeric', month: 'long', day: 'numeric'
-                                });
-                            } catch (e) {
-                                console.warn('Could not parse date_published:', post.date_published);
-                                datePublished = post.date_published;
-                            }
-                        }
-
-                        postElement.innerHTML = `
-                            ${imageHtml}
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">${post.title || 'Untitled Post'}</h3>
-                            <p class="text-sm text-gray-500 mb-2">By ${author} on ${datePublished}</p>
-                            <p class="text-base text-gray-600 mb-4 leading-relaxed flex-grow">${contentSnippet}</p>
-                            <a href="/post/${post.id}" class="text-blue-600 font-medium inline-flex items-center self-start focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Read More <i class="fas fa-arrow-right ml-2"></i></a>
-                        `;
-                        blogPostsContainer.appendChild(postElement);
-                    });
-
-                    // Render Pagination Controls
-                    if (totalPages > 1) {
-                        const prevButton = document.createElement('button');
-                        prevButton.innerHTML = '<i class="fas fa-arrow-left mr-2"></i>Previous';
-                        prevButton.className = 'px-4 py-2 mx-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
-                        if (currentPage === 1) {
-                            prevButton.disabled = true;
-                        }
-                        prevButton.addEventListener('click', () => fetchBlogPosts(currentPage - 1));
-                        paginationControlsContainer.appendChild(prevButton);
-
-                        const pageInfo = document.createElement('span');
-                        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-                        pageInfo.className = 'px-4 py-2 mx-2 text-gray-700 font-medium';
-                        paginationControlsContainer.appendChild(pageInfo);
-
-                        const nextButton = document.createElement('button');
-                        nextButton.innerHTML = 'Next<i class="fas fa-arrow-right ml-2"></i>';
-                        nextButton.className = 'px-4 py-2 mx-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
-                        if (currentPage >= totalPages) { // Adjusted condition here
-                            nextButton.disabled = true;
-                        }
-                        nextButton.addEventListener('click', () => fetchBlogPosts(currentPage + 1));
-                        paginationControlsContainer.appendChild(nextButton);
-                    }
-                     // If AOS is used, you might need to re-initialize it after adding dynamic content
-                    if (typeof AOS !== 'undefined') {
-                        AOS.refresh();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching blog posts:', error);
-                    blogPostsContainer.innerHTML = '<p class="text-center text-red-500 col-span-full">Could not load blog posts. Please try again later.</p>';
-                });
-        }
-
-        fetchBlogPosts(1); // Initial fetch for page 1
-    });
-  </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const navbar = document.getElementById('main-navbar');
-      const logoImg = document.getElementById('navbar-logo-image');
-      // Store original link colors or rely on Tailwind to re-apply when .navbar-transparent is removed.
-      // For simplicity, this script will just toggle the .navbar-transparent class.
-
-      function updateNavbarStyle() {
-        if (window.scrollY > 50) { // Threshold of 50px
-          navbar.classList.remove('navbar-transparent');
-          if (logoImg) logoImg.src = 'Solutions.png';
-          // Tailwind classes like bg-white, shadow-lg, text-gray-700, etc., will take effect.
-        } else {
-          navbar.classList.add('navbar-transparent');
-          if (logoImg) logoImg.src = 'Solutions_darkmode.png';
-        }
-      }
-
-      window.addEventListener('scroll', updateNavbarStyle);
-      updateNavbarStyle(); // Set initial state on load
-    });
-  </script>
-</body>
-</html>
-
-[end of Index.html]
+>>>>>>> REPLACE

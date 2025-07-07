@@ -201,7 +201,7 @@
     height: 40px;
     background-color: #f3f4f6;
     border-radius: 9999px;
-    padding: 12px 24px;
+  padding: 0; /* Removed padding to give images more space */
     font-size: 0.9rem;
     font-weight: 500;
     color: #4b5563;
@@ -266,35 +266,6 @@
       margin-top: 0;
       margin-bottom: 0;
     }
-
-    /* Keyframes and animation application removed for JS driven animation */
-    /*
-    @keyframes scroll-left {
-      0% {
-        transform: translateX(0%);
-      }
-      100% {
-        transform: translateX(-50%);
-      }
-    }
-
-    @keyframes scroll-right {
-      0% {
-        transform: translateX(-50%);
-      }
-      100% {
-        transform: translateX(0%);
-      }
-    }
-
-    #tech-logo-row-1 {
-      animation: scroll-left 80s linear infinite;
-    }
-
-    #tech-logo-row-2 {
-      animation: scroll-right 80s linear infinite;
-    }
-    */
 
     .testimonial-swiper {
       position: relative; /* Ensure it's a positioning context for absolute arrows */
@@ -390,65 +361,84 @@
     }
     */
 
-/* New CSS for Logo Scroller */
-.logo-scroller-section {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+.wrapper {
+  margin-top: 2rem;
+  width: 90%;
+  max-width: 1536px;
+  margin-inline: auto;
+  height: 60px; /* Adjusted for 40px item height + some padding */
+  position: relative;
   overflow: hidden;
-  display: flex; /* Makes the two tracks sit side-by-side */
-  /* width: 100%; /* Or some other desired width for the section */
-  /* padding: 20px 0; /* Optional: if the old .tech-logo-scroller-container padding was desired */
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 1) 20%,
+    rgba(0, 0, 0, 1) 80%,
+    rgba(0, 0, 0, 0)
+  );
 }
 
-.ticker-track {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start; /* Aligns items to the start of the track */
-  flex-shrink: 0; /* Important: Prevents tracks from shrinking within the flex container */
-  min-width: 100%; /* Each track (containing one set of logos) should be at least as wide as the container if we want translateX(-100%) to mean "one full viewport/container width" of logos. Or, use width: max-content if logos define the natural width. The tutorial implies track width is determined by its content. Let's use max-content to be similar to what we know works for content-defined width. */
-  width: max-content; /* Ensures track is as wide as its content (logos + margins) */
-}
-
-.ticker-track .tech-logo {
-  /* Assuming .tech-logo already has necessary padding, display, etc. from Tailwind */
-  /* We need to ensure it doesn't shrink and respects its margin for spacing */
-  flex-shrink: 0;
-  margin-right: 64px; /* This was the last agreed-upon spacing */
-  /* height: 36px; /* As per tutorial, or keep existing if different and preferred */
-  /* box-sizing: border-box; /* Good practice, ensure it's here or on .tech-logo globally */
-}
-/* Ensure the very last logo in a track doesn't have a right margin if it creates an unwanted double margin
-   when the two tracks are conceptually joined by the animation.
-   However, with translateX(-100%) based on the track's own width (which includes its last child's margin),
-   this might not be strictly necessary. For now, let's assume the margin is part of the repeating unit. */
-
-@keyframes ticker-ltr { /* Scrolls content from Right to Left on screen */
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-100%); /* Moves left by its own full width */
+@keyframes scrollLeft {
+  to {
+    left: -150px; /* ITEM_WIDTH */
   }
 }
 
-@keyframes ticker-rtl { /* Scrolls content from Left to Right on screen */
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(0%);
+@keyframes scrollRight {
+  to {
+    right: -150px; /* ITEM_WIDTH */
   }
 }
 
-/* Apply to the specific tracks within each section */
-/* Row 1 - scrolls Right to Left */
-#logo-scroller-row1-section .ticker-track { /* Applies to both tracks in section 1 */
-  /* animation: ticker-ltr 60s linear infinite; */ /* Adjust 60s for speed */
+.itemLeft,
+.itemRight {
+  width: 150px; /* ITEM_WIDTH */
+  height: 40px; /* ITEM_HEIGHT based on .tech-logo */
+  /* background-color: #e11d48; */ /* Replaced by .tech-logo styles */
+  /* border-radius: 6px; */ /* Replaced by .tech-logo styles */
+  position: absolute;
+  animation-timing-function: linear;
+  animation-duration: 30s;
+  animation-iteration-count: infinite;
 }
 
-/* Row 2 - scrolls Left to Right */
-#logo-scroller-row2-section .ticker-track { /* Applies to both tracks in section 2 */
-  /* animation: ticker-rtl 60s linear infinite; */ /* Adjust 60s for speed */
+.itemLeft {
+  left: max(calc(150px * 15), 100%); /* ITEM_WIDTH * NUM_ITEMS (15 items) */
+  animation-name: scrollLeft;
 }
+
+.itemRight {
+  right: max(calc(150px * 15), calc(100% + 150px)); /* ITEM_WIDTH * NUM_ITEMS, 100% + ITEM_WIDTH */
+  animation-name: scrollRight;
+}
+
+/* Updated for 15 items, ITEM_WIDTH = 150px. Animation duration 30s for now. */
+.item1 { animation-delay: calc(30s / 15 * (15 - 1) * -1); }
+.item2 { animation-delay: calc(30s / 15 * (15 - 2) * -1); }
+.item3 { animation-delay: calc(30s / 15 * (15 - 3) * -1); }
+.item4 { animation-delay: calc(30s / 15 * (15 - 4) * -1); }
+.item5 { animation-delay: calc(30s / 15 * (15 - 5) * -1); }
+.item6 { animation-delay: calc(30s / 15 * (15 - 6) * -1); }
+.item7 { animation-delay: calc(30s / 15 * (15 - 7) * -1); }
+.item8 { animation-delay: calc(30s / 15 * (15 - 8) * -1); }
+.item9 { animation-delay: calc(30s / 15 * (15 - 9) * -1); }
+.item10 { animation-delay: calc(30s / 15 * (15 - 10) * -1); }
+.item11 { animation-delay: calc(30s / 15 * (15 - 11) * -1); }
+.item12 { animation-delay: calc(30s / 15 * (15 - 12) * -1); }
+.item13 { animation-delay: calc(30s / 15 * (15 - 13) * -1); }
+.item14 { animation-delay: calc(30s / 15 * (15 - 14) * -1); }
+.item15 { animation-delay: calc(30s / 15 * (15 - 15) * -1); }
+
   </style>
   <script type="application/ld+json">
     {
@@ -761,7 +751,7 @@
     <section id="technologies" class="py-28 bg-white">
 
             <!-- START - Seamless Logo Scroller -->
-            <div class="tech-logo-scroller-container" style="overflow: hidden; padding: 40px 0; background-color: #ffffff;">
+            <div class="tech-logo-scroller-container" style="padding: 40px 0; background-color: #ffffff;">
               <div class="container mx-auto px-6">
                 <div class="text-center mb-16" data-aos="fade-up" data-aos-duration="600" data-aos-offset="100" data-aos-easing="ease-out-cubic">
                   <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Our <span class="text-blue-600">Technology</span> Stack</h2>
@@ -769,50 +759,42 @@
                 </div>
               </div>
 
-              <!-- Single Row - Infinite Scroll -->
-              <div class="logo-scroller" style="overflow: hidden; position: relative; height: 80px;">
-                <div class="logo-track" id="track1" style="display: flex; position: absolute; will-change: transform; gap: 48px; white-space: nowrap; left: 0;">
-                  <!-- CRM & Outreach Logos -->
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">HubSpot</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Salesforce</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Pipedrive</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Zoho CRM</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">LinkedIn Sales Navigator</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Apollo.io</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Lemlist</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Mailshake</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Hunter.io</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Calendly</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Google Calendar</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Google Sheets</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Excel</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Notion</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Airtable</div>
-                </div>
-
-                <!-- Second Track for Seamless Loop -->
-                <div class="logo-track" id="track2" style="display: flex; position: absolute; will-change: transform; gap: 48px; white-space: nowrap; left: 100%;">
-                  <!-- Same set again -->
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">HubSpot</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Salesforce</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Pipedrive</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Zoho CRM</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">LinkedIn Sales Navigator</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Apollo.io</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Lemlist</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Mailshake</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Hunter.io</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Calendly</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Google Calendar</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Google Sheets</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Excel</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Notion</div>
-                  <div class="tech-logo inline-flex items-center justify-center px-5 py-3 bg-gray-100 rounded-full whitespace-nowrap text-sm font-medium hover:bg-blue-50 transition-all duration-300">Airtable</div>
-                </div>
-              </div>
+            <!-- START - New Seamless Logo Scroller based on example -->
+            <div class="wrapper">
+              <div class="tech-logo itemLeft item1"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/HubSpot_Logo.svg" alt="HubSpot Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item2"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Salesforce.com_logo.svg" alt="Salesforce Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item3"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Pipedrive_Logo.svg" alt="Pipedrive Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item4"><img src="https://upload.wikimedia.org/wikipedia/en/5/5e/ZOHO_logo_2023.svg" alt="Zoho CRM Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item5"><img src="https://www.kindpng.com/picc/m/106-1069585_linkedin-sales-navigator-logo-hd-png-download.png" alt="LinkedIn Sales Navigator Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item6"><img src="https://seeklogo.com/images/A/apollo-io-logo-457273BBD4-seeklogo.com.svg" alt="Apollo.io Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item7"><img src="https://logotic.me/assets/lemlist.svg" alt="Lemlist Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item8"><img src="https://seeklogo.com/images/M/mailshake-logo-412145C627-seeklogo.com.svg" alt="Mailshake Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item9"><img src="https://api.brandfetch.io/logo/hunter.io?v=1" alt="Hunter.io Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item10"><img src="https://seeklogo.com/images/C/calendly-logo-0CDAE9BD9A-seeklogo.com.png" alt="Calendly Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item11"><img src="https://www.gstatic.com/images/branding/product/1x/calendar_48dp.png" alt="Google Calendar Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item12"><img src="https://support.reallysimplesystems.com/zapier-integration/google-sheets-logo/GoogleSheetsLogo.png" alt="Google Sheets Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item13"><img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Microsoft_Excel_2013_logo.svg" alt="Excel Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item14"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item15"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Airtable_Logo.svg" alt="Airtable Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
             </div>
-            <!-- END - Seamless Logo Scroller -->
-
+            <div class="wrapper">
+              <div class="tech-logo itemRight item1"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/HubSpot_Logo.svg" alt="HubSpot Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item2"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Salesforce.com_logo.svg" alt="Salesforce Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item3"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Pipedrive_Logo.svg" alt="Pipedrive Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item4"><img src="https://upload.wikimedia.org/wikipedia/en/5/5e/ZOHO_logo_2023.svg" alt="Zoho CRM Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item5"><img src="https://www.kindpng.com/picc/m/106-1069585_linkedin-sales-navigator-logo-hd-png-download.png" alt="LinkedIn Sales Navigator Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item6"><img src="https://seeklogo.com/images/A/apollo-io-logo-457273BBD4-seeklogo.com.svg" alt="Apollo.io Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item7"><img src="https://logotic.me/assets/lemlist.svg" alt="Lemlist Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item8"><img src="https://seeklogo.com/images/M/mailshake-logo-412145C627-seeklogo.com.svg" alt="Mailshake Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item9"><img src="https://api.brandfetch.io/logo/hunter.io?v=1" alt="Hunter.io Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item10"><img src="https://seeklogo.com/images/C/calendly-logo-0CDAE9BD9A-seeklogo.com.png" alt="Calendly Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item11"><img src="https://www.gstatic.com/images/branding/product/1x/calendar_48dp.png" alt="Google Calendar Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item12"><img src="https://support.reallysimplesystems.com/zapier-integration/google-sheets-logo/GoogleSheetsLogo.png" alt="Google Sheets Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item13"><img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Microsoft_Excel_2013_logo.svg" alt="Excel Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item14"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item15"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Airtable_Logo.svg" alt="Airtable Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+            </div>
+            <!-- END - New Seamless Logo Scroller -->
             <!-- "View Full Tech Stack" button originally here, now removed -->
         </div>
     </section>
@@ -1079,43 +1061,6 @@
           }
       }
     </script>
-
-    <script>
-    function animateDoubleTrack(track1Id, track2Id, speed = 1) {
-      const track1 = document.getElementById(track1Id);
-      const track2 = document.getElementById(track2Id);
-
-      if (!track1 || !track2) return;
-
-      const trackWidth = track1.scrollWidth;
-
-      function scroll() {
-        const t1Left = parseFloat(getComputedStyle(track1).left);
-        const t2Left = parseFloat(getComputedStyle(track2).left);
-
-        // Move both tracks at same speed
-        track1.style.left = `${t1Left - speed}px`;
-        track2.style.left = `${t2Left - speed}px`;
-
-        // Reset track when it's off-screen
-        if (t1Left <= -trackWidth) {
-          track1.style.left = `${t2Left + trackWidth}px`;
-        }
-
-        if (t2Left <= -trackWidth) {
-          track2.style.left = `${t1Left + trackWidth}px`;
-        }
-
-        requestAnimationFrame(scroll);
-      }
-
-      scroll();
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      animateDoubleTrack('track1', 'track2', 1);
-    });
-  </script>
 
   <!-- AOS and other scripts -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>

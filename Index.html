@@ -512,6 +512,11 @@
         }
       }
     }
+
+#main-content-wrapper.blur-effect {
+  filter: blur(5px);
+  transition: filter 0.3s ease-in-out;
+}
   </script>
   <script type="application/ld+json">
     {
@@ -636,6 +641,7 @@
         </div>
     </nav>
 
+    <div id="main-content-wrapper">
     <!-- Hero Section -->
     <section class="hero-gradient pb-28 md:pb-40">
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
@@ -1011,22 +1017,49 @@
                 <p>© 2024 Bridgee Solutions. All rights reserved.</p>
             </div>
         </div>
+    </div> <!-- This closes main-content-wrapper -->
 
     <script>
       const menuButton = document.getElementById('mobile-menu-button');
       const menu = document.getElementById('mobile-menu');
+      const mainContentWrapper = document.getElementById('main-content-wrapper');
+
+      function openMenu() {
+        menuButton.setAttribute('aria-expanded', 'true');
+        menu.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        if (mainContentWrapper) {
+          mainContentWrapper.classList.add('blur-effect');
+        }
+        const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+        if (focusableElements.length > 0) {
+          focusableElements[0].focus();
+        }
+      }
+
+      function closeMenu() {
+        menuButton.setAttribute('aria-expanded', 'false');
+        menu.classList.add('hidden');
+        document.body.style.overflow = '';
+        if (mainContentWrapper) {
+          mainContentWrapper.classList.remove('blur-effect');
+        }
+      }
 
       menuButton.addEventListener('click', function() {
         const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
-        menuButton.setAttribute('aria-expanded', !isExpanded);
-        menu.classList.toggle('hidden');
-        document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
+        if (isExpanded) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
 
-        if (!isExpanded && !menu.classList.contains('hidden')) { // If menu is now open
-          const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
-          if (focusableElements.length > 0) {
-            focusableElements[0].focus();
-          }
+      // Click outside to close
+      document.addEventListener('click', function(event) {
+        const isMenuOpen = !menu.classList.contains('hidden');
+        if (isMenuOpen && !menu.contains(event.target) && !menuButton.contains(event.target)) {
+          closeMenu();
         }
       });
 
@@ -1055,9 +1088,7 @@
       // Escape key to close
       document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
-          menu.classList.add('hidden');
-          document.body.style.overflow = '';
-          menuButton.setAttribute('aria-expanded', 'false');
+          closeMenu();
           menuButton.focus();
         }
       });

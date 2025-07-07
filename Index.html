@@ -218,6 +218,25 @@
       padding: 20px 0;
     }
 
+    .tech-logo-row {
+      display: flex;
+      width: 100%; /* Changed from max-content */
+      justify-content: center; /* Added */
+      flex-wrap: wrap; /* Added */
+    }
+
+    .tech-logo-row .tech-logo {
+      /* Existing styles */
+      margin-right: 64px; /* Increased spacing */
+      flex-shrink: 0;
+
+      /* New/updated styles for consistency */
+      box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+      margin-left: 0;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
     .testimonial-swiper {
       position: relative;
       padding-left: 40px;
@@ -342,6 +361,7 @@
   animation-name: scrollRight;
 }
 
+
 /* Delay classes for TOP ROW (8 items) */
 .item1 { animation-delay: calc(30s / 8 * (8 - 1) * -1); }
 .item2 { animation-delay: calc(30s / 8 * (8 - 2) * -1); }
@@ -401,7 +421,6 @@
     width: 100px;  /* From 160px desktop */
     height: 100px; /* From 120px desktop */
   }
-
   /* Specific override for .tech-logo within the scroller context on mobile */
   .wrapper .tech-logo { /* Increased specificity */
     height: 100px; /* Match item height */
@@ -412,6 +431,7 @@
   .logo-image {
     height: 60px; /* From 70px/80px desktop, adjusted for new item height */
   }
+
 
   /* Keyframe and animation positioning overrides for mobile will be added here */
   @keyframes scrollLeftMobile {
@@ -441,6 +461,7 @@
     animation-name: scrollRightMobile;
   }
 }
+
 
   </style>
   <script type="application/ld+json">
@@ -763,7 +784,9 @@
               </div>
 
             <!-- START - New Seamless Logo Scroller based on example -->
+
             <div class="wrapper"> <!-- Top row with 8 logos -->
+
               <div class="tech-logo itemLeft item1"><img src="logos/simple-icons--hubspot.svg" alt="HubSpot Logo" class="logo-image"><span class="logo-label">HubSpot</span></div>
               <div class="tech-logo itemLeft item2"><img src="logos/devicon--salesforce.svg" alt="Salesforce Logo" class="logo-image"><span class="logo-label">Salesforce</span></div>
               <div class="tech-logo itemLeft item3"><img src="logos/Pipedrive.png" alt="Pipedrive Logo" class="logo-image"><span class="logo-label">Pipedrive</span></div>
@@ -772,6 +795,7 @@
               <div class="tech-logo itemLeft item6"><img src="logos/Apollo.io.png" alt="Apollo.io Logo" class="logo-image"><span class="logo-label">Apollo.io</span></div>
               <div class="tech-logo itemLeft item7"><img src="logos/lemlist_logo.jfif" alt="Lemlist Logo" class="logo-image"><span class="logo-label">Lemlist</span></div>
               <div class="tech-logo itemLeft item8"><img src="logos/Mailshake.png" alt="Mailshake Logo" class="logo-image"><span class="logo-label">Mailshake</span></div>
+
             </div>
             <div class="wrapper"> <!-- Bottom row with 7 logos - CORRECTED -->
               <div class="tech-logo itemBottomRight bottom-item1"><img src="logos/hunter-io-CTA.png" alt="Hunter.io Logo" class="logo-image"><span class="logo-label">Hunter.io</span></div>

@@ -44,14 +44,11 @@
     }
 
     .hero-gradient {
-      /* background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); */
-      /* animation: gradient 15s ease infinite; */
-      /* background-size: 400% 400%; */
       background-image: url('hero-background.jpg');
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
-      position: relative; /* Added for pseudo-element positioning */
+      position: relative;
     }
 
     .hero-gradient::after {
@@ -60,16 +57,10 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 100px; /* Verified and kept at 100px */
+      height: 100px;
       background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-      pointer-events: none; /* Ensure it doesn't interfere with mouse events */
+      pointer-events: none;
     }
-
-    /* @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    } */
 
     #main-navbar {
       transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, color 0.3s ease-in-out;
@@ -80,41 +71,34 @@
       box-shadow: none !important;
     }
 
-    /* Text color adjustments for transparent state */
-    /* Logo text parts */
-    #main-navbar.navbar-transparent .text-gray-800 { /* Targets 'Bridgee' part of logo */
+    #main-navbar.navbar-transparent .text-gray-800 {
       color: #FFFFFF !important;
     }
-    #main-navbar.navbar-transparent .text-blue-600 { /* Targets 'Solutions' part of logo and 'Home' link */
-      color: #FFFFFF !important; /* Make 'Solutions' and 'Home' link white */
+    #main-navbar.navbar-transparent .text-blue-600 {
+      color: #FFFFFF !important;
     }
 
-    /* Desktop nav links - excluding the 'Contact Us' button which has its own bg */
     #main-navbar.navbar-transparent .md\:flex.items-center.hidden a:not(.bg-blue-600) {
-      color: #FFFFFF !important; /* Make other nav links white */
+      color: #FFFFFF !important;
     }
     #main-navbar.navbar-transparent .md\:flex.items-center.hidden a:not(.bg-blue-600):hover {
-      color: #d1d5db !important; /* A light gray for hover, or adjust as needed */
+      color: #d1d5db !important;
     }
 
-    /* Contact Us button text remains white due to its own bg-blue-600, border might need adjustment if it had one */
-    /* Mobile menu button icon */
     #main-navbar.navbar-transparent .mobile-menu-button svg {
       color: #FFFFFF !important;
     }
 
-    /* Style for the 'Services' button in transparent navbar */
     #main-navbar.navbar-transparent .relative.group > button {
       color: #FFFFFF !important;
     }
     #main-navbar.navbar-transparent .relative.group > button:hover {
-      color: #d1d5db !important; /* Light gray for hover, matching other links */
+      color: #d1d5db !important;
     }
 
-    /* Styles for Services Dropdown in Transparent Navbar State */
     #main-navbar.navbar-transparent .services-dropdown {
-      background-color: rgba(55, 65, 81, 0.92) !important; /* bg-gray-700 with 92% opacity for better text readability */
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important; /* Lighter shadow (Tailwind's shadow-md equivalent) */
+      background-color: rgba(55, 65, 81, 0.92) !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
     }
 
     #main-navbar.navbar-transparent .services-dropdown a {
@@ -122,19 +106,9 @@
     }
 
     #main-navbar.navbar-transparent .services-dropdown a:hover {
-      background-color: rgba(31, 41, 55, 0.95) !important; /* bg-gray-800 with 95% opacity */
-      color: #d1d5db !important; /* text-gray-300 */
+      background-color: rgba(31, 41, 55, 0.95) !important;
+      color: #d1d5db !important;
     }
-
-    /* --- Styles for the solid state (when scrolling) --- */
-    /* These will be reapplied by removing .navbar-transparent and letting Tailwind classes take over, */
-    /* but we need to ensure specificity or define a .navbar-solid if Tailwind is aggressively overridden. */
-    /* For now, relying on Tailwind default classes + JS class removal. */
-    /* Example if explicit solid state definition was needed for text:
-    #main-navbar:not(.navbar-transparent) .text-gray-800 { color: #1f2937 !important; }
-    #main-navbar:not(.navbar-transparent) .text-blue-600 { color: #2563eb !important; }
-    #main-navbar:not(.navbar-transparent) .md\:flex.items-center.hidden a:not(.bg-blue-600) { color: #374151 !important; }
-    */
 
     @keyframes fadeInBlur {
       0% {
@@ -150,10 +124,8 @@
     }
 
     .hero-text-animate {
-      opacity: 0; /* Initial state before animation starts or if animations are off */
+      opacity: 0;
       animation: fadeInBlur 0.7s ease-out 0.2s forwards;
-
-      /* Animation properties: name, duration, timing-function, delay, fill-mode */
     }
 
     .hero-gradient::before {
@@ -163,14 +135,14 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.4); /* 40% black overlay */
+      background-color: rgba(0, 0, 0, 0.4);
       z-index: 0;
     }
 
     .hero-gradient h1,
     .hero-gradient p,
-    .hero-gradient a[href="services.html"] { /* Target the specific secondary link for default color */
-      color: #FFFFFF; /* Changed to white */
+    .hero-gradient a[href="services.html"] {
+      color: #FFFFFF;
     }
 
     .cta-button {
@@ -194,36 +166,35 @@
     .cta-button:hover:before {
       width: 100%;
     }
-
     
   .tech-logo {
     min-width: 120px;
-  height: 100px; /* Adjusted by .itemLeft/Right, but good to reflect intended item height */
+  height: 120px; /* New item height */
     background-color: #f3f4f6;
-  border-radius: 8px; /* Slightly more rounded for a square */
-  padding: 8px; /* Padding inside the square box */
-  font-size: 0.9rem; /* Will be for the label */
-  font-weight: 500; /* Will be for the label */
-  color: #4b5563; /* Will be for the label */
-  display: flex;
-  flex-direction: column;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4b5563;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-  justify-content: center; /* Center image and text block */
-  text-align: center; /* For the label text */
+    justify-content: center;
+    text-align: center;
     user-select: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Ensure transform is part of transition */
   }
 
   .tech-logo:hover {
     background-color: #e5e7eb;
-    transform: translateY(-2px);
+    transform: translateY(-2px); /* Make the whole container rise */
     cursor: default;
   }
 
   @media (max-width: 768px) {
     .tech-logo {
       min-width: 100px;
-      padding: 10px 16px;
+      padding: 10px 16px; /* This might need checking against the 8px general padding */
       font-size: 0.75rem;
     }
   }
@@ -231,23 +202,20 @@
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      height: 420px; /* Fixed height for testimonial cards */
+      height: 420px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
     .testimonial-card p.text-blue-100 {
-      flex-grow: 1; /* Allows the paragraph to take available space */
-      overflow-y: auto; /* Add vertical scroll if content overflows */
-      padding-right: 5px; /* Space for scrollbar */
-      /* Existing classes: mb-6 leading-relaxed - these will be in HTML */
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: 5px;
     }
 
     .tech-logo-scroller-container {
-      overflow: hidden;
       padding: 20px 0;
-      /* background-color: #f9fafb; */ /* Example background */
     }
 
     .tech-logo-row {
@@ -270,98 +238,67 @@
     }
 
     .testimonial-swiper {
-      position: relative; /* Ensure it's a positioning context for absolute arrows */
-      padding-left: 40px; /* Space for prev arrow */
-      padding-right: 40px; /* Space for next arrow */
-      padding-bottom: 30px; /* Space for pagination dots */
-      /* overflow: hidden; is usually part of swiper's default or added by class */
+      position: relative;
+      padding-left: 40px;
+      padding-right: 40px;
+      padding-bottom: 30px;
     }
 
-    /* Swiper Pagination Custom Positioning */
     .testimonial-swiper .swiper-pagination {
-        bottom: 5px; /* Adjust to sit within the new padding-bottom */
+        bottom: 5px;
     }
 
-    /* Swiper Navigation Buttons Styling */
     .testimonial-swiper .swiper-button-next,
     .testimonial-swiper .swiper-button-prev {
-        color: #2563eb; /* Blue-600 from Tailwind */
+        color: #2563eb;
         width: 30px;
         height: 30px;
-        background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
-        border-radius: 50%; /* Make them circular */
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
         transition: background-color 0.3s ease;
-        /* top: 50%; transform: translateY(-50%); Swiper default, ensure it's there or add if needed */
     }
     .testimonial-swiper .swiper-button-next {
-        right: 10px; /* Adjusted position */
+        right: 10px;
     }
     .testimonial-swiper .swiper-button-prev {
-        left: 10px; /* Adjusted position */
+        left: 10px;
     }
 
     .testimonial-swiper .swiper-button-next:hover,
     .testimonial-swiper .swiper-button-prev:hover {
-        background-color: rgba(255, 255, 255, 1); /* Opaque white background on hover */
+        background-color: rgba(255, 255, 255, 1);
     }
 
     .testimonial-swiper .swiper-button-next::after,
     .testimonial-swiper .swiper-button-prev::after {
-        font-size: 16px; /* Adjust size of the arrow icon */
+        font-size: 16px;
         font-weight: bold;
     }
 
-    /* Swiper Pagination Dots Styling */
     .testimonial-swiper .swiper-pagination-bullet {
-        background-color: #93c5fd; /* Blue-300 from Tailwind for inactive dots */
+        background-color: #93c5fd;
         opacity: 0.8;
-        width: 10px; /* Slightly larger dots */
+        width: 10px;
         height: 10px;
         transition: background-color 0.3s ease, opacity 0.3s ease;
     }
 
     .testimonial-swiper .swiper-pagination-bullet-active {
-        background-color: #2563eb; /* Blue-600 for active dot */
+        background-color: #2563eb;
         opacity: 1;
     }
 
-    /* Ensure Swiper navigation is visible (remove or comment out any display: none rule for these) */
-    /*
-    .testimonial-swiper .swiper-button-next,
-    .testimonial-swiper .swiper-button-prev,
-    .testimonial-swiper .swiper-pagination {
-        display: none !important;
-    }
-    */
-
-    /* Comment out styles for continuous scroll if they exist */
     .testimonial-swiper .swiper-slide {
       transition: transform 0.3s ease, opacity 0.3s ease;
-      transform: scale(0.85); /* Default scale for non-active slides */
-      opacity: 0.7; /* Default opacity for non-active slides */
-        /* width: auto; */ /* Original commented line */
-        /* flex-shrink: 0; */ /* Original commented line */
+      transform: scale(0.85);
+      opacity: 0.7;
     }
 
     .testimonial-swiper .swiper-slide-active {
-      transform: scale(1); /* Full size */
-      opacity: 1; /* Full opacity */
-      z-index: 1; /* Ensure active slide is on top */
+      transform: scale(1);
+      opacity: 1;
+      z-index: 1;
     }
-    /*
-    .testimonial-swiper .swiper-wrapper {
-         transition-timing-function: linear !important;
-    }
-    */
-
-    /* Remove explicit text-wrapping for p tags if Swiper handles it */
-    /*
-    .testimonial-card p.text-blue-100 {
-        white-space: normal !important;
-        word-wrap: break-word !important;
-        overflow-wrap: break-word !important;
-    }
-    */
 
 *,
 *::before,
@@ -378,7 +315,7 @@
   width: 90%;
   max-width: 1536px;
   margin-inline: auto;
-  height: 120px; /* Adjusted for 100px item height + padding */
+  height: 140px; /* Adjusted for 120px item height + padding */
   position: relative;
   overflow: hidden;
   mask-image: linear-gradient(
@@ -392,39 +329,40 @@
 
 @keyframes scrollLeft {
   to {
-    left: -160px; /* ITEM_WIDTH updated */
+    left: -160px;
   }
 }
 
 @keyframes scrollRight {
   to {
-    right: -160px; /* ITEM_WIDTH updated */
+    right: -160px;
   }
 }
 
 .itemLeft,
-.itemRight {
-  width: 160px; /* ITEM_WIDTH updated */
-  height: 100px; /* ITEM_HEIGHT remains */
-  /* background-color: #e11d48; */ /* Replaced by .tech-logo styles */
-  /* border-radius: 6px; */ /* Replaced by .tech-logo styles */
+.itemRight, /* Consolidate base item styles */
+.itemBottomRight {
+  width: 160px;
+  height: 120px; /* New item height */
   position: absolute;
   animation-timing-function: linear;
   animation-duration: 30s;
   animation-iteration-count: infinite;
+  /* .tech-logo class will provide background, padding, border-radius, flex display etc. */
 }
 
 .itemLeft { /* Top row with 8 items */
-  left: max(calc(160px * 8), 100%); /* ITEM_WIDTH * 8 items */
+  left: max(calc(160px * 8), 100%);
   animation-name: scrollLeft;
 }
 
-.itemRight { /* Original .itemRight, will be for top row if we need two directions, or repurposed/removed */
-  right: max(calc(160px * 8), calc(100% + 160px)); /* ITEM_WIDTH * 8 items */
+.itemRight { /* If top row scrolls other way - currently not used by HTML structure */
+  right: max(calc(160px * 8), calc(100% + 160px));
   animation-name: scrollRight;
 }
 
-/* Delay classes for TOP ROW (8 items) - assuming .itemX maps to .top-itemX */
+
+/* Delay classes for TOP ROW (8 items) */
 .item1 { animation-delay: calc(30s / 8 * (8 - 1) * -1); }
 .item2 { animation-delay: calc(30s / 8 * (8 - 2) * -1); }
 .item3 { animation-delay: calc(30s / 8 * (8 - 3) * -1); }
@@ -433,16 +371,12 @@
 .item6 { animation-delay: calc(30s / 8 * (8 - 6) * -1); }
 .item7 { animation-delay: calc(30s / 8 * (8 - 7) * -1); }
 .item8 { animation-delay: calc(30s / 8 * (8 - 8) * -1); }
-/* Remove .item9 to .item15 as they are not for the top 8-item row */
 
-/* New classes for BOTTOM ROW (7 items) */
-.itemBottomRight { /* For bottom row with 7 items, scrolling right to left on screen */
-  right: max(calc(160px * 7), calc(100% + 160px)); /* ITEM_WIDTH * 7 items */
-  animation-name: scrollRight; /* Assuming scrollRight is the desired animation */
+/* Classes for BOTTOM ROW (7 items) */
+.itemBottomRight {
+  right: max(calc(160px * 7), calc(100% + 160px));
+  animation-name: scrollRight;
 }
-/* We will also need .itemBottomLeft if the bottom row scrolls left-to-right on screen */
-/* For now, assuming bottom row also uses scrollRight (content appears from right, moves left) */
-/* Or, if bottom row should use scrollLeft (content appears from left, moves right), need .itemBottomLeft */
 
 .bottom-item1 { animation-delay: calc(30s / 7 * (7 - 1) * -1); }
 .bottom-item2 { animation-delay: calc(30s / 7 * (7 - 2) * -1); }
@@ -453,18 +387,18 @@
 .bottom-item7 { animation-delay: calc(30s / 7 * (7 - 7) * -1); }
 
 .logo-label {
-  font-size: 0.75rem; /* 12px */
+  font-size: 0.75rem;
   color: #4b5563;
-  display: block; /* Ensures it takes its own line */
-  width: 100%; /* Take full width of parent's padding box */
+  display: block;
+  width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-top: 4px; /* Space above the label */
+  margin-top: 4px;
 }
 
 .logo-image {
-  height: 70px;
+  height: 80px; /* Increased image height */
   max-width: 100%;
   object-fit: contain;
   filter: grayscale(100%);
@@ -474,6 +408,60 @@
 .tech-logo:hover .logo-image {
   filter: grayscale(0%);
 }
+
+@media (max-width: 768px) {
+  .wrapper {
+    height: 120px; /* From 140px desktop */
+    margin-top: 1rem; /* Optionally reduce top margin for wrappers on mobile */
+  }
+
+  .itemLeft,
+  .itemRight,
+  .itemBottomRight {
+    width: 100px;  /* From 160px desktop */
+    height: 100px; /* From 120px desktop */
+  }
+  /* Specific override for .tech-logo within the scroller context on mobile */
+  .wrapper .tech-logo { /* Increased specificity */
+    height: 100px; /* Match item height */
+    padding: 6px;   /* Smaller, consistent padding */
+    /* font-size for label is 0.75rem from general .tech-logo media query, which is fine */
+  }
+
+  .logo-image {
+    height: 60px; /* From 70px/80px desktop, adjusted for new item height */
+  }
+
+
+  /* Keyframe and animation positioning overrides for mobile will be added here */
+  @keyframes scrollLeftMobile {
+    to {
+      left: -100px; /* Mobile ITEM_WIDTH */
+    }
+  }
+
+  @keyframes scrollRightMobile {
+    to {
+      right: -100px; /* Mobile ITEM_WIDTH */
+    }
+  }
+
+  .itemLeft { /* Top row with 8 items - mobile */
+    left: max(calc(100px * 8), 100%); /* Mobile ITEM_WIDTH * 8 items */
+    animation-name: scrollLeftMobile;
+  }
+
+  .itemRight { /* Top row opposite scroll - mobile */
+    right: max(calc(100px * 8), calc(100% + 100px)); /* Mobile ITEM_WIDTH * 8 items */
+    animation-name: scrollRightMobile;
+  }
+
+  .itemBottomRight { /* Bottom row with 7 items - mobile */
+    right: max(calc(100px * 7), calc(100% + 100px)); /* Mobile ITEM_WIDTH * 7 items */
+    animation-name: scrollRightMobile;
+  }
+}
+
 
   </style>
   <script type="application/ld+json">
@@ -796,7 +784,9 @@
               </div>
 
             <!-- START - New Seamless Logo Scroller based on example -->
-            <div class="wrapper">
+
+            <div class="wrapper"> <!-- Top row with 8 logos -->
+
               <div class="tech-logo itemLeft item1"><img src="logos/simple-icons--hubspot.svg" alt="HubSpot Logo" class="logo-image"><span class="logo-label">HubSpot</span></div>
               <div class="tech-logo itemLeft item2"><img src="logos/devicon--salesforce.svg" alt="Salesforce Logo" class="logo-image"><span class="logo-label">Salesforce</span></div>
               <div class="tech-logo itemLeft item3"><img src="logos/Pipedrive.png" alt="Pipedrive Logo" class="logo-image"><span class="logo-label">Pipedrive</span></div>
@@ -805,30 +795,16 @@
               <div class="tech-logo itemLeft item6"><img src="logos/Apollo.io.png" alt="Apollo.io Logo" class="logo-image"><span class="logo-label">Apollo.io</span></div>
               <div class="tech-logo itemLeft item7"><img src="logos/lemlist_logo.jfif" alt="Lemlist Logo" class="logo-image"><span class="logo-label">Lemlist</span></div>
               <div class="tech-logo itemLeft item8"><img src="logos/Mailshake.png" alt="Mailshake Logo" class="logo-image"><span class="logo-label">Mailshake</span></div>
-              <div class="tech-logo itemLeft item9"><img src="logos/hunter-io-CTA.png" alt="Hunter.io Logo" class="logo-image"><span class="logo-label">Hunter.io</span></div>
-              <div class="tech-logo itemLeft item10"><img src="logos/simple-icons--calendly.svg" alt="Calendly Logo" class="logo-image"><span class="logo-label">Calendly</span></div>
-              <div class="tech-logo itemLeft item11"><img src="logos/logos--laravel.svg" alt="Laravel Logo" class="logo-image"><span class="logo-label">Laravel</span></div>
-              <div class="tech-logo itemLeft item12"><img src="logos/skill-icons--react-dark.svg" alt="React Logo" class="logo-image"><span class="logo-label">React</span></div>
-              <div class="tech-logo itemLeft item13"><img src="logos/devicon--flutter.svg" alt="Flutter Logo" class="logo-image"><span class="logo-label">Flutter</span></div>
-              <div class="tech-logo itemLeft item14"><img src="logos/devicon--notion.svg" alt="Notion Logo" class="logo-image"><span class="logo-label">Notion</span></div>
-              <div class="tech-logo itemLeft item15"><img src="logos/logos--airtable.svg" alt="Airtable Logo" class="logo-image"><span class="logo-label">Airtable</span></div>
+
             </div>
-            <div class="wrapper">
-              <div class="tech-logo itemRight item1"><img src="logos/simple-icons--hubspot.svg" alt="HubSpot Logo" class="logo-image"><span class="logo-label">HubSpot</span></div>
-              <div class="tech-logo itemRight item2"><img src="logos/devicon--salesforce.svg" alt="Salesforce Logo" class="logo-image"><span class="logo-label">Salesforce</span></div>
-              <div class="tech-logo itemRight item3"><img src="logos/Pipedrive.png" alt="Pipedrive Logo" class="logo-image"><span class="logo-label">Pipedrive</span></div>
-              <div class="tech-logo itemRight item4"><img src="logos/arcticons--zoho-crm.svg" alt="Zoho CRM Logo" class="logo-image"><span class="logo-label">Zoho CRM</span></div>
-              <div class="tech-logo itemRight item5"><img src="logos/LinkedInSalesNavigator.jfif" alt="LinkedIn Sales Navigator Logo" class="logo-image"><span class="logo-label">LinkedIn Sales Navigator</span></div>
-              <div class="tech-logo itemRight item6"><img src="logos/Apollo.io.png" alt="Apollo.io Logo" class="logo-image"><span class="logo-label">Apollo.io</span></div>
-              <div class="tech-logo itemRight item7"><img src="logos/lemlist_logo.jfif" alt="Lemlist Logo" class="logo-image"><span class="logo-label">Lemlist</span></div>
-              <div class="tech-logo itemRight item8"><img src="logos/Mailshake.png" alt="Mailshake Logo" class="logo-image"><span class="logo-label">Mailshake</span></div>
-              <div class="tech-logo itemRight item9"><img src="logos/hunter-io-CTA.png" alt="Hunter.io Logo" class="logo-image"><span class="logo-label">Hunter.io</span></div>
-              <div class="tech-logo itemRight item10"><img src="logos/simple-icons--calendly.svg" alt="Calendly Logo" class="logo-image"><span class="logo-label">Calendly</span></div>
-              <div class="tech-logo itemRight item11"><img src="logos/logos--laravel.svg" alt="Laravel Logo" class="logo-image"><span class="logo-label">Laravel</span></div>
-              <div class="tech-logo itemRight item12"><img src="logos/skill-icons--react-dark.svg" alt="React Logo" class="logo-image"><span class="logo-label">React</span></div>
-              <div class="tech-logo itemRight item13"><img src="logos/devicon--flutter.svg" alt="Flutter Logo" class="logo-image"><span class="logo-label">Flutter</span></div>
-              <div class="tech-logo itemRight item14"><img src="logos/devicon--notion.svg" alt="Notion Logo" class="logo-image"><span class="logo-label">Notion</span></div>
-              <div class="tech-logo itemRight item15"><img src="logos/logos--airtable.svg" alt="Airtable Logo" class="logo-image"><span class="logo-label">Airtable</span></div>
+            <div class="wrapper"> <!-- Bottom row with 7 logos - CORRECTED -->
+              <div class="tech-logo itemBottomRight bottom-item1"><img src="logos/hunter-io-CTA.png" alt="Hunter.io Logo" class="logo-image"><span class="logo-label">Hunter.io</span></div>
+              <div class="tech-logo itemBottomRight bottom-item2"><img src="logos/simple-icons--calendly.svg" alt="Calendly Logo" class="logo-image"><span class="logo-label">Calendly</span></div>
+              <div class="tech-logo itemBottomRight bottom-item3"><img src="logos/logos--laravel.svg" alt="Laravel Logo" class="logo-image"><span class="logo-label">Laravel</span></div>
+              <div class="tech-logo itemBottomRight bottom-item4"><img src="logos/skill-icons--react-dark.svg" alt="React Logo" class="logo-image"><span class="logo-label">React</span></div>
+              <div class="tech-logo itemBottomRight bottom-item5"><img src="logos/devicon--flutter.svg" alt="Flutter Logo" class="logo-image"><span class="logo-label">Flutter</span></div>
+              <div class="tech-logo itemBottomRight bottom-item6"><img src="logos/devicon--notion.svg" alt="Notion Logo" class="logo-image"><span class="logo-label">Notion</span></div>
+              <div class="tech-logo itemBottomRight bottom-item7"><img src="logos/logos--airtable.svg" alt="Airtable Logo" class="logo-image"><span class="logo-label">Airtable</span></div>
             </div>
             <!-- END - New Seamless Logo Scroller -->
             <!-- "View Full Tech Stack" button originally here, now removed -->
@@ -1109,78 +1085,6 @@
 
     // Testimonial Swiper Initialization & Logo Scroller
     document.addEventListener('DOMContentLoaded', function () {
-      // Logo Scroller (JS Animation - to be removed or commented out)
-      // console.log("DOM fully loaded and parsed. Initializing logo scroller.");
-      /*
-      function animateLogoRow(rowId, scrollSpeedPxPerFrame, moveContentRightToLeft) {
-        const rowElement = document.getElementById(rowId);
-        if (!rowElement) {
-          console.error(`Logo row not found: ${rowId}`);
-          return;
-        }
-        // console.log(`Initializing animation for ${rowId}. Speed: ${scrollSpeedPxPerFrame}, RTL: ${moveContentRightToLeft}`);
-
-        if (rowElement.children.length === 0) {
-            // console.error(`No logos found in ${rowId} to animate at outset.`);
-            return;
-        }
-
-        const originalLogos = Array.from(rowElement.children);
-
-        let calculatedWidthOfOneSet = 0;
-        const logoMarginRight = 64;
-
-        originalLogos.forEach(logo => {
-          calculatedWidthOfOneSet += logo.offsetWidth + logoMarginRight;
-        });
-
-        // console.log(`${rowId} - Calculated width of ONE set (logos + margins): ${calculatedWidthOfOneSet}px`);
-
-        originalLogos.forEach(logo => {
-          rowElement.appendChild(logo.cloneNode(true));
-        });
-
-        void rowElement.offsetWidth;
-
-        const scrollWidthOfOneSet = calculatedWidthOfOneSet;
-
-        let currentPositionDotPx = 0;
-
-        if (scrollWidthOfOneSet === 0) {
-            // console.error(`${rowId} - scrollWidthOfOneSet is 0. Animation cannot proceed meaningfully.`);
-            return;
-        } else {
-            // console.log(`${rowId} - USING scrollWidthOfOneSet for animation: ${scrollWidthOfOneSet}px`);
-        }
-
-        if (!moveContentRightToLeft) {
-            rowElement.style.transform = `translateX(-${scrollWidthOfOneSet}px)`;
-            // console.log(`${rowId} - Initial LTR transform set to: translateX(-${scrollWidthOfOneSet}px)`);
-        }
-
-        function step() {
-          currentPositionDotPx += scrollSpeedPxPerFrame;
-
-          if (currentPositionDotPx >= scrollWidthOfOneSet) {
-            currentPositionDotPx -= scrollWidthOfOneSet;
-          }
-
-          if (moveContentRightToLeft) {
-            rowElement.style.transform = `translateX(-${currentPositionDotPx}px)`;
-          } else {
-            rowElement.style.transform = `translateX(${currentPositionDotPx - scrollWidthOfOneSet}px)`;
-          }
-          requestAnimationFrame(step);
-        }
-
-        // console.log(`Starting animation loop for ${rowId}`);
-        requestAnimationFrame(step);
-      }
-
-      // animateLogoRow('tech-logo-row-1', 0.5, true);
-      // animateLogoRow('tech-logo-row-2', 0.5, false);
-      */
-
       const testimonialSwiper = new Swiper('.testimonial-swiper', {
         loop: true,
         slidesPerView: 1,
@@ -1208,18 +1112,13 @@
       });
     });
 
-    // Fade-in hero elements on page load (if this script is still needed and separate)
-    // window.addEventListener('DOMContentLoaded', () => {
-    //   document.getElementById('hero-text')?.classList.remove('opacity-0', 'translate-y-6');
-    //   document.getElementById('hero-image')?.classList.remove('opacity-0', 'translate-y-6');
-    // });
   </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
         const blogPostsContainer = document.querySelector('#blog .grid');
         const paginationControlsContainer = document.createElement('div');
-        paginationControlsContainer.className = 'col-span-full mt-8 text-center'; // Ensure it spans full width of grid
+        paginationControlsContainer.className = 'col-span-full mt-8 text-center';
         blogPostsContainer.parentNode.insertBefore(paginationControlsContainer, blogPostsContainer.nextSibling);
 
 
@@ -1237,8 +1136,8 @@
                     return response.json();
                 })
                 .then(data => {
-                    blogPostsContainer.innerHTML = ''; // Clear previous posts
-                    paginationControlsContainer.innerHTML = ''; // Clear previous pagination controls
+                    blogPostsContainer.innerHTML = '';
+                    paginationControlsContainer.innerHTML = '';
 
                     const posts = data.posts;
                     const currentPage = data.current_page;
@@ -1252,15 +1151,11 @@
                     posts.forEach(post => {
                         const postElement = document.createElement('div');
                         postElement.className = 'bg-white rounded-xl p-8 shadow-lg flex flex-col';
-                        // Add AOS attributes if desired, e.g., postElement.setAttribute('data-aos', 'fade-up');
 
                         let imageHtml = '';
                         if (post.image_url) {
-                             // Check if the URL is absolute or needs prefixing
                             let imageUrl = post.image_url;
                             if (!post.image_url.startsWith('http') && !post.image_url.startsWith('/')) {
-                                // Assuming images uploaded via bot are stored in a specific static path
-                                // For example, if blog_bot.py saves to 'uploaded_images' and Flask serves it from '/uploaded_images/'
                                 imageUrl = `/uploaded_images/${post.image_url}`;
                             }
                             imageHtml = `<img src="${imageUrl}" alt="${post.title || 'Blog post image'}" class="rounded-lg mb-4 w-full h-48 object-cover">`;
@@ -1270,7 +1165,6 @@
 
                         let contentSnippet = 'No content available.';
                         if (post.content && typeof post.content === 'string') {
-                           // Basic stripping of HTML tags for snippet if content_is_html is true
                             let textContent = post.content;
                             if (post.content_is_html) {
                                 const tempDiv = document.createElement('div');
@@ -1306,7 +1200,6 @@
                         blogPostsContainer.appendChild(postElement);
                     });
 
-                    // Render Pagination Controls
                     if (totalPages > 1) {
                         const prevButton = document.createElement('button');
                         prevButton.innerHTML = '<i class="fas fa-arrow-left mr-2"></i>Previous';
@@ -1325,13 +1218,12 @@
                         const nextButton = document.createElement('button');
                         nextButton.innerHTML = 'Next<i class="fas fa-arrow-right ml-2"></i>';
                         nextButton.className = 'px-4 py-2 mx-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
-                        if (currentPage >= totalPages) { // Adjusted condition here
+                        if (currentPage >= totalPages) {
                             nextButton.disabled = true;
                         }
                         nextButton.addEventListener('click', () => fetchBlogPosts(currentPage + 1));
                         paginationControlsContainer.appendChild(nextButton);
                     }
-                     // If AOS is used, you might need to re-initialize it after adding dynamic content
                     if (typeof AOS !== 'undefined') {
                         AOS.refresh();
                     }
@@ -1342,21 +1234,18 @@
                 });
         }
 
-        fetchBlogPosts(1); // Initial fetch for page 1
+        fetchBlogPosts(1);
     });
   </script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const navbar = document.getElementById('main-navbar');
       const logoImg = document.getElementById('navbar-logo-image');
-      // Store original link colors or rely on Tailwind to re-apply when .navbar-transparent is removed.
-      // For simplicity, this script will just toggle the .navbar-transparent class.
 
       function updateNavbarStyle() {
-        if (window.scrollY > 50) { // Threshold of 50px
+        if (window.scrollY > 50) {
           navbar.classList.remove('navbar-transparent');
           if (logoImg) logoImg.src = 'Solutions.png';
-          // Tailwind classes like bg-white, shadow-lg, text-gray-700, etc., will take effect.
         } else {
           navbar.classList.add('navbar-transparent');
           if (logoImg) logoImg.src = 'Solutions_darkmode.png';
@@ -1364,10 +1253,8 @@
       }
 
       window.addEventListener('scroll', updateNavbarStyle);
-      updateNavbarStyle(); // Set initial state on load
+      updateNavbarStyle();
     });
   </script>
 </body>
 </html>
-
-

@@ -198,16 +198,18 @@
     
   .tech-logo {
     min-width: 120px;
-    height: 40px;
+  height: 100px; /* Adjusted by .itemLeft/Right, but good to reflect intended item height */
     background-color: #f3f4f6;
-    border-radius: 9999px;
-  padding: 0; /* Removed padding to give images more space */
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #4b5563;
-    display: inline-flex;
+  border-radius: 8px; /* Slightly more rounded for a square */
+  padding: 8px; /* Padding inside the square box */
+  font-size: 0.9rem; /* Will be for the label */
+  font-weight: 500; /* Will be for the label */
+  color: #4b5563; /* Will be for the label */
+  display: flex;
+  flex-direction: column;
     align-items: center;
-    justify-content: center;
+  justify-content: center; /* Center image and text block */
+  text-align: center; /* For the label text */
     user-select: none;
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
@@ -376,7 +378,7 @@
   width: 90%;
   max-width: 1536px;
   margin-inline: auto;
-  height: 60px; /* Adjusted for 40px item height + some padding */
+  height: 120px; /* Adjusted for 100px item height + padding */
   position: relative;
   overflow: hidden;
   mask-image: linear-gradient(
@@ -390,20 +392,20 @@
 
 @keyframes scrollLeft {
   to {
-    left: -150px; /* ITEM_WIDTH */
+    left: -160px; /* ITEM_WIDTH updated */
   }
 }
 
 @keyframes scrollRight {
   to {
-    right: -150px; /* ITEM_WIDTH */
+    right: -160px; /* ITEM_WIDTH updated */
   }
 }
 
 .itemLeft,
 .itemRight {
-  width: 150px; /* ITEM_WIDTH */
-  height: 40px; /* ITEM_HEIGHT based on .tech-logo */
+  width: 160px; /* ITEM_WIDTH updated */
+  height: 100px; /* ITEM_HEIGHT remains */
   /* background-color: #e11d48; */ /* Replaced by .tech-logo styles */
   /* border-radius: 6px; */ /* Replaced by .tech-logo styles */
   position: absolute;
@@ -412,32 +414,66 @@
   animation-iteration-count: infinite;
 }
 
-.itemLeft {
-  left: max(calc(150px * 15), 100%); /* ITEM_WIDTH * NUM_ITEMS (15 items) */
+.itemLeft { /* Top row with 8 items */
+  left: max(calc(160px * 8), 100%); /* ITEM_WIDTH * 8 items */
   animation-name: scrollLeft;
 }
 
-.itemRight {
-  right: max(calc(150px * 15), calc(100% + 150px)); /* ITEM_WIDTH * NUM_ITEMS, 100% + ITEM_WIDTH */
+.itemRight { /* Original .itemRight, will be for top row if we need two directions, or repurposed/removed */
+  right: max(calc(160px * 8), calc(100% + 160px)); /* ITEM_WIDTH * 8 items */
   animation-name: scrollRight;
 }
 
-/* Updated for 15 items, ITEM_WIDTH = 150px. Animation duration 30s for now. */
-.item1 { animation-delay: calc(30s / 15 * (15 - 1) * -1); }
-.item2 { animation-delay: calc(30s / 15 * (15 - 2) * -1); }
-.item3 { animation-delay: calc(30s / 15 * (15 - 3) * -1); }
-.item4 { animation-delay: calc(30s / 15 * (15 - 4) * -1); }
-.item5 { animation-delay: calc(30s / 15 * (15 - 5) * -1); }
-.item6 { animation-delay: calc(30s / 15 * (15 - 6) * -1); }
-.item7 { animation-delay: calc(30s / 15 * (15 - 7) * -1); }
-.item8 { animation-delay: calc(30s / 15 * (15 - 8) * -1); }
-.item9 { animation-delay: calc(30s / 15 * (15 - 9) * -1); }
-.item10 { animation-delay: calc(30s / 15 * (15 - 10) * -1); }
-.item11 { animation-delay: calc(30s / 15 * (15 - 11) * -1); }
-.item12 { animation-delay: calc(30s / 15 * (15 - 12) * -1); }
-.item13 { animation-delay: calc(30s / 15 * (15 - 13) * -1); }
-.item14 { animation-delay: calc(30s / 15 * (15 - 14) * -1); }
-.item15 { animation-delay: calc(30s / 15 * (15 - 15) * -1); }
+/* Delay classes for TOP ROW (8 items) - assuming .itemX maps to .top-itemX */
+.item1 { animation-delay: calc(30s / 8 * (8 - 1) * -1); }
+.item2 { animation-delay: calc(30s / 8 * (8 - 2) * -1); }
+.item3 { animation-delay: calc(30s / 8 * (8 - 3) * -1); }
+.item4 { animation-delay: calc(30s / 8 * (8 - 4) * -1); }
+.item5 { animation-delay: calc(30s / 8 * (8 - 5) * -1); }
+.item6 { animation-delay: calc(30s / 8 * (8 - 6) * -1); }
+.item7 { animation-delay: calc(30s / 8 * (8 - 7) * -1); }
+.item8 { animation-delay: calc(30s / 8 * (8 - 8) * -1); }
+/* Remove .item9 to .item15 as they are not for the top 8-item row */
+
+/* New classes for BOTTOM ROW (7 items) */
+.itemBottomRight { /* For bottom row with 7 items, scrolling right to left on screen */
+  right: max(calc(160px * 7), calc(100% + 160px)); /* ITEM_WIDTH * 7 items */
+  animation-name: scrollRight; /* Assuming scrollRight is the desired animation */
+}
+/* We will also need .itemBottomLeft if the bottom row scrolls left-to-right on screen */
+/* For now, assuming bottom row also uses scrollRight (content appears from right, moves left) */
+/* Or, if bottom row should use scrollLeft (content appears from left, moves right), need .itemBottomLeft */
+
+.bottom-item1 { animation-delay: calc(30s / 7 * (7 - 1) * -1); }
+.bottom-item2 { animation-delay: calc(30s / 7 * (7 - 2) * -1); }
+.bottom-item3 { animation-delay: calc(30s / 7 * (7 - 3) * -1); }
+.bottom-item4 { animation-delay: calc(30s / 7 * (7 - 4) * -1); }
+.bottom-item5 { animation-delay: calc(30s / 7 * (7 - 5) * -1); }
+.bottom-item6 { animation-delay: calc(30s / 7 * (7 - 6) * -1); }
+.bottom-item7 { animation-delay: calc(30s / 7 * (7 - 7) * -1); }
+
+.logo-label {
+  font-size: 0.75rem; /* 12px */
+  color: #4b5563;
+  display: block; /* Ensures it takes its own line */
+  width: 100%; /* Take full width of parent's padding box */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 4px; /* Space above the label */
+}
+
+.logo-image {
+  height: 70px;
+  max-width: 100%;
+  object-fit: contain;
+  filter: grayscale(100%);
+  transition: filter 0.3s ease-in-out;
+}
+
+.tech-logo:hover .logo-image {
+  filter: grayscale(0%);
+}
 
   </style>
   <script type="application/ld+json">
@@ -615,7 +651,7 @@
     <!-- Hero Section -->
     <section class="hero-gradient pb-28 md:pb-40">
         <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
-            <div class="md:w-full flex flex-col items-start max-w-4xl pt-64 mt-10 md:mt-0 hero-text-animate" style="position: relative; z-index: 1;">
+            <div class="md:w-full flex flex-col items-start max-w-4xl pt-52 mt-6 md:mt-0 hero-text-animate" style="position: relative; z-index: 1;">
                 <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-8">Your Bridge to <span class="underline decoration-blue-300">Scalable, Skilled</span> and <span class="underline decoration-blue-300">Smart</span> Outsourcing</h1>
                 <p class="text-lg md:text-xl mb-10 leading-relaxed">Virtual Assistants. Software Development. Custom BPO. All tailored from Addis Ababa to power your business growth.</p>
                 <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
@@ -761,38 +797,38 @@
 
             <!-- START - New Seamless Logo Scroller based on example -->
             <div class="wrapper">
-              <div class="tech-logo itemLeft item1"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/HubSpot_Logo.svg" alt="HubSpot Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item2"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Salesforce.com_logo.svg" alt="Salesforce Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item3"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Pipedrive_Logo.svg" alt="Pipedrive Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item4"><img src="https://upload.wikimedia.org/wikipedia/en/5/5e/ZOHO_logo_2023.svg" alt="Zoho CRM Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item5"><img src="https://www.kindpng.com/picc/m/106-1069585_linkedin-sales-navigator-logo-hd-png-download.png" alt="LinkedIn Sales Navigator Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item6"><img src="https://seeklogo.com/images/A/apollo-io-logo-457273BBD4-seeklogo.com.svg" alt="Apollo.io Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item7"><img src="https://logotic.me/assets/lemlist.svg" alt="Lemlist Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item8"><img src="https://seeklogo.com/images/M/mailshake-logo-412145C627-seeklogo.com.svg" alt="Mailshake Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item9"><img src="https://api.brandfetch.io/logo/hunter.io?v=1" alt="Hunter.io Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item10"><img src="https://seeklogo.com/images/C/calendly-logo-0CDAE9BD9A-seeklogo.com.png" alt="Calendly Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item11"><img src="https://www.gstatic.com/images/branding/product/1x/calendar_48dp.png" alt="Google Calendar Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item12"><img src="https://support.reallysimplesystems.com/zapier-integration/google-sheets-logo/GoogleSheetsLogo.png" alt="Google Sheets Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item13"><img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Microsoft_Excel_2013_logo.svg" alt="Excel Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item14"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemLeft item15"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Airtable_Logo.svg" alt="Airtable Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemLeft item1"><img src="logos/simple-icons--hubspot.svg" alt="HubSpot Logo" class="logo-image"><span class="logo-label">HubSpot</span></div>
+              <div class="tech-logo itemLeft item2"><img src="logos/devicon--salesforce.svg" alt="Salesforce Logo" class="logo-image"><span class="logo-label">Salesforce</span></div>
+              <div class="tech-logo itemLeft item3"><img src="logos/Pipedrive.png" alt="Pipedrive Logo" class="logo-image"><span class="logo-label">Pipedrive</span></div>
+              <div class="tech-logo itemLeft item4"><img src="logos/arcticons--zoho-crm.svg" alt="Zoho CRM Logo" class="logo-image"><span class="logo-label">Zoho CRM</span></div>
+              <div class="tech-logo itemLeft item5"><img src="logos/LinkedInSalesNavigator.jfif" alt="LinkedIn Sales Navigator Logo" class="logo-image"><span class="logo-label">LinkedIn Sales Navigator</span></div>
+              <div class="tech-logo itemLeft item6"><img src="logos/Apollo.io.png" alt="Apollo.io Logo" class="logo-image"><span class="logo-label">Apollo.io</span></div>
+              <div class="tech-logo itemLeft item7"><img src="logos/lemlist_logo.jfif" alt="Lemlist Logo" class="logo-image"><span class="logo-label">Lemlist</span></div>
+              <div class="tech-logo itemLeft item8"><img src="logos/Mailshake.png" alt="Mailshake Logo" class="logo-image"><span class="logo-label">Mailshake</span></div>
+              <div class="tech-logo itemLeft item9"><img src="logos/hunter-io-CTA.png" alt="Hunter.io Logo" class="logo-image"><span class="logo-label">Hunter.io</span></div>
+              <div class="tech-logo itemLeft item10"><img src="logos/simple-icons--calendly.svg" alt="Calendly Logo" class="logo-image"><span class="logo-label">Calendly</span></div>
+              <div class="tech-logo itemLeft item11"><img src="logos/logos--laravel.svg" alt="Laravel Logo" class="logo-image"><span class="logo-label">Laravel</span></div>
+              <div class="tech-logo itemLeft item12"><img src="logos/skill-icons--react-dark.svg" alt="React Logo" class="logo-image"><span class="logo-label">React</span></div>
+              <div class="tech-logo itemLeft item13"><img src="logos/devicon--flutter.svg" alt="Flutter Logo" class="logo-image"><span class="logo-label">Flutter</span></div>
+              <div class="tech-logo itemLeft item14"><img src="logos/devicon--notion.svg" alt="Notion Logo" class="logo-image"><span class="logo-label">Notion</span></div>
+              <div class="tech-logo itemLeft item15"><img src="logos/logos--airtable.svg" alt="Airtable Logo" class="logo-image"><span class="logo-label">Airtable</span></div>
             </div>
             <div class="wrapper">
-              <div class="tech-logo itemRight item1"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/HubSpot_Logo.svg" alt="HubSpot Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item2"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Salesforce.com_logo.svg" alt="Salesforce Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item3"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Pipedrive_Logo.svg" alt="Pipedrive Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item4"><img src="https://upload.wikimedia.org/wikipedia/en/5/5e/ZOHO_logo_2023.svg" alt="Zoho CRM Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item5"><img src="https://www.kindpng.com/picc/m/106-1069585_linkedin-sales-navigator-logo-hd-png-download.png" alt="LinkedIn Sales Navigator Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item6"><img src="https://seeklogo.com/images/A/apollo-io-logo-457273BBD4-seeklogo.com.svg" alt="Apollo.io Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item7"><img src="https://logotic.me/assets/lemlist.svg" alt="Lemlist Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item8"><img src="https://seeklogo.com/images/M/mailshake-logo-412145C627-seeklogo.com.svg" alt="Mailshake Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item9"><img src="https://api.brandfetch.io/logo/hunter.io?v=1" alt="Hunter.io Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item10"><img src="https://seeklogo.com/images/C/calendly-logo-0CDAE9BD9A-seeklogo.com.png" alt="Calendly Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item11"><img src="https://www.gstatic.com/images/branding/product/1x/calendar_48dp.png" alt="Google Calendar Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item12"><img src="https://support.reallysimplesystems.com/zapier-integration/google-sheets-logo/GoogleSheetsLogo.png" alt="Google Sheets Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item13"><img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Microsoft_Excel_2013_logo.svg" alt="Excel Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item14"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
-              <div class="tech-logo itemRight item15"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Airtable_Logo.svg" alt="Airtable Logo" style="height: 100%; max-width: 100%; object-fit: contain;"></div>
+              <div class="tech-logo itemRight item1"><img src="logos/simple-icons--hubspot.svg" alt="HubSpot Logo" class="logo-image"><span class="logo-label">HubSpot</span></div>
+              <div class="tech-logo itemRight item2"><img src="logos/devicon--salesforce.svg" alt="Salesforce Logo" class="logo-image"><span class="logo-label">Salesforce</span></div>
+              <div class="tech-logo itemRight item3"><img src="logos/Pipedrive.png" alt="Pipedrive Logo" class="logo-image"><span class="logo-label">Pipedrive</span></div>
+              <div class="tech-logo itemRight item4"><img src="logos/arcticons--zoho-crm.svg" alt="Zoho CRM Logo" class="logo-image"><span class="logo-label">Zoho CRM</span></div>
+              <div class="tech-logo itemRight item5"><img src="logos/LinkedInSalesNavigator.jfif" alt="LinkedIn Sales Navigator Logo" class="logo-image"><span class="logo-label">LinkedIn Sales Navigator</span></div>
+              <div class="tech-logo itemRight item6"><img src="logos/Apollo.io.png" alt="Apollo.io Logo" class="logo-image"><span class="logo-label">Apollo.io</span></div>
+              <div class="tech-logo itemRight item7"><img src="logos/lemlist_logo.jfif" alt="Lemlist Logo" class="logo-image"><span class="logo-label">Lemlist</span></div>
+              <div class="tech-logo itemRight item8"><img src="logos/Mailshake.png" alt="Mailshake Logo" class="logo-image"><span class="logo-label">Mailshake</span></div>
+              <div class="tech-logo itemRight item9"><img src="logos/hunter-io-CTA.png" alt="Hunter.io Logo" class="logo-image"><span class="logo-label">Hunter.io</span></div>
+              <div class="tech-logo itemRight item10"><img src="logos/simple-icons--calendly.svg" alt="Calendly Logo" class="logo-image"><span class="logo-label">Calendly</span></div>
+              <div class="tech-logo itemRight item11"><img src="logos/logos--laravel.svg" alt="Laravel Logo" class="logo-image"><span class="logo-label">Laravel</span></div>
+              <div class="tech-logo itemRight item12"><img src="logos/skill-icons--react-dark.svg" alt="React Logo" class="logo-image"><span class="logo-label">React</span></div>
+              <div class="tech-logo itemRight item13"><img src="logos/devicon--flutter.svg" alt="Flutter Logo" class="logo-image"><span class="logo-label">Flutter</span></div>
+              <div class="tech-logo itemRight item14"><img src="logos/devicon--notion.svg" alt="Notion Logo" class="logo-image"><span class="logo-label">Notion</span></div>
+              <div class="tech-logo itemRight item15"><img src="logos/logos--airtable.svg" alt="Airtable Logo" class="logo-image"><span class="logo-label">Airtable</span></div>
             </div>
             <!-- END - New Seamless Logo Scroller -->
             <!-- "View Full Tech Stack" button originally here, now removed -->

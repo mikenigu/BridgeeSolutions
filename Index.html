@@ -516,6 +516,8 @@
 #main-content-wrapper.blur-effect {
   filter: blur(5px);
   transition: filter 0.3s ease-in-out;
+  /* outline: 3px solid red; */ /* For debugging - removed */
+  will-change: filter; /* Performance hint */
 }
   </script>
   <script type="application/ld+json">
@@ -1019,92 +1021,6 @@
         </div>
     </div> <!-- This closes main-content-wrapper -->
 
-    <script>
-      const menuButton = document.getElementById('mobile-menu-button');
-      const menu = document.getElementById('mobile-menu');
-      const mainContentWrapper = document.getElementById('main-content-wrapper');
-
-      function openMenu() {
-        menuButton.setAttribute('aria-expanded', 'true');
-        menu.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        if (mainContentWrapper) {
-          mainContentWrapper.classList.add('blur-effect');
-        }
-        const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
-        if (focusableElements.length > 0) {
-          focusableElements[0].focus();
-        }
-      }
-
-      function closeMenu() {
-        menuButton.setAttribute('aria-expanded', 'false');
-        menu.classList.add('hidden');
-        document.body.style.overflow = '';
-        if (mainContentWrapper) {
-          mainContentWrapper.classList.remove('blur-effect');
-        }
-      }
-
-      menuButton.addEventListener('click', function() {
-        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
-        if (isExpanded) {
-          closeMenu();
-        } else {
-          openMenu();
-        }
-      });
-
-      // Click outside to close
-      document.addEventListener('click', function(event) {
-        const isMenuOpen = !menu.classList.contains('hidden');
-        if (isMenuOpen && !menu.contains(event.target) && !menuButton.contains(event.target)) {
-          closeMenu();
-        }
-      });
-
-      // Focus trapping
-      menu.addEventListener('keydown', function(event) {
-        if (menu.classList.contains('hidden') || event.key !== 'Tab') return;
-
-        const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
-        if (focusableElements.length === 0) return;
-        const firstFocusableElement = focusableElements[0];
-        const lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-        if (event.shiftKey) { // Shift + Tab
-          if (document.activeElement === firstFocusableElement) {
-            lastFocusableElement.focus();
-            event.preventDefault();
-          }
-        } else { // Tab
-          if (document.activeElement === lastFocusableElement) {
-            firstFocusableElement.focus();
-            event.preventDefault();
-          }
-        }
-      });
-
-      // Escape key to close
-      document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
-          closeMenu();
-          menuButton.focus();
-        }
-      });
-
-      function toggleMobileServicesDropdown(event) {
-          event.preventDefault();
-          const dropdown = document.getElementById('mobile-services-dropdown');
-          dropdown.classList.toggle('hidden');
-          const icon = event.currentTarget.querySelector('i');
-          if (icon) {
-              icon.classList.toggle('fa-chevron-down');
-              icon.classList.toggle('fa-chevron-up');
-          }
-      }
-    </script>
-
   <!-- AOS and other scripts -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 
@@ -1268,6 +1184,7 @@
         fetchBlogPosts(1);
     });
   </script>
+  <script src="static/js/mobile_menu.js" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const navbar = document.getElementById('main-navbar');

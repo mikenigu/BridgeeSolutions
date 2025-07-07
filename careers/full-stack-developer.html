@@ -51,6 +51,11 @@
     .cta-button:hover:before {
       width: 100%;
     }
+    #main-content-wrapper.blur-effect {
+      filter: blur(5px);
+      transition: filter 0.3s ease-in-out;
+      will-change: filter;
+    }
   </style>
   <script type="application/ld+json">
     {
@@ -152,6 +157,7 @@
         </div>
     </nav>
 
+    <div id="main-content-wrapper">
     <main id="job-detail-content" class="bg-white py-12 md:py-16">
         <div class="container mx-auto px-6">
             <div class="mb-8 text-sm" data-aos="fade-right">
@@ -353,55 +359,7 @@
             </div>
         </div>
     </footer>
-
-    <script>
-      const menuButton = document.getElementById('mobile-menu-button');
-      const menu = document.getElementById('mobile-menu');
-
-      menuButton.addEventListener('click', function() {
-        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
-        menuButton.setAttribute('aria-expanded', !isExpanded);
-        menu.classList.toggle('hidden');
-        document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
-
-        if (!isExpanded && !menu.classList.contains('hidden')) {
-          const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
-          if (focusableElements.length > 0) {
-            focusableElements[0].focus();
-          }
-        }
-      });
-
-      menu.addEventListener('keydown', function(event) {
-        if (menu.classList.contains('hidden') || event.key !== 'Tab') return;
-
-        const focusableElements = menu.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
-        if (focusableElements.length === 0) return;
-        const firstFocusableElement = focusableElements[0];
-        const lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-        if (event.shiftKey) {
-          if (document.activeElement === firstFocusableElement) {
-            lastFocusableElement.focus();
-            event.preventDefault();
-          }
-        } else {
-          if (document.activeElement === lastFocusableElement) {
-            firstFocusableElement.focus();
-            event.preventDefault();
-          }
-        }
-      });
-
-      document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
-          menu.classList.add('hidden');
-          document.body.style.overflow = '';
-          menuButton.setAttribute('aria-expanded', 'false');
-          menuButton.focus();
-        }
-      });
-    </script>
+    </div> <!-- This closes main-content-wrapper -->
 
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
@@ -420,6 +378,7 @@
   </script>
     <!-- Link to the shared career form handler -->
     <script src="../static/js/career_form_handler.js" defer></script>
+    <script src="../static/js/mobile_menu.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Ensure the function is called only if the form exists on this page.

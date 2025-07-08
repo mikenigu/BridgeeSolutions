@@ -516,8 +516,7 @@
 #main-content-wrapper.blur-effect {
   filter: blur(5px);
   transition: filter 0.3s ease-in-out;
-  /* outline: 3px solid red; */ /* For debugging - removed */
-  will-change: filter; /* Performance hint */
+  will-change: filter;
 }
   </script>
   <script type="application/ld+json">
@@ -1019,6 +1018,8 @@
                 <p>© 2024 Bridgee Solutions. All rights reserved.</p>
             </div>
         </div>
+    </div> <!-- This closes main-content-wrapper -->
+
     </div> <!-- This closes main-content-wrapper -->
 
   <!-- AOS and other scripts -->

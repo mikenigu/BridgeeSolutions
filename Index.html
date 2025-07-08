@@ -110,6 +110,12 @@
       color: #d1d5db !important;
     }
 
+    #main-content-wrapper.blur-effect {
+      filter: blur(5px);
+      transition: filter 0.3s ease-in-out;
+      will-change: filter;
+    }
+
     @keyframes fadeInBlur {
       0% {
         opacity: 0;
@@ -513,11 +519,7 @@
       }
     }
 
-#main-content-wrapper.blur-effect {
-  filter: blur(5px);
-  transition: filter 0.3s ease-in-out;
-  will-change: filter;
-}
+
   </script>
   <script type="application/ld+json">
     {

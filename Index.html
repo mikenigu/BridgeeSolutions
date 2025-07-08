@@ -202,7 +202,7 @@
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      height: 420px;
+      height: 380px; /* Reduced height */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -210,8 +210,8 @@
 
     .testimonial-card p.text-blue-100 {
       flex-grow: 1;
-      overflow-y: auto;
-      padding-right: 5px;
+      /* overflow-y: auto; */ /* Removed to prevent scrollbar */
+      padding-right: 5px; /* May no longer be needed if no scrollbar, but harmless */
     }
 
     .tech-logo-scroller-container {

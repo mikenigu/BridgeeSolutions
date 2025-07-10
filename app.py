@@ -72,6 +72,19 @@ def load_user(user_id):
     return users_db.get(user_id)
 
 # --- Helper Functions ---
+def save_blog_posts(posts_data: list) -> bool:
+    try:
+        with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(posts_data, f, indent=4, ensure_ascii=False)
+        app.logger.info(f"Successfully saved {len(posts_data)} posts to {BLOG_POSTS_FILE}")
+        return True
+    except IOError as e:
+        app.logger.error(f"IOError writing to {BLOG_POSTS_FILE}: {e}", exc_info=True)
+        return False
+    except Exception as e: # Catch any other potential errors during save
+        app.logger.error(f"Unexpected error saving to {BLOG_POSTS_FILE}: {e}", exc_info=True)
+        return False
+
 def generate_unique_post_id() -> str:
     return str(uuid.uuid4())
 

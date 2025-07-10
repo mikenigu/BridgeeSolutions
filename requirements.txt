@@ -5,3 +5,4 @@ Flask-CORS>=4.0.0 # Or a more specific version if known, but this is a common wa
 Flask-Mail>=0.9.1
 # Using a reasonable base version for python-dotenv
 mammoth>=1.6.0
+Flask-Login>=0.6.0

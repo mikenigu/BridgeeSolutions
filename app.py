@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, abort, render_template
+from flask import Flask, request, jsonify, send_from_directory, abort, render_template, redirect, url_for, flash
 from flask_cors import CORS, cross_origin # Make sure cross_origin is imported
 import os
 import asyncio # Added asyncio
@@ -9,11 +9,14 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename # Keep for now, might be used by other routes later or full version
 from flask_mail import Mail, Message # Import Mail and Message
 import telegram # Keep for now
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app) # Initialize CORS globally
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'a_default_fallback_secret_key_for_development') # Added for Flask-Login session management
 
 # --- Configuration ---
 # Telegram Bot Configuration (already present)
@@ -41,6 +44,30 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', app.config[
 # Note: SERVICE_REQUEST_RECIPIENT will be used directly in the mail sending logic, not as a Flask-Mail config.
 
 mail = Mail(app)
+
+# --- Flask-Login Setup ---
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login' # Name of the login route
+
+class User(UserMixin):
+    def __init__(self, id, username, password_hash):
+        self.id = id
+        self.username = username
+        self.password_hash = password_hash
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+# In-memory user store (for simplicity, replace with database in production)
+# TODO: Move to a more secure user store if this app goes beyond simple admin use
+users_db = {
+    "1": User(id="1", username="admin", password_hash=generate_password_hash("adminpass123"))
+}
+
+@login_manager.user_loader
+def load_user(user_id):
+    return users_db.get(user_id)
 
 # --- Helper Functions ---
 def allowed_file(filename):
@@ -500,6 +527,48 @@ def submit_contact_form():
         except Exception as e:
             app.logger.error(f"Failed to send contact form email from {email} to {recipient_email}. Error: {str(e)}")
             return jsonify({'success': False, 'message': 'There was an error sending your message. Please try again later.'}), 500
+
+# --- Login/Logout Routes ---
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('admin_test')) # Or an admin dashboard later
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        remember = True if request.form.get('remember_me') else False
+
+        # Find user by username (simple iteration for in-memory store)
+        user_obj = None
+        for user_in_db in users_db.values():
+            if user_in_db.username == username:
+                user_obj = user_in_db
+                break
+
+        if user_obj and user_obj.check_password(password):
+            login_user(user_obj, remember=remember)
+            flash('Logged in successfully!', 'success')
+            # Redirect to the page the user was trying to access, or a default
+            next_page = request.args.get('next')
+            if not next_page or url_for(next_page.lstrip('/')) == url_for('login'): # Basic security check for next_page
+                 next_page = url_for('admin_test') # Default to admin_test for now
+            return redirect(next_page)
+        else:
+            flash('Invalid username or password. Please try again.', 'error')
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('serve_index'))
+
+# --- Protected Test Route ---
+@app.route('/admin_test')
+@login_required
+def admin_test():
+    return f"Hello, {current_user.username}! This is a protected admin page. Your ID is {current_user.id}"
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

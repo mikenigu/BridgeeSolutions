@@ -35,10 +35,9 @@
         <div class="bg-white p-6 rounded-lg shadow-xl">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-semibold text-gray-800">{{ title }}</h1>
-                <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">
+                <a href="{{ url_for('admin_create_blog_post') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">
                     <i class="fas fa-plus mr-2"></i>Create New Post
                 </a>
-                <!-- TODO: Link to actual create post route later -->
             </div>
 
             <!-- Flashed Messages -->

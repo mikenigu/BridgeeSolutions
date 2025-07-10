@@ -11,6 +11,8 @@ from flask_mail import Mail, Message # Import Mail and Message
 import telegram # Keep for now
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+import uuid # For generating unique post IDs
+import mammoth # For .docx conversion
 
 load_dotenv()
 
@@ -70,6 +72,64 @@ def load_user(user_id):
     return users_db.get(user_id)
 
 # --- Helper Functions ---
+def generate_unique_post_id() -> str:
+    return str(uuid.uuid4())
+
+def get_current_timestamp_iso() -> str:
+    return datetime.utcnow().isoformat() + 'Z'
+
+def save_uploaded_image(file_storage) -> str | None:
+    if file_storage and file_storage.filename:
+        original_filename = secure_filename(file_storage.filename)
+        # Get file extension
+        extension = original_filename.rsplit('.', 1)[1].lower() if '.' in original_filename else 'jpg' # default to jpg
+        unique_filename_stem = uuid.uuid4().hex
+        unique_filename = f"{unique_filename_stem}.{extension}"
+
+        upload_folder = os.path.join(app.static_folder, 'uploaded_images') # Use app.static_folder
+        os.makedirs(upload_folder, exist_ok=True)
+        save_path = os.path.join(upload_folder, unique_filename)
+
+        try:
+            file_storage.save(save_path)
+            # Return web-accessible path
+            return url_for('static', filename=f'uploaded_images/{unique_filename}', _external=False)
+        except Exception as e:
+            app.logger.error(f"Error saving uploaded image {original_filename} to {save_path}: {e}")
+            return None
+    return None
+
+def convert_docx_to_html(docx_file_stream) -> str | None:
+    """Converts a .docx file stream to HTML."""
+    try:
+        # Ensure the stream is at the beginning if it's a file-like object that has been read before
+        if hasattr(docx_file_stream, 'seek') and callable(docx_file_stream.seek):
+            docx_file_stream.seek(0)
+
+        result = mammoth.convert_to_html(docx_file_stream)
+        html_content = result.value
+        if result.messages:
+            app.logger.warning(f"Mammoth conversion messages: {result.messages}")
+        return html_content
+    except Exception as e:
+        app.logger.error(f"Error converting .docx to HTML with mammoth: {e}", exc_info=True)
+        return None
+
+def read_text_from_file(file_storage) -> str | None:
+    """Reads text content from an uploaded text/markdown file stream."""
+    try:
+        # Ensure the stream is at the beginning
+        if hasattr(file_storage, 'seek') and callable(file_storage.seek):
+            file_storage.seek(0)
+        return file_storage.read().decode('utf-8')
+    except UnicodeDecodeError:
+        app.logger.error("Error decoding uploaded text file. Ensure it is UTF-8 encoded.")
+        return None # Or raise an error to be caught by the route
+    except Exception as e:
+        app.logger.error(f"Error reading text from file: {e}", exc_info=True)
+        return None
+
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -582,7 +642,99 @@ def admin_blog_list():
     except Exception as e:
         app.logger.error(f"Error sorting blog posts for admin panel: {e}")
         # Continue with unsorted posts if sorting fails
-    return render_template('admin_blog_list.html', posts=posts, title="Blog Admin", now=datetime.utcnow())
+    return render_template('admin_blog_list.html', posts=posts, title="Blog Posts", now=datetime.utcnow()) # Changed title for clarity
+
+@app.route('/admin/blog/create', methods=['GET', 'POST'])
+@login_required
+def admin_create_blog_post():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        author = request.form.get('author', current_user.username) # Default to current user
+        content_text = request.form.get('content_text')
+        content_file = request.files.get('content_file')
+        content_is_html = 'content_is_html' in request.form
+
+        image_url_form = request.form.get('image_url')
+        image_upload_file = request.files.get('image_upload')
+
+        final_content = ""
+
+        # --- Content Processing ---
+        if content_file and content_file.filename:
+            filename = secure_filename(content_file.filename)
+            if filename.lower().endswith('.docx'):
+                html_from_docx = convert_docx_to_html(content_file.stream)
+                if html_from_docx:
+                    final_content = html_from_docx
+                    content_is_html = True # Override if docx is successfully processed
+                else:
+                    flash('Error converting .docx file. Please check the file or provide content manually.', 'error')
+                    return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.utcnow())
+            elif filename.lower().endswith(('.txt', '.md')):
+                text_from_file = read_text_from_file(content_file.stream)
+                if text_from_file:
+                    final_content = text_from_file
+                    # content_is_html might remain as user set it for .md if they want to parse it later
+                else:
+                    flash('Error reading content from text/markdown file.', 'error')
+                    return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.utcnow())
+            else:
+                flash('Unsupported content file type. Please use .txt, .md, or .docx.', 'error')
+                return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.utcnow())
+        elif content_text:
+            final_content = content_text
+        else:
+            flash('Content is required (either typed or from a file).', 'error')
+            return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.utcnow())
+
+        if not title:
+            flash('Title is required.', 'error')
+            # Pass back current form data to re-populate
+            return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, content=final_content, content_is_html=content_is_html, now=datetime.utcnow())
+
+        # --- Image Processing ---
+        final_image_url = None
+        image_url_is_static = False # Flag to differentiate between external URLs and uploaded static files
+
+        if image_upload_file and image_upload_file.filename:
+            # Prioritize uploaded image
+            saved_image_path = save_uploaded_image(image_upload_file)
+            if saved_image_path:
+                final_image_url = saved_image_path
+                image_url_is_static = True # Mark that this is a path to a static file
+            else:
+                flash('Error saving uploaded image. Please try again or use a URL.', 'error')
+                # Continue without image or return error? For now, continue.
+        elif image_url_form:
+            final_image_url = image_url_form
+            image_url_is_static = False # It's an external URL
+
+        # --- Create and Save Post ---
+        new_post_id = generate_unique_post_id()
+        new_post = {
+            "id": new_post_id,
+            "title": title,
+            "author": author if author else None, # Store None if author was skipped/empty
+            "content": final_content,
+            "content_is_html": content_is_html,
+            "date_published": get_current_timestamp_iso(),
+            "image_url": final_image_url,
+            "image_url_is_static": image_url_is_static # Store this new flag
+        }
+
+        posts = load_blog_posts()
+        posts.append(new_post)
+        if save_blog_posts(posts):
+            flash(f"Blog post '{title}' created successfully!", 'success')
+            return redirect(url_for('admin_blog_list'))
+        else:
+            flash('Error saving blog post to file. Please check server logs.', 'error')
+            # Re-render form with data if save fails
+            return render_template('admin_blog_form.html', title="Create New Blog Post", post=new_post, now=datetime.utcnow())
+
+    # GET request
+    return render_template('admin_blog_form.html', title="Create New Blog Post", post=None, now=datetime.utcnow())
+
 
 # --- Jinja Filters ---
 def format_datetime_admin_filter(value, format='%B %d, %Y %H:%M %Z'):

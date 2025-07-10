@@ -570,5 +570,41 @@ def logout():
 def admin_test():
     return f"Hello, {current_user.username}! This is a protected admin page. Your ID is {current_user.id}"
 
+# --- Admin Panel Routes ---
+@app.route('/admin/blog')
+@login_required
+def admin_blog_list():
+    posts = load_blog_posts()
+    # Sort posts by date, newest first. Assuming 'date_published' is in ISO format.
+    # More robust sorting might be needed if date formats vary or are not always present.
+    try:
+        posts.sort(key=lambda x: x.get('date_published', ''), reverse=True)
+    except Exception as e:
+        app.logger.error(f"Error sorting blog posts for admin panel: {e}")
+        # Continue with unsorted posts if sorting fails
+    return render_template('admin_blog_list.html', posts=posts, title="Blog Admin", now=datetime.utcnow())
+
+# --- Jinja Filters ---
+def format_datetime_admin_filter(value, format='%B %d, %Y %H:%M %Z'):
+    """Formats an ISO datetime string (with or without Z) for display."""
+    if not value:
+        return "N/A"
+    try:
+        if isinstance(value, str):
+            if value.endswith('Z'):
+                dt_obj = datetime.fromisoformat(value.replace('Z', '+00:00'))
+            else:
+                dt_obj = datetime.fromisoformat(value)
+        elif isinstance(value, datetime):
+            dt_obj = value
+        else:
+            return str(value) # Fallback for unexpected types
+        return dt_obj.strftime(format)
+    except ValueError:
+        return str(value) # Return original if parsing fails
+
+app.jinja_env.filters['format_datetime_admin'] = format_datetime_admin_filter
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

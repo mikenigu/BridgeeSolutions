@@ -154,10 +154,14 @@
                     <div>
                         <label for="image_url">Image URL (Optional)</label>
                         <input type="url" name="image_url" id="image_url" value="{{ post.image_url if post and not post.image_url_is_static else '' }}" placeholder="https://example.com/image.jpg">
-                        {% if post and post.image_url and post.image_url_is_static %}
-                            <p class="text-xs text-gray-500 mt-1">Current static image: {{ post.image_url }}. Upload a new image or provide a URL to change.</p>
-                        {% elif post and post.image_url %}
-                             <p class="text-xs text-gray-500 mt-1">Current image URL. Upload an image or provide a new URL to change.</p>
+                        {% if post and post.image_url %}
+                            {% if post.image_url_is_static %}
+                                <p class="text-xs text-gray-500 mt-1">Current static image:</p>
+                                <img src="{{ post.image_url }}" alt="Current image for {{ post.title | escape }}" class="my-2 max-w-xs h-auto rounded border shadow-sm">
+                                <p class="text-xs text-gray-500 mt-1">Path: {{ post.image_url }}. Upload a new image or provide a URL to change/remove (leave URL blank to remove).</p>
+                            {% else %}
+                                 <p class="text-xs text-gray-500 mt-1">Current image URL: <a href="{{ post.image_url }}" target="_blank" class="text-blue-500 hover:underline">{{ post.image_url }}</a>. Upload an image or provide a new URL to change/remove (leave URL blank to remove).</p>
+                            {% endif %}
                         {% endif %}
                     </div>
                      <p class="text-center text-sm font-medium text-gray-500 my-2">OR</p>

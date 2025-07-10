@@ -748,6 +748,141 @@ def admin_create_blog_post():
     # GET request
     return render_template('admin_blog_form.html', title="Create New Blog Post", post=None, now=datetime.utcnow())
 
+@app.route('/admin/blog/edit/<string:post_id>', methods=['GET', 'POST'])
+@login_required
+def admin_edit_blog_post(post_id):
+    posts = load_blog_posts()
+    post_to_edit = None
+    post_index = -1
+
+    for i, p in enumerate(posts):
+        if p.get('id') == post_id:
+            post_to_edit = p
+            post_index = i
+            break
+
+    if not post_to_edit:
+        flash(f"Blog post with ID {post_id} not found.", 'error')
+        return redirect(url_for('admin_blog_list'))
+
+    if request.method == 'POST':
+        title = request.form.get('title')
+        author = request.form.get('author', current_user.username)
+        content_text = request.form.get('content_text')
+        content_file = request.files.get('content_file')
+        content_is_html_form = 'content_is_html' in request.form # From checkbox
+
+        image_url_form = request.form.get('image_url')
+        image_upload_file = request.files.get('image_upload')
+
+        # --- Content Processing ---
+        new_content = post_to_edit.get('content') # Default to existing content
+        new_content_is_html = post_to_edit.get('content_is_html', False)
+
+        if content_file and content_file.filename:
+            filename = secure_filename(content_file.filename)
+            if filename.lower().endswith('.docx'):
+                html_from_docx = convert_docx_to_html(content_file.stream)
+                if html_from_docx is not None:
+                    new_content = html_from_docx
+                    new_content_is_html = True
+                else:
+                    flash('Error converting .docx file. Content not updated.', 'error')
+                    # Return here or let it proceed with old content if desired. For now, let's return.
+                    return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
+            elif filename.lower().endswith(('.txt', '.md')):
+                text_from_file = read_text_from_file(content_file.stream)
+                if text_from_file is not None:
+                    new_content = text_from_file
+                    new_content_is_html = content_is_html_form # Respect checkbox for txt/md
+                else:
+                    flash('Error reading content from text/markdown file. Content not updated.', 'error')
+                    return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
+            # No error for unsupported type, just means content_file won't be used if not .docx, .txt, .md
+        elif content_text: # Only use content_text if no (valid) file was uploaded
+             new_content = content_text
+             new_content_is_html = content_is_html_form
+
+
+        if not title:
+            flash('Title is required.', 'error')
+            # Update post_to_edit with current form values for re-rendering
+            current_form_data = request.form.to_dict()
+            current_form_data['content'] = new_content # Use processed content
+            current_form_data['content_is_html'] = new_content_is_html
+            return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=current_form_data, now=datetime.utcnow())
+
+        # --- Image Processing ---
+        final_image_url = post_to_edit.get('image_url')
+        final_image_url_is_static = post_to_edit.get('image_url_is_static', False)
+        old_static_image_path = None
+        if final_image_url_is_static and final_image_url:
+             # Convert web path to filesystem path for deletion
+             # Assumes url_for('static', filename='uploaded_images/...') structure
+             old_static_image_filename = final_image_url.split('/')[-1]
+             old_static_image_path = os.path.join(app.static_folder, 'uploaded_images', old_static_image_filename)
+
+
+        if image_upload_file and image_upload_file.filename:
+            saved_image_path = save_uploaded_image(image_upload_file)
+            if saved_image_path:
+                # If old image was static and different, delete it
+                if old_static_image_path and os.path.exists(old_static_image_path) and old_static_image_path != os.path.join(app.static_folder, 'uploaded_images', saved_image_path.split('/')[-1]):
+                    try:
+                        os.remove(old_static_image_path)
+                        app.logger.info(f"Deleted old static image: {old_static_image_path}")
+                    except Exception as e:
+                        app.logger.error(f"Error deleting old static image {old_static_image_path}: {e}")
+                final_image_url = saved_image_path
+                final_image_url_is_static = True
+            else:
+                flash('Error saving uploaded image. Image not updated.', 'warning')
+        elif image_url_form: # If a new URL is provided (and it's different or old was static)
+            if image_url_form != final_image_url or final_image_url_is_static:
+                # If old image was static, delete it
+                if old_static_image_path and os.path.exists(old_static_image_path):
+                    try:
+                        os.remove(old_static_image_path)
+                        app.logger.info(f"Deleted old static image (URL replaced): {old_static_image_path}")
+                    except Exception as e:
+                        app.logger.error(f"Error deleting old static image {old_static_image_path}: {e}")
+                final_image_url = image_url_form
+                final_image_url_is_static = False
+        elif not image_url_form and final_image_url: # Existing image, but URL field now blank (means "remove image")
+            if old_static_image_path and os.path.exists(old_static_image_path):
+                 try:
+                    os.remove(old_static_image_path)
+                    app.logger.info(f"Deleted old static image (field cleared): {old_static_image_path}")
+                 except Exception as e:
+                    app.logger.error(f"Error deleting old static image {old_static_image_path}: {e}")
+            final_image_url = None
+            final_image_url_is_static = False
+
+
+        # --- Update Post ---
+        posts[post_index]['title'] = title
+        posts[post_index]['author'] = author if author else None
+        posts[post_index]['content'] = new_content
+        posts[post_index]['content_is_html'] = new_content_is_html
+        posts[post_index]['image_url'] = final_image_url
+        posts[post_index]['image_url_is_static'] = final_image_url_is_static
+        # date_published is not changed on edit, but could add a 'last_modified' field
+
+        if save_blog_posts(posts):
+            flash(f"Blog post '{title}' updated successfully!", 'success')
+            return redirect(url_for('admin_blog_list'))
+        else:
+            flash('Error saving updated blog post. Please check server logs.', 'error')
+            # Re-render form with current (attempted) data
+            post_to_edit.update(request.form.to_dict()) # Update with form data for re-render
+            post_to_edit['content'] = new_content # ensure processed content is used
+            post_to_edit['content_is_html'] = new_content_is_html
+            post_to_edit['image_url'] = final_image_url
+            post_to_edit['image_url_is_static'] = final_image_url_is_static
+            return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
+
+    # GET request
+    return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
 
 # --- Jinja Filters ---
 def format_datetime_admin_filter(value, format='%B %d, %Y %H:%M %Z'):

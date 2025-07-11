@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Bridgee Solutions Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9fafb; /* bg-gray-50 */
+        }
+        .detail-label {
+            font-weight: 600; /* semibold */
+            color: #4b5563; /* gray-600 */
+        }
+        .detail-value {
+            color: #1f2937; /* gray-800 */
+            word-break: break-word;
+        }
+        .cover-letter-content {
+            white-space: pre-wrap; /* respects newlines and spaces */
+            background-color: #f9fafb; /* bg-gray-50 */
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+            padding: 1rem;
+            border-radius: 0.375rem; /* rounded-md */
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Admin Navigation -->
+    <nav class="bg-gray-800 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{{ url_for('admin_blog_list') }}" class="text-xl font-semibold hover:text-gray-300">Admin Panel</a>
+            <div>
+                <a href="{{ url_for('admin_blog_list') }}" class="py-2 px-3 hover:bg-gray-700 rounded-md text-sm">Blog Posts</a>
+                <a href="{{ url_for('admin_hr_applications_list') }}" class="py-2 px-3 bg-gray-700 rounded-md text-sm">HR Applications</a>
+                <a href="{{ url_for('logout') }}" class="py-2 px-3 hover:bg-gray-700 rounded-md text-sm">Logout ({{ current_user.username }})</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white p-6 md:p-8 rounded-lg shadow-xl max-w-3xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl md:text-3xl font-semibold text-gray-800">{{ title }}</h1>
+                <a href="{{ url_for('admin_hr_applications_list') }}" class="text-sm text-blue-600 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Applications List
+                </a>
+            </div>
+
+            <!-- Flashed Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-4 p-3 rounded-md text-sm
+                                    {% if category == 'error' %}bg-red-100 text-red-700 border border-red-200
+                                    {% elif category == 'success' %}bg-green-100 text-green-700 border border-green-200
+                                    {% else %}bg-blue-100 text-blue-700 border border-blue-200
+                                    {% endif %}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if application %}
+            <div class="space-y-4">
+                <div>
+                    <p class="detail-label">Full Name:</p>
+                    <p class="detail-value">{{ application.full_name | default('N/A') }}</p>
+                </div>
+                <div>
+                    <p class="detail-label">Email Address:</p>
+                    <p class="detail-value">{{ application.email | default('N/A') }}</p>
+                </div>
+                <div>
+                    <p class="detail-label">Phone Number:</p>
+                    <p class="detail-value">{{ application.phone_number | default('N/A') }}</p>
+                </div>
+                <div>
+                    <p class="detail-label">Applying for Job:</p>
+                    <p class="detail-value">{{ application.job_title | default('N/A') }}</p>
+                </div>
+                <div>
+                    <p class="detail-label">Submission Date:</p>
+                    <p class="detail-value">{{ application.timestamp | format_datetime_admin if application.timestamp else 'N/A' }}</p>
+                </div>
+                <div>
+                    <p class="detail-label">Current Status:</p>
+                    <p class="detail-value">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                   {% if application.status == 'new' %} bg-blue-100 text-blue-800
+                                   {% elif application.status == 'reviewed_accepted' %} bg-green-100 text-green-800
+                                   {% elif application.status == 'interviewing' %} bg-yellow-100 text-yellow-800
+                                   {% elif application.status == 'offer_extended' %} bg-purple-100 text-purple-800
+                                   {% elif application.status == 'employed' %} bg-gray-100 text-gray-800 font-bold
+                                   {% elif application.status == 'reviewed_declined' or application.status == 'offer_declined' %} bg-red-100 text-red-800
+                                   {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                            {{ application.status | replace('_', ' ') | title | default('N/A') }}
+                        </span>
+                    </p>
+                </div>
+                <div>
+                    <p class="detail-label">CV Filename:</p>
+                    <p class="detail-value">{{ application.cv_filename | default('N/A') }}</p>
+                    {% if application.cv_filename %}
+                    <a href="{{ url_for('admin_hr_download_cv', filename=application.cv_filename) }}"
+                       class="mt-1 inline-block bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-3 rounded-md shadow-sm text-xs">
+                        <i class="fas fa-download mr-1"></i> Download CV
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if application.cover_letter %}
+                <div>
+                    <p class="detail-label">Cover Letter:</p>
+                    <div class="cover-letter-content">
+                        {{ application.cover_letter }}
+                    </div>
+                </div>
+                {% else %}
+                <div>
+                    <p class="detail-label">Cover Letter:</p>
+                    <p class="detail-value italic">No cover letter provided.</p>
+                </div>
+                {% endif %}
+
+                <!-- Placeholder for future status change form -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-700 mb-2">Update Status (Future)</h3>
+                    <p class="text-sm text-gray-500">Functionality to update application status will be here.</p>
+                </div>
+
+            </div>
+            {% else %}
+                <p class="text-red-600">Application details could not be loaded.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer for Admin (simple) -->
+    <footer class="bg-gray-800 text-white text-center p-4 mt-auto">
+        <p class="text-sm">&copy; {{ now.year if now else '' }} Bridgee Solutions Admin. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

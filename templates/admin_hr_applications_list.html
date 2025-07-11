@@ -97,8 +97,11 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="#" class="text-indigo-600 hover:text-indigo-900">View</a>
-                                <!-- Future actions: Edit Status, Download CV -->
+                                {% if app_item.cv_filename %}
+                                <a href="{{ url_for('admin_hr_application_detail', app_id=app_item.cv_filename.split('-', 1)[0]) }}" class="text-indigo-600 hover:text-indigo-900">View Details</a>
+                                {% else %}
+                                <span class="text-gray-400">Details N/A</span>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}

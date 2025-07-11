@@ -1010,20 +1010,44 @@ def admin_hr_applications_list():
     page = request.args.get('page', 1, type=int)
     APPS_PER_PAGE = 10 # Configuration for items per page
 
-    all_applications = load_applications_hr()
+    filter_status = request.args.get('filter_status')
+    filter_job_title = request.args.get('filter_job_title', '').strip().lower()
 
-    total_applications = len(all_applications)
+    applications_data = load_applications_hr() # Already sorted by timestamp desc by default
+
+    filtered_applications = []
+    if not filter_status and not filter_job_title:
+        filtered_applications = applications_data
+    else:
+        for app_item in applications_data:
+            matches_status = True
+            if filter_status:
+                matches_status = app_item.get('status') == filter_status
+
+            matches_job_title = True
+            if filter_job_title:
+                matches_job_title = filter_job_title in app_item.get('job_title', '').lower()
+
+            if matches_status and matches_job_title:
+                filtered_applications.append(app_item)
+
+    total_applications = len(filtered_applications)
     total_pages = (total_applications + APPS_PER_PAGE - 1) // APPS_PER_PAGE
+    # Ensure page is within valid range after filtering
+    page = max(1, min(page, total_pages if total_pages > 0 else 1))
+
 
     start_index = (page - 1) * APPS_PER_PAGE
     end_index = start_index + APPS_PER_PAGE
-    applications_on_page = all_applications[start_index:end_index]
+    applications_on_page = filtered_applications[start_index:end_index]
 
     return render_template('admin_hr_applications_list.html',
                            applications=applications_on_page,
                            title="HR - Submitted Applications",
                            current_page=page,
                            total_pages=total_pages,
+                           status_display_names=STATUS_DISPLAY_NAMES_HR, # For the filter dropdown
+                           request_args=request.args, # To repopulate filter form
                            now=datetime.utcnow())
 
 @app.route('/admin/hr/application/<string:app_id>')

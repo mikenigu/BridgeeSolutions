@@ -22,9 +22,10 @@
     <!-- Admin Navigation -->
     <nav class="bg-gray-800 text-white p-4 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="{{ url_for('admin_blog_list') }}" class="text-xl font-semibold hover:text-gray-300">Admin Panel - Blog Posts</a>
+            <a href="{{ url_for('admin_blog_list') }}" class="text-xl font-semibold hover:text-gray-300">Admin Panel</a>
             <div>
-                <!-- Future links can go here, e.g., HR Panel -->
+                <a href="{{ url_for('admin_blog_list') }}" class="py-2 px-3 bg-gray-700 rounded-md text-sm">Blog Posts</a>
+                <a href="{{ url_for('admin_hr_applications_list') }}" class="py-2 px-3 hover:bg-gray-700 rounded-md text-sm">HR Applications</a>
                 <a href="{{ url_for('logout') }}" class="py-2 px-3 hover:bg-gray-700 rounded-md text-sm">Logout ({{ current_user.username }})</a>
             </div>
         </div>

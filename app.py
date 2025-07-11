@@ -954,6 +954,57 @@ def format_datetime_admin_filter(value, format='%B %d, %Y %H:%M %Z'):
 
 app.jinja_env.filters['format_datetime_admin'] = format_datetime_admin_filter
 
+# --- HR Panel Routes ---
+def load_applications_hr(): # Renamed to avoid conflict if any other 'load_applications' might exist
+    if not os.path.exists(APPLICATION_LOG_FILE):
+        app.logger.info(f"HR Panel: {APPLICATION_LOG_FILE} not found. Returning empty list.")
+        return []
+    try:
+        with open(APPLICATION_LOG_FILE, 'r', encoding='utf-8') as f:
+            content = f.read()
+            if not content:
+                app.logger.info(f"HR Panel: {APPLICATION_LOG_FILE} is empty. Returning empty list.")
+                return []
+            applications_data = json.loads(content)
+            if not isinstance(applications_data, list):
+                app.logger.warning(f"HR Panel: Data in {APPLICATION_LOG_FILE} is not a list. Returning empty list.")
+                return []
+            # Sort by timestamp, newest first. Ensure timestamp exists and is valid.
+            # Add error handling for missing or malformed timestamps if necessary.
+            try:
+                applications_data.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+            except Exception as e:
+                app.logger.error(f"HR Panel: Error sorting applications by timestamp: {e}")
+            return applications_data
+    except json.JSONDecodeError:
+        app.logger.error(f"HR Panel: Error decoding JSON from {APPLICATION_LOG_FILE}. Returning empty list.", exc_info=True)
+        return []
+    except IOError as e:
+        app.logger.error(f"HR Panel: IOError reading {APPLICATION_LOG_FILE}: {e}. Returning empty list.", exc_info=True)
+        return []
+
+@app.route('/admin/hr/applications')
+@login_required
+def admin_hr_applications_list():
+    page = request.args.get('page', 1, type=int)
+    APPS_PER_PAGE = 10 # Configuration for items per page
+
+    all_applications = load_applications_hr()
+
+    total_applications = len(all_applications)
+    total_pages = (total_applications + APPS_PER_PAGE - 1) // APPS_PER_PAGE
+
+    start_index = (page - 1) * APPS_PER_PAGE
+    end_index = start_index + APPS_PER_PAGE
+    applications_on_page = all_applications[start_index:end_index]
+
+    return render_template('admin_hr_applications_list.html',
+                           applications=applications_on_page,
+                           title="HR - Submitted Applications",
+                           current_page=page,
+                           total_pages=total_pages,
+                           now=datetime.utcnow())
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

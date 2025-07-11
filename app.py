@@ -330,26 +330,36 @@ def submit_application(): # Synchronous route
             if not all([full_name, email, job_title]): # Basic check for job application
                 return jsonify({'success': False, 'message': 'Validation Error: Missing required fields (Full Name, Email, Job Title).'}), 400
 
-            # --- Duplicate Application Check ---
+            # --- Duplicate Application Check & Robust Log Loading ---
             applications_log = []
             if os.path.exists(APPLICATION_LOG_FILE):
                 try:
-                    with open(APPLICATION_LOG_FILE, 'r') as f:
+                    with open(APPLICATION_LOG_FILE, 'r', encoding='utf-8') as f:
                         content = f.read()
-                        if content:
+                        if content.strip(): # Ensure content is not just whitespace
                             applications_log = json.loads(content)
-                            if not isinstance(applications_log, list): # Ensure it's a list
-                                print(f"Warning: Log file {APPLICATION_LOG_FILE} does not contain a list. Resetting log.")
-                                applications_log = []
+                            if not isinstance(applications_log, list):
+                                app.logger.error(f"Critical Error: Data in {APPLICATION_LOG_FILE} is not a list. ABORTING SUBMISSION to prevent data corruption.")
+                                return jsonify({'success': False, 'message': 'Server error: Could not process application data. Please try again later.'}), 500
                         else:
-                            applications_log = [] # File is empty
-                except json.JSONDecodeError:
-                    print(f"Warning: Could not decode JSON from {APPLICATION_LOG_FILE}. Starting with an empty log.")
-                    applications_log = [] # File is malformed
+                            # File exists but is empty or whitespace, which is valid; applications_log remains []
+                            app.logger.info(f"{APPLICATION_LOG_FILE} exists but is empty. Initializing with empty list.")
+                            applications_log = []
+                except json.JSONDecodeError as e:
+                    app.logger.error(f"Critical Error: Could not decode JSON from {APPLICATION_LOG_FILE}: {e}. ABORTING SUBMISSION to prevent data corruption.")
+                    return jsonify({'success': False, 'message': 'Server error: Could not process application data. Please try again later.'}), 500
                 except IOError as e:
-                    print(f"Warning: Could not read {APPLICATION_LOG_FILE}: {e}. Starting with an empty log.")
-                    applications_log = []
+                    app.logger.error(f"Critical Error: Could not read {APPLICATION_LOG_FILE}: {e}. ABORTING SUBMISSION to prevent data corruption.")
+                    return jsonify({'success': False, 'message': 'Server error: Could not process application data. Please try again later.'}), 500
+                except Exception as e: # Catch any other unexpected error during load
+                    app.logger.error(f"Unexpected critical error loading {APPLICATION_LOG_FILE}: {e}. ABORTING SUBMISSION.")
+                    return jsonify({'success': False, 'message': 'Server error: Could not process application data. Please try again later.'}), 500
+            else:
+                # Log file does not exist, which is fine for the first run.
+                app.logger.info(f"{APPLICATION_LOG_FILE} does not exist. Initializing with empty list for new applications.")
+                applications_log = []
 
+            # Proceed with duplicate check only if applications_log was successfully loaded (or initialized as empty)
             for app_log in applications_log:
                 # Ensure keys exist in log entry before accessing
                 if app_log.get('email') == email and app_log.get('job_title') == job_title:
@@ -403,9 +413,7 @@ def submit_application(): # Synchronous route
             #     'job_title': job_title
             # }
 
-            # --- Log Application ---
-            # The applications_log list is already populated from the duplicate check step earlier
-            # or initialized as an empty list if the log file didn't exist or was invalid.
+            # --- Log Application (Atomic Write Implementation) ---
             new_application_entry = {
                 'email': email,
                 'job_title': job_title,
@@ -413,17 +421,34 @@ def submit_application(): # Synchronous route
                 'full_name': full_name,
                 'phone_number': form_data.get('phone_number', ''),
                 'cv_filename': filename, # This is the unique filename
-                'cover_letter': form_data.get('cover_letter', ''), # ADD THIS LINE
-                'status': 'new' # New field
+                'cover_letter': form_data.get('cover_letter', ''),
+                'status': 'new'
             }
             applications_log.append(new_application_entry)
 
+            temp_file_path = APPLICATION_LOG_FILE + "." + str(uuid.uuid4()) + ".tmp"
             try:
-                with open(APPLICATION_LOG_FILE, 'w') as f:
-                    json.dump(applications_log, f, indent=4)
-                print(f"Successfully logged application for {full_name} to {APPLICATION_LOG_FILE}")
+                with open(temp_file_path, 'w', encoding='utf-8') as f_temp:
+                    json.dump(applications_log, f_temp, indent=4, ensure_ascii=False)
+
+                os.rename(temp_file_path, APPLICATION_LOG_FILE) # Atomic operation on most OS
+                app.logger.info(f"Successfully logged application for {full_name} to {APPLICATION_LOG_FILE}")
+
             except IOError as e:
-                print(f"Error: Could not write to {APPLICATION_LOG_FILE}: {e}. Application for {full_name} was processed but not logged.")
+                app.logger.error(f"IOError during atomic write for {APPLICATION_LOG_FILE}: {e}. Application for {full_name} was processed but final logging failed.")
+                # Clean up temp file if it exists
+                if os.path.exists(temp_file_path):
+                    try: os.remove(temp_file_path)
+                    except Exception as e_remove: app.logger.error(f"Error removing temp file {temp_file_path}: {e_remove}")
+                # Return a server error as the final step of saving the application record failed.
+                # The CV is saved, but the record is not. This is a server-side issue.
+                return jsonify({'success': False, 'message': 'Server error while finalizing application record. Please try again later or contact support.'}), 500
+            except Exception as e: # Catch any other unexpected errors during write/rename
+                app.logger.error(f"Unexpected error during atomic write for {APPLICATION_LOG_FILE}: {e}. Application for {full_name} processed but final logging failed.")
+                if os.path.exists(temp_file_path):
+                    try: os.remove(temp_file_path)
+                    except Exception as e_remove: app.logger.error(f"Error removing temp file {temp_file_path}: {e_remove}")
+                return jsonify({'success': False, 'message': 'Server error while finalizing application record. Please try again later or contact support.'}), 500
             # --- End Log Application ---
 
             # Telegram notification is now handled by the HR bot, so we remove the direct call here.

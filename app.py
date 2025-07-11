@@ -865,8 +865,8 @@ def admin_edit_blog_post(post_id):
         posts[post_index]['author'] = author if author else None
         posts[post_index]['content'] = new_content
         posts[post_index]['content_is_html'] = new_content_is_html
-        posts[post_index]['image_url'] = new_image_url # Use the processed new_image_url
-        posts[post_index]['image_url_is_static'] = new_image_is_static # Use the processed new_image_is_static
+        posts[post_index]['image_url'] = updated_image_url # Use the processed updated_image_url
+        posts[post_index]['image_url_is_static'] = updated_image_is_static # Use the processed updated_image_is_static
         # date_published is not changed on edit, but could add a 'last_modified' field
 
         if save_blog_posts(posts):

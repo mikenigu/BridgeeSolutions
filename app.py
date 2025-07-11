@@ -1005,6 +1005,60 @@ def admin_hr_applications_list():
                            total_pages=total_pages,
                            now=datetime.utcnow())
 
+@app.route('/admin/hr/application/<string:app_id>')
+@login_required
+def admin_hr_application_detail(app_id):
+    all_applications = load_applications_hr()
+    target_application = None
+    for app_item in all_applications:
+        # Assuming app_id is the timestamp prefix of cv_filename
+        if app_item.get('cv_filename', '').startswith(app_id + '-'):
+            target_application = app_item
+            break
+
+    if not target_application:
+        flash(f"Application with ID {app_id} not found.", 'error')
+        return redirect(url_for('admin_hr_applications_list'))
+
+    return render_template('admin_hr_application_detail.html',
+                           application=target_application,
+                           title=f"Application: {target_application.get('full_name', 'N/A')}",
+                           now=datetime.utcnow())
+
+@app.route('/admin/hr/download_cv/<path:filename>')
+@login_required
+def admin_hr_download_cv(filename):
+    # Basic security: Prevent directory traversal.
+    # secure_filename is good for saving, but for sending, we need to ensure the path is within UPLOAD_FOLDER.
+    # os.path.abspath and os.path.commonprefix can be used for more robust checks if needed.
+    # For now, we assume filename does not contain '..' or '/' that would allow escape.
+    # A more robust check would be to ensure `filename` is just a filename and not a path.
+    if '..' in filename or filename.startswith('/'):
+        app.logger.warning(f"Potential directory traversal attempt for CV download: {filename}")
+        abort(400) # Bad request
+
+    upload_dir = app.config.get('UPLOAD_FOLDER', 'uploads') # Get from app config
+
+    # Check if the file exists directly in the UPLOAD_FOLDER
+    file_path = os.path.join(upload_dir, filename)
+    if not os.path.isfile(file_path):
+        app.logger.error(f"CV file not found for download: {file_path}")
+        flash(f"CV file '{filename}' not found on server.", 'error')
+        # Try to get app_id to redirect back to detail page if possible, otherwise list page
+        # This is a bit tricky as we only have filename here.
+        # For simplicity, redirect to the list. A more complex solution could store referer or pass app_id.
+        return redirect(url_for('admin_hr_applications_list'))
+
+    try:
+        return send_from_directory(upload_dir, filename, as_attachment=True)
+    except FileNotFoundError:
+        app.logger.error(f"send_from_directory could not find CV file: {filename} in {upload_dir}")
+        abort(404) # Or flash message and redirect
+    except Exception as e:
+        app.logger.error(f"Error sending CV file {filename}: {e}", exc_info=True)
+        flash("An error occurred while trying to download the CV.", "error")
+        return redirect(url_for('admin_hr_applications_list'))
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

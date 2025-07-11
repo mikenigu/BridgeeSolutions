@@ -431,7 +431,7 @@ def submit_application(): # Synchronous route
                 with open(temp_file_path, 'w', encoding='utf-8') as f_temp:
                     json.dump(applications_log, f_temp, indent=4, ensure_ascii=False)
 
-                os.rename(temp_file_path, APPLICATION_LOG_FILE) # Atomic operation on most OS
+                os.replace(temp_file_path, APPLICATION_LOG_FILE) # Atomically replaces the destination
                 app.logger.info(f"Successfully logged application for {full_name} to {APPLICATION_LOG_FILE}")
 
             except IOError as e:
@@ -630,7 +630,7 @@ def submit_contact_form():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('admin_test')) # Or an admin dashboard later
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -649,7 +649,7 @@ def login():
             # Redirect to the page the user was trying to access, or a default
             next_page = request.args.get('next')
             if not next_page or url_for(next_page.lstrip('/')) == url_for('login'): # Basic security check for next_page
-                 next_page = url_for('admin_dashboard')
+                 next_page = url_for('admin_test') # Default to admin_test for now
             return redirect(next_page)
         else:
             flash('Invalid username or password. Please try again.', 'error')
@@ -661,6 +661,12 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for('serve_index'))
+
+# --- Protected Test Route ---
+@app.route('/admin_test')
+@login_required
+def admin_test():
+    return f"Hello, {current_user.username}! This is a protected admin page. Your ID is {current_user.id}"
 
 # --- Admin Panel Routes ---
 @app.route('/admin/blog')
@@ -909,38 +915,6 @@ def admin_edit_blog_post(post_id):
 
     # GET request
     return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
-
-from collections import Counter # Import Counter for status breakdown
-
-@app.route('/admin/dashboard')
-@login_required
-def admin_dashboard():
-    # Blog statistics
-    blog_posts = load_blog_posts()
-    total_blog_posts = len(blog_posts)
-
-    # HR statistics
-    hr_applications = load_applications_hr()
-    total_hr_applications = len(hr_applications)
-
-    hr_applications_by_status = {}
-    if hr_applications:
-        status_counts = Counter(app_item.get('status', 'unknown') for app_item in hr_applications)
-        # Ensure all statuses from STATUS_DISPLAY_NAMES_HR are present, even if count is 0
-        for status_key in STATUS_DISPLAY_NAMES_HR:
-            hr_applications_by_status[status_key] = status_counts.get(status_key, 0)
-    else: # Ensure structure exists even if no applications
-        for status_key in STATUS_DISPLAY_NAMES_HR:
-            hr_applications_by_status[status_key] = 0
-
-
-    return render_template('admin_dashboard.html',
-                           title="Admin Dashboard",
-                           now=datetime.utcnow(),
-                           total_blog_posts=total_blog_posts,
-                           total_hr_applications=total_hr_applications,
-                           hr_applications_by_status=hr_applications_by_status,
-                           status_display_names_hr=STATUS_DISPLAY_NAMES_HR) # Pass for display
 
 @app.route('/admin/blog/delete/<string:post_id>', methods=['GET']) # Using GET for simplicity, ideally POST with CSRF
 @login_required

@@ -1,52 +1,23 @@
 [
     {
-        "email": "bhjja@gj",
+        "email": "yo1n2@gmail.com",
         "job_title": "UI/UX Designer",
-        "timestamp": "2025-07-11T12:32:20.596286Z",
-        "full_name": "Michael Nigusse",
-        "phone_number": "+251903323791",
-        "cv_filename": "1752226340592-5-Scales_in_spatial_mappings_2.pdf",
-        "cover_letter": "",
-        "status": "employed",
-        "reviewed_timestamp": "2025-07-11T12:33:06.045176Z",
-        "reviewed_by": "1",
-        "reviewed_by_name": "admin"
-    },
-    {
-        "email": "yom@gmail.com",
-        "job_title": "UI/UX Designer",
-        "timestamp": "2025-07-11T12:15:46.792420Z",
-        "full_name": "Yom Fisseha",
-        "phone_number": "+251903323791",
-        "cv_filename": "1752225346743-5-Scales_in_spatial_mappings.pdf",
-        "cover_letter": "bfjsvckersmdfvck",
-        "status": "reviewed_declined",
-        "reviewed_timestamp": "2025-07-11T12:31:47.203350Z",
-        "reviewed_by": "1",
-        "reviewed_by_name": "admin"
-    },
-    {
-        "email": "mike.evnmy1995@gmail.com",
-        "job_title": "Virtual Assistant",
-        "timestamp": "2025-06-20T16:23:20.232418Z",
-        "full_name": "Michael Nigusse",
+        "timestamp": "2025-06-19T17:22:27.058738Z",
+        "full_name": "yonas nigusse",
         "phone_number": "+251939581907",
-        "cv_filename": "1750425800231-Civics.docx",
-        "cover_letter": "",
+        "cv_filename": "1750342947057-Civics.docx",
+        "cover_letter": "fdvc,zcjslcx cdbzckdsbc djxkc",
         "status": "new"
     },
     {
-        "email": "yon232@gmail.com",
-        "job_title": "Business Analyst",
-        "timestamp": "2025-06-20T10:05:12.387066Z",
-        "full_name": "Leul Mesfin",
+        "email": "mike.enmny1995@gmail.com",
+        "job_title": "UI/UX Designer",
+        "timestamp": "2025-06-19T17:57:45.531405Z",
+        "full_name": "Michael Nigusse",
         "phone_number": "+251939581907",
-        "cv_filename": "1750403112286-Civics.docx",
+        "cv_filename": "1750345065529-Civics.docx",
         "cover_letter": "",
-        "status": "offer_extended",
-        "reviewed_timestamp": "2025-06-20T10:05:33.939219Z",
-        "reviewed_by": "431509534",
-        "reviewed_by_name": "Michael"
+        "status": "new"
     },
     {
         "email": "yon23@gmail.com",
@@ -62,23 +33,26 @@
         "reviewed_by_name": "Michael"
     },
     {
-        "email": "mike.enmny1995@gmail.com",
-        "job_title": "UI/UX Designer",
-        "timestamp": "2025-06-19T17:57:45.531405Z",
-        "full_name": "Michael Nigusse",
+        "email": "yon232@gmail.com",
+        "job_title": "Business Analyst",
+        "timestamp": "2025-06-20T10:05:12.387066Z",
+        "full_name": "Leul Mesfin",
         "phone_number": "+251939581907",
-        "cv_filename": "1750345065529-Civics.docx",
+        "cv_filename": "1750403112286-Civics.docx",
         "cover_letter": "",
-        "status": "new"
+        "status": "offer_extended",
+        "reviewed_timestamp": "2025-06-20T10:05:33.939219Z",
+        "reviewed_by": "431509534",
+        "reviewed_by_name": "Michael"
     },
     {
-        "email": "yo1n2@gmail.com",
-        "job_title": "UI/UX Designer",
-        "timestamp": "2025-06-19T17:22:27.058738Z",
-        "full_name": "yonas nigusse",
+        "email": "mike.evnmy1995@gmail.com",
+        "job_title": "Virtual Assistant",
+        "timestamp": "2025-06-20T16:23:20.232418Z",
+        "full_name": "Michael Nigusse",
         "phone_number": "+251939581907",
-        "cv_filename": "1750342947057-Civics.docx",
-        "cover_letter": "fdvc,zcjslcx cdbzckdsbc djxkc",
+        "cv_filename": "1750425800231-Civics.docx",
+        "cover_letter": "",
         "status": "new"
     }
 ]

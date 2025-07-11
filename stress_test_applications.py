@@ -9,12 +9,14 @@ BASE_URL = "http://127.0.0.1:5000"  # Assuming Flask app runs on default port
 ENDPOINT = "/api/submit-application"
 URL = BASE_URL + ENDPOINT
 
-NUM_CONCURRENT_REQUESTS = 10  # Number of threads to use for concurrent requests
+NUM_CONCURRENT_REQUESTS = 5  # Number of threads to use for concurrent requests
 TOTAL_REQUESTS = 100         # Total number of applications to attempt to submit
-REQUEST_DELAY_SECONDS = 0.1 # Optional delay between starting each batch of concurrent requests
+REQUEST_DELAY_SECONDS = 1 # Optional delay between starting each batch of concurrent requests
 
-DUMMY_CV_FILENAME = "dummy_cv.pdf" # CORRECTED
-DUMMY_CV_CONTENT = "This is a dummy CV file for stress testing purposes. It's named .pdf to pass validation." # CORRECTED
+
+DUMMY_CV_FILENAME = "dummy_cv.pdf"
+DUMMY_CV_CONTENT = "This is a dummy CV file for stress testing purposes."
+
 
 # --- Helper Functions ---
 def create_dummy_cv():
@@ -41,8 +43,8 @@ def submit_application(request_id):
 
     try:
         with open(DUMMY_CV_FILENAME, "rb") as cv_file:
-            files = {"cv_upload": (DUMMY_CV_FILENAME, cv_file, "application/pdf")} # CORRECTED
-
+            files = {"cv_upload": (DUMMY_CV_FILENAME, cv_file, "application/pdf")}
+            
             start_time = time.time()
             response = requests.post(URL, data=form_payload, files=files, timeout=30) # 30-second timeout
             end_time = time.time()

@@ -954,8 +954,29 @@ def format_datetime_admin_filter(value, format='%B %d, %Y %H:%M %Z'):
 
 app.jinja_env.filters['format_datetime_admin'] = format_datetime_admin_filter
 
+# --- HR Panel Configuration & Helper Data ---
+STATUS_DISPLAY_NAMES_HR = {
+    'new': 'New',
+    'reviewed_accepted': 'Accepted (Pending Interview)',
+    'interviewing': 'Interviewing',
+    'offer_extended': 'Offer Extended',
+    'employed': 'Employed',
+    'reviewed_declined': 'Declined by Company',
+    'offer_declined': 'Offer Declined by Candidate'
+}
+
+VALID_STATUS_TRANSITIONS_HR = {
+    'new': ['reviewed_accepted', 'reviewed_declined'],
+    'reviewed_accepted': ['interviewing', 'reviewed_declined', 'new'], # Can go back to new
+    'interviewing': ['offer_extended', 'reviewed_declined', 'reviewed_accepted'], # Can go back
+    'offer_extended': ['employed', 'offer_declined', 'interviewing'], # Can go back
+    'employed': [], # Terminal status for this flow
+    'reviewed_declined': ['new', 'reviewed_accepted'], # Can be reconsidered
+    'offer_declined': ['new', 'reviewed_accepted', 'offer_extended'] # Can be reconsidered or offer re-extended
+}
+
 # --- HR Panel Routes ---
-def load_applications_hr(): # Renamed to avoid conflict if any other 'load_applications' might exist
+def load_applications_hr():
     if not os.path.exists(APPLICATION_LOG_FILE):
         app.logger.info(f"HR Panel: {APPLICATION_LOG_FILE} not found. Returning empty list.")
         return []
@@ -1023,7 +1044,65 @@ def admin_hr_application_detail(app_id):
     return render_template('admin_hr_application_detail.html',
                            application=target_application,
                            title=f"Application: {target_application.get('full_name', 'N/A')}",
+                           valid_status_transitions=VALID_STATUS_TRANSITIONS_HR,
+                           status_display_names=STATUS_DISPLAY_NAMES_HR,
                            now=datetime.utcnow())
+
+@app.route('/admin/hr/application/update_status/<string:app_id>', methods=['POST'])
+@login_required
+def admin_hr_update_application_status(app_id):
+    new_status = request.form.get('new_status')
+    if not new_status:
+        flash("No new status provided.", 'error')
+        return redirect(url_for('admin_hr_application_detail', app_id=app_id))
+
+    all_applications = load_applications_hr()
+    target_application = None
+    target_app_index = -1
+
+    for i, app_item in enumerate(all_applications):
+        if app_item.get('cv_filename', '').startswith(app_id + '-'):
+            target_application = app_item
+            target_app_index = i
+            break
+
+    if not target_application:
+        flash(f"Application with ID {app_id} not found.", 'error')
+        return redirect(url_for('admin_hr_applications_list'))
+
+    current_status = target_application.get('status')
+    allowed_transitions = VALID_STATUS_TRANSITIONS_HR.get(current_status, [])
+
+    if new_status not in allowed_transitions:
+        flash(f"Invalid status transition from '{STATUS_DISPLAY_NAMES_HR.get(current_status, current_status)}' to '{STATUS_DISPLAY_NAMES_HR.get(new_status, new_status)}'.", 'error')
+        return redirect(url_for('admin_hr_application_detail', app_id=app_id))
+
+    # Update application
+    all_applications[target_app_index]['status'] = new_status
+    all_applications[target_app_index]['reviewed_timestamp'] = datetime.utcnow().isoformat() + 'Z'
+    all_applications[target_app_index]['reviewed_by'] = current_user.id
+    all_applications[target_app_index]['reviewed_by_name'] = current_user.username
+
+    if save_applications_hr(all_applications):
+        flash(f"Application status updated to '{STATUS_DISPLAY_NAMES_HR.get(new_status, new_status)}'.", 'success')
+    else:
+        flash("Failed to save application status update. Please check server logs.", 'error')
+
+    return redirect(url_for('admin_hr_application_detail', app_id=app_id))
+
+# Helper function to save applications - similar to save_blog_posts
+def save_applications_hr(applications_data: list) -> bool:
+    try:
+        with open(APPLICATION_LOG_FILE, 'w', encoding='utf-8') as f:
+            json.dump(applications_data, f, indent=4, ensure_ascii=False)
+        app.logger.info(f"HR Panel: Successfully saved {len(applications_data)} applications to {APPLICATION_LOG_FILE}")
+        return True
+    except IOError as e:
+        app.logger.error(f"HR Panel: IOError writing applications to {APPLICATION_LOG_FILE}: {e}", exc_info=True)
+        return False
+    except Exception as e:
+        app.logger.error(f"HR Panel: Unexpected error saving applications to {APPLICATION_LOG_FILE}: {e}", exc_info=True)
+        return False
 
 @app.route('/admin/hr/download_cv/<path:filename>')
 @login_required

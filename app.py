@@ -891,6 +891,48 @@ def admin_edit_blog_post(post_id):
     # GET request
     return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
 
+@app.route('/admin/blog/delete/<string:post_id>', methods=['GET']) # Using GET for simplicity, ideally POST with CSRF
+@login_required
+def admin_delete_blog_post(post_id):
+    posts = load_blog_posts()
+    post_to_delete = None
+    post_index = -1
+
+    for i, p in enumerate(posts):
+        if p.get('id') == post_id:
+            post_to_delete = p
+            post_index = i
+            break
+
+    if not post_to_delete:
+        flash(f"Blog post with ID {post_id} not found for deletion.", 'error')
+        return redirect(url_for('admin_blog_list'))
+
+    # Check for and delete associated static image
+    if post_to_delete.get('image_url_is_static') and post_to_delete.get('image_url'):
+        static_image_filename = post_to_delete.get('image_url').split('/')[-1]
+        static_image_path = os.path.join(app.static_folder, 'uploaded_images', static_image_filename)
+        if os.path.exists(static_image_path):
+            try:
+                os.remove(static_image_path)
+                app.logger.info(f"Deleted static image: {static_image_path} for post {post_id}")
+            except Exception as e:
+                app.logger.error(f"Error deleting static image {static_image_path} for post {post_id}: {e}")
+                flash(f"Error deleting associated image file. Post not deleted.", 'error') # Optional: stop deletion if image can't be removed
+                # return redirect(url_for('admin_blog_list')) # Or proceed with post deletion
+
+    # Remove post from list
+    del posts[post_index]
+
+    if save_blog_posts(posts):
+        flash(f"Blog post '{post_to_delete.get('title', 'Untitled')}' deleted successfully!", 'success')
+    else:
+        flash('Error saving changes after deleting blog post. Please check server logs.', 'error')
+        # If saving fails, the deletion effectively didn't persist.
+        # The post might reappear on next load if the original file wasn't overwritten.
+
+    return redirect(url_for('admin_blog_list'))
+
 # --- Jinja Filters ---
 def format_datetime_admin_filter(value, format='%B %d, %Y %H:%M %Z'):
     """Formats an ISO datetime string (with or without Z) for display."""

@@ -40,7 +40,7 @@
             </div>
 
             <!-- Filter Form -->
-            <form method="GET" action="{{ url_for('admin_hr_applications_list') }}" class="mb-6 bg-gray-50 p-4 rounded-lg shadow">
+            <form method="GET" id="hrFilterForm" action="{{ url_for('admin_hr_applications_list') }}" class="mb-6 bg-gray-50 p-4 rounded-lg shadow">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div>
                         <label for="filter_status" class="block text-sm font-medium text-gray-700">Status</label>
@@ -173,6 +173,47 @@
     <footer class="bg-gray-800 text-white text-center p-4 mt-auto">
         <p class="text-sm">&copy; {{ now.year if now else '' }} Bridgee Solutions Admin. All rights reserved.</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterForm = document.getElementById('hrFilterForm');
+            const jobTitleInput = document.getElementById('filter_job_title');
+            const statusSelect = document.getElementById('filter_status');
+
+            // Debounce function
+            function debounce(func, delay) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+
+            // Function to submit the form
+            function submitFilterForm() {
+                if (filterForm) {
+                    filterForm.submit();
+                }
+            }
+
+            // Debounced version of the submit function for job title input
+            const debouncedJobTitleSubmit = debounce(submitFilterForm, 500); // 500ms delay
+
+            // Event listener for job title input
+            if (jobTitleInput) {
+                jobTitleInput.addEventListener('input', function () {
+                    debouncedJobTitleSubmit();
+                });
+            }
+
+            // Event listener for status select change (immediate submit, no debounce needed for select)
+            if (statusSelect) {
+                statusSelect.addEventListener('change', function() {
+                    submitFilterForm();
+                });
+            }
+        });
+    </script>
 
 </body>
 </html>

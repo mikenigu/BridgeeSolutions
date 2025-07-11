@@ -882,8 +882,8 @@ def admin_edit_blog_post(post_id):
                 'author': author,
                 'content': new_content,
                 'content_is_html': new_content_is_html,
-                'image_url': new_image_url,
-                'image_url_is_static': new_image_is_static,
+                'image_url': updated_image_url,
+                'image_url_is_static': updated_image_is_static,
                 'date_published': post_to_edit.get('date_published') # Keep original publish date
             }
             return render_template('admin_blog_form.html', title=f"Edit Post: {title}", post=current_form_state, now=datetime.utcnow())

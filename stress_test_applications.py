@@ -16,6 +16,7 @@ REQUEST_DELAY_SECONDS = 0.1 # Optional delay between starting each batch of conc
 DUMMY_CV_FILENAME = "dummy_cv.pdf" # CORRECTED
 DUMMY_CV_CONTENT = "This is a dummy CV file for stress testing purposes. It's named .pdf to pass validation." # CORRECTED
 
+
 # --- Helper Functions ---
 def create_dummy_cv():
     """Creates a dummy CV file if it doesn't exist."""
@@ -97,7 +98,7 @@ if __name__ == "__main__":
             if (i + 1) % NUM_CONCURRENT_REQUESTS == 0 : # Optional: slight delay after submitting a batch
                  if REQUEST_DELAY_SECONDS > 0:
                     time.sleep(REQUEST_DELAY_SECONDS)
-
+                    
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
             request_details.append(result)
@@ -126,6 +127,7 @@ if __name__ == "__main__":
         print(f"Average duration for successful requests: {avg_success_duration:.2f}s")
 
     print(f"Total time spent sending requests (sum of durations): {total_duration:.2f}s")
+
 
     # Detailed failures
     if failed_submissions > 0 or error_submissions > 0:

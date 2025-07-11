@@ -22,7 +22,7 @@
     <!-- Admin Navigation -->
     <nav class="bg-gray-800 text-white p-4 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="{{ url_for('admin_blog_list') }}" class="text-xl font-semibold hover:text-gray-300">Admin Panel</a>
+            <a href="{{ url_for('admin_dashboard') }}" class="text-xl font-semibold hover:text-gray-300">Admin Panel</a>
             <div>
                 <a href="{{ url_for('admin_blog_list') }}" class="py-2 px-3 hover:bg-gray-700 rounded-md text-sm">Blog Posts</a>
                 <a href="{{ url_for('admin_hr_applications_list') }}" class="py-2 px-3 bg-gray-700 rounded-md text-sm">HR Applications</a>
@@ -40,7 +40,7 @@
             </div>
 
             <!-- Filter Form -->
-            <form method="GET" action="{{ url_for('admin_hr_applications_list') }}" class="mb-6 bg-gray-50 p-4 rounded-lg shadow">
+            <form method="GET" id="hrFilterForm" action="{{ url_for('admin_hr_applications_list') }}" class="mb-6 bg-gray-50 p-4 rounded-lg shadow">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div>
                         <label for="filter_status" class="block text-sm font-medium text-gray-700">Status</label>
@@ -173,6 +173,66 @@
     <footer class="bg-gray-800 text-white text-center p-4 mt-auto">
         <p class="text-sm">&copy; {{ now.year if now else '' }} Bridgee Solutions Admin. All rights reserved.</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterForm = document.getElementById('hrFilterForm');
+            const jobTitleInput = document.getElementById('filter_job_title');
+            const statusSelect = document.getElementById('filter_status');
+
+            // Debounce function
+            function debounce(func, delay) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+
+            // Function to submit the form
+            function submitFilterForm(triggerField) {
+                if (filterForm) {
+                    if (triggerField === 'jobTitle') {
+                        sessionStorage.setItem('hrFilterTrigger', 'jobTitle');
+                    } else {
+                        // Clear it if status change or manual submit, so we don't refocus job title
+                        sessionStorage.removeItem('hrFilterTrigger');
+                    }
+                    filterForm.submit();
+                }
+            }
+
+            // Debounced version of the submit function for job title input
+            const debouncedJobTitleSubmit = debounce(function() {
+                submitFilterForm('jobTitle');
+            }, 500); // 500ms delay
+
+            // Event listener for job title input
+            if (jobTitleInput) {
+                jobTitleInput.addEventListener('input', function () {
+                    debouncedJobTitleSubmit();
+                });
+            }
+
+            // Event listener for status select change (immediate submit)
+            if (statusSelect) {
+                statusSelect.addEventListener('change', function() {
+                    submitFilterForm('status'); // or pass null/undefined if no specific trigger needed for status
+                });
+            }
+
+            // Check on page load if job title field should be refocused
+            if (sessionStorage.getItem('hrFilterTrigger') === 'jobTitle') {
+                if (jobTitleInput) {
+                    jobTitleInput.focus();
+                    // Move cursor to the end of the input
+                    jobTitleInput.setSelectionRange(jobTitleInput.value.length, jobTitleInput.value.length);
+                }
+            }
+            // Always clear the trigger after checking, regardless of focus success
+            sessionStorage.removeItem('hrFilterTrigger');
+        });
+    </script>
 
 </body>
 </html>

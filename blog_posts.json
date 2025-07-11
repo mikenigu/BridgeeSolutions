@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "id": "test-post-1",
+        "title": "My First Test Post",
+        "content": "Content here.",
+        "author": "Admin",
+        "date_published": "2023-10-27T10:00:00Z",
+        "image_url": null,
+        "content_is_html": false
+    }
+]

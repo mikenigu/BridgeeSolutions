@@ -36,8 +36,35 @@
         <div class="bg-white p-6 rounded-lg shadow-xl">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-semibold text-gray-800">{{ title }}</h1>
-                <!-- Placeholder for future actions like "Filter" or "Export" -->
+                <!-- Placeholder for future actions like "Export" -->
             </div>
+
+            <!-- Filter Form -->
+            <form method="GET" action="{{ url_for('admin_hr_applications_list') }}" class="mb-6 bg-gray-50 p-4 rounded-lg shadow">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label for="filter_status" class="block text-sm font-medium text-gray-700">Status</label>
+                        <select id="filter_status" name="filter_status" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="">All Statuses</option>
+                            {% for status_key, display_name in status_display_names.items() %}
+                                <option value="{{ status_key }}" {% if status_key == request.args.get('filter_status') %}selected{% endif %}>{{ display_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter_job_title" class="block text-sm font-medium text-gray-700">Job Title</label>
+                        <input type="text" name="filter_job_title" id="filter_job_title" value="{{ request.args.get('filter_job_title', '') }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2">
+                    </div>
+                    <div class="flex space-x-2">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fas fa-filter mr-2"></i>Apply Filters
+                        </button>
+                        <a href="{{ url_for('admin_hr_applications_list') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Clear Filters
+                        </a>
+                    </div>
+                </div>
+            </form>
 
             <!-- Flashed Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -113,7 +140,10 @@
             <div class="mt-6 flex justify-between items-center">
                 <div>
                     {% if current_page > 1 %}
-                        <a href="{{ url_for('admin_hr_applications_list', page=current_page-1) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg shadow-sm text-sm">
+                        {# Merge existing request args with new page number for previous page #}
+                        {% set prev_page_args = request_args.copy() %}
+                        {% set _ = prev_page_args.set('page', current_page - 1) %}
+                        <a href="{{ url_for('admin_hr_applications_list', **prev_page_args) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg shadow-sm text-sm">
                             <i class="fas fa-arrow-left mr-1"></i> Previous
                         </a>
                     {% endif %}
@@ -123,7 +153,10 @@
                 </div>
                 <div>
                     {% if current_page < total_pages %}
-                        <a href="{{ url_for('admin_hr_applications_list', page=current_page+1) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm text-sm">
+                        {# Merge existing request args with new page number for next page #}
+                        {% set next_page_args = request_args.copy() %}
+                        {% set _ = next_page_args.set('page', current_page + 1) %}
+                        <a href="{{ url_for('admin_hr_applications_list', **next_page_args) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm text-sm">
                             Next <i class="fas fa-arrow-right ml-1"></i>
                         </a>
                     {% endif %}

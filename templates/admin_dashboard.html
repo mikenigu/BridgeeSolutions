@@ -72,6 +72,35 @@
             {% endif %}
         </div>
 
+        <!-- Statistics Section -->
+        <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="dashboard-card text-center">
+                <h3 class="text-lg font-semibold text-gray-700">Total Blog Posts</h3>
+                <p class="text-4xl font-bold text-indigo-600">{{ total_blog_posts | default('N/A') }}</p>
+            </div>
+            <div class="dashboard-card text-center">
+                <h3 class="text-lg font-semibold text-gray-700">Total HR Applications</h3>
+                <p class="text-4xl font-bold text-teal-600">{{ total_hr_applications | default('N/A') }}</p>
+            </div>
+            <div class="dashboard-card">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2 text-center md:text-left">HR Applications by Status</h3>
+                {% if hr_applications_by_status %}
+                    <ul class="space-y-1 text-sm">
+                        {% for status_key, count in hr_applications_by_status.items() %}
+                            <li class="flex justify-between">
+                                <span>{{ status_display_names_hr.get(status_key, status_key.replace('_',' ')|title) }}:</span>
+                                <span class="font-semibold">{{ count }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-sm text-gray-500 text-center md:text-left">No application data available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <hr class="my-8">
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Blog Management Card -->
             <div class="dashboard-card">

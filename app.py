@@ -885,10 +885,37 @@ def admin_edit_blog_post(post_id):
     # GET request
     return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
 
+from collections import Counter # Import Counter for status breakdown
+
 @app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
-    return render_template('admin_dashboard.html', title="Admin Dashboard", now=datetime.utcnow())
+    # Blog statistics
+    blog_posts = load_blog_posts()
+    total_blog_posts = len(blog_posts)
+
+    # HR statistics
+    hr_applications = load_applications_hr()
+    total_hr_applications = len(hr_applications)
+
+    hr_applications_by_status = {}
+    if hr_applications:
+        status_counts = Counter(app_item.get('status', 'unknown') for app_item in hr_applications)
+        # Ensure all statuses from STATUS_DISPLAY_NAMES_HR are present, even if count is 0
+        for status_key in STATUS_DISPLAY_NAMES_HR:
+            hr_applications_by_status[status_key] = status_counts.get(status_key, 0)
+    else: # Ensure structure exists even if no applications
+        for status_key in STATUS_DISPLAY_NAMES_HR:
+            hr_applications_by_status[status_key] = 0
+
+
+    return render_template('admin_dashboard.html',
+                           title="Admin Dashboard",
+                           now=datetime.utcnow(),
+                           total_blog_posts=total_blog_posts,
+                           total_hr_applications=total_hr_applications,
+                           hr_applications_by_status=hr_applications_by_status,
+                           status_display_names_hr=STATUS_DISPLAY_NAMES_HR) # Pass for display
 
 @app.route('/admin/blog/delete/<string:post_id>', methods=['GET']) # Using GET for simplicity, ideally POST with CSRF
 @login_required

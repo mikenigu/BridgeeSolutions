@@ -813,59 +813,60 @@ def admin_edit_blog_post(post_id):
             return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=current_form_data, now=datetime.utcnow())
 
         # --- Image Processing ---
-        final_image_url = post_to_edit.get('image_url')
-        final_image_url_is_static = post_to_edit.get('image_url_is_static', False)
+        updated_image_url = post_to_edit.get('image_url')
+        updated_image_is_static = post_to_edit.get('image_url_is_static', False)
         old_static_image_path = None
-        if final_image_url_is_static and final_image_url:
-             # Convert web path to filesystem path for deletion
-             # Assumes url_for('static', filename='uploaded_images/...') structure
-             old_static_image_filename = final_image_url.split('/')[-1]
-             old_static_image_path = os.path.join(app.static_folder, 'uploaded_images', old_static_image_filename)
 
+        if updated_image_is_static and updated_image_url:
+            old_static_image_filename = updated_image_url.split('/')[-1]
+            old_static_image_path = os.path.join(app.static_folder, 'uploaded_images', old_static_image_filename)
 
-        if image_upload_file and image_upload_file.filename:
+        if image_upload_file and image_upload_file.filename:  # New image uploaded
             saved_image_path = save_uploaded_image(image_upload_file)
             if saved_image_path:
-                # If old image was static and different, delete it
-                if old_static_image_path and os.path.exists(old_static_image_path) and old_static_image_path != os.path.join(app.static_folder, 'uploaded_images', saved_image_path.split('/')[-1]):
-                    try:
-                        os.remove(old_static_image_path)
-                        app.logger.info(f"Deleted old static image: {old_static_image_path}")
-                    except Exception as e:
-                        app.logger.error(f"Error deleting old static image {old_static_image_path}: {e}")
-                final_image_url = saved_image_path
-                final_image_url_is_static = True
-            else:
-                flash('Error saving uploaded image. Image not updated.', 'warning')
-        elif image_url_form: # If a new URL is provided (and it's different or old was static)
-            if image_url_form != final_image_url or final_image_url_is_static:
-                # If old image was static, delete it
                 if old_static_image_path and os.path.exists(old_static_image_path):
-                    try:
-                        os.remove(old_static_image_path)
-                        app.logger.info(f"Deleted old static image (URL replaced): {old_static_image_path}")
-                    except Exception as e:
-                        app.logger.error(f"Error deleting old static image {old_static_image_path}: {e}")
-                final_image_url = image_url_form
-                final_image_url_is_static = False
-        elif not image_url_form and final_image_url: # Existing image, but URL field now blank (means "remove image")
-            if old_static_image_path and os.path.exists(old_static_image_path):
-                 try:
-                    os.remove(old_static_image_path)
-                    app.logger.info(f"Deleted old static image (field cleared): {old_static_image_path}")
-                 except Exception as e:
-                    app.logger.error(f"Error deleting old static image {old_static_image_path}: {e}")
-            final_image_url = None
-            final_image_url_is_static = False
+                    # Check if it's truly a different file before deleting
+                    new_filename_for_comparison = saved_image_path.split('/')[-1]
+                    if old_static_image_filename != new_filename_for_comparison:
+                        try:
+                            os.remove(old_static_image_path)
+                            app.logger.info(f"Deleted old static image: {old_static_image_path} (replaced by new upload)")
+                        except Exception as e:
+                            app.logger.error(f"Error deleting old static image {old_static_image_path}: {e}")
+                updated_image_url = saved_image_path
+                updated_image_is_static = True
+            else:
+                flash('Error saving uploaded image. Image was not updated.', 'warning')
+        else:  # No new image uploaded, evaluate form_url
+            form_url = request.form.get('image_url', '').strip()
+            original_url_in_post = post_to_edit.get('image_url')
+            original_is_static_in_post = post_to_edit.get('image_url_is_static', False)
 
+            if form_url: # User typed something into the URL field
+                if form_url != original_url_in_post or original_is_static_in_post: # It's a new URL, or was static and now is URL
+                    if original_is_static_in_post and old_static_image_path and os.path.exists(old_static_image_path):
+                        try:
+                            os.remove(old_static_image_path)
+                            app.logger.info(f"Deleted old static image: {old_static_image_path} (replaced by new URL)")
+                        except Exception as e:
+                            app.logger.error(f"Error deleting old static image {old_static_image_path}: {e}")
+                    updated_image_url = form_url
+                    updated_image_is_static = False
+                # else: form_url is same as original_url_in_post and it was not static - no change
+            elif not form_url and original_url_in_post and not original_is_static_in_post:
+                # URL field was explicitly cleared for an existing external URL
+                updated_image_url = None
+                updated_image_is_static = False
+            # If form_url is empty AND original was static, updated_image_url & updated_image_is_static retain their initial values (original static image is kept).
+            # If form_url is empty AND original was also empty/None, no change.
 
         # --- Update Post ---
         posts[post_index]['title'] = title
         posts[post_index]['author'] = author if author else None
         posts[post_index]['content'] = new_content
         posts[post_index]['content_is_html'] = new_content_is_html
-        posts[post_index]['image_url'] = final_image_url
-        posts[post_index]['image_url_is_static'] = final_image_url_is_static
+        posts[post_index]['image_url'] = new_image_url # Use the processed new_image_url
+        posts[post_index]['image_url_is_static'] = new_image_is_static # Use the processed new_image_is_static
         # date_published is not changed on edit, but could add a 'last_modified' field
 
         if save_blog_posts(posts):
@@ -874,12 +875,18 @@ def admin_edit_blog_post(post_id):
         else:
             flash('Error saving updated blog post. Please check server logs.', 'error')
             # Re-render form with current (attempted) data
-            post_to_edit.update(request.form.to_dict()) # Update with form data for re-render
-            post_to_edit['content'] = new_content # ensure processed content is used
-            post_to_edit['content_is_html'] = new_content_is_html
-            post_to_edit['image_url'] = final_image_url
-            post_to_edit['image_url_is_static'] = final_image_url_is_static
-            return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
+            # Construct a dictionary representing the current state for re-rendering
+            current_form_state = {
+                'id': post_id, # Keep the ID
+                'title': title,
+                'author': author,
+                'content': new_content,
+                'content_is_html': new_content_is_html,
+                'image_url': new_image_url,
+                'image_url_is_static': new_image_is_static,
+                'date_published': post_to_edit.get('date_published') # Keep original publish date
+            }
+            return render_template('admin_blog_form.html', title=f"Edit Post: {title}", post=current_form_state, now=datetime.utcnow())
 
     # GET request
     return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())

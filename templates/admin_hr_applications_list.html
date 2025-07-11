@@ -190,14 +190,22 @@
             }
 
             // Function to submit the form
-            function submitFilterForm() {
+            function submitFilterForm(triggerField) {
                 if (filterForm) {
+                    if (triggerField === 'jobTitle') {
+                        sessionStorage.setItem('hrFilterTrigger', 'jobTitle');
+                    } else {
+                        // Clear it if status change or manual submit, so we don't refocus job title
+                        sessionStorage.removeItem('hrFilterTrigger');
+                    }
                     filterForm.submit();
                 }
             }
 
             // Debounced version of the submit function for job title input
-            const debouncedJobTitleSubmit = debounce(submitFilterForm, 500); // 500ms delay
+            const debouncedJobTitleSubmit = debounce(function() {
+                submitFilterForm('jobTitle');
+            }, 500); // 500ms delay
 
             // Event listener for job title input
             if (jobTitleInput) {
@@ -206,12 +214,23 @@
                 });
             }
 
-            // Event listener for status select change (immediate submit, no debounce needed for select)
+            // Event listener for status select change (immediate submit)
             if (statusSelect) {
                 statusSelect.addEventListener('change', function() {
-                    submitFilterForm();
+                    submitFilterForm('status'); // or pass null/undefined if no specific trigger needed for status
                 });
             }
+
+            // Check on page load if job title field should be refocused
+            if (sessionStorage.getItem('hrFilterTrigger') === 'jobTitle') {
+                if (jobTitleInput) {
+                    jobTitleInput.focus();
+                    // Move cursor to the end of the input
+                    jobTitleInput.setSelectionRange(jobTitleInput.value.length, jobTitleInput.value.length);
+                }
+            }
+            // Always clear the trigger after checking, regardless of focus success
+            sessionStorage.removeItem('hrFilterTrigger');
         });
     </script>
 

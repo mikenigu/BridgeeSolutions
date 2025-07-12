@@ -7,4 +7,3 @@ venv/
 env/
 ENV/
 .env
-submitted_applications.log.json

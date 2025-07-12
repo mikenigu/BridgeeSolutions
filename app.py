@@ -4,7 +4,7 @@ import os
 import asyncio # Added asyncio
 # import uuid # Import uuid module - no longer needed
 import json # Import json module
-from datetime import datetime # Import datetime
+from datetime import datetime, timezone # Import datetime
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename # Keep for now, might be used by other routes later or full version
 from flask_mail import Mail, Message # Import Mail and Message
@@ -18,6 +18,7 @@ from collections import Counter # Import Counter for status breakdown
 load_dotenv()
 
 app = Flask(__name__)
+app.jinja_env.add_extension('jinja2.ext.do') # Enable do extension
 CORS(app) # Initialize CORS globally
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'a_default_fallback_secret_key_for_development') # Added for Flask-Login session management
 
@@ -90,7 +91,7 @@ def generate_unique_post_id() -> str:
     return str(uuid.uuid4())
 
 def get_current_timestamp_iso() -> str:
-    return datetime.utcnow().isoformat() + 'Z'
+    return datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
 def save_uploaded_image(file_storage) -> str | None:
     if file_storage and file_storage.filename:
@@ -331,36 +332,26 @@ def submit_application(): # Synchronous route
             if not all([full_name, email, job_title]): # Basic check for job application
                 return jsonify({'success': False, 'message': 'Validation Error: Missing required fields (Full Name, Email, Job Title).'}), 400
 
-            # --- Duplicate Application Check & Robust Log Loading ---
+            # --- Duplicate Application Check ---
             applications_log = []
             if os.path.exists(APPLICATION_LOG_FILE):
                 try:
-                    with open(APPLICATION_LOG_FILE, 'r', encoding='utf-8') as f:
+                    with open(APPLICATION_LOG_FILE, 'r') as f:
                         content = f.read()
-                        if content.strip(): # Ensure content is not just whitespace
+                        if content:
                             applications_log = json.loads(content)
-                            if not isinstance(applications_log, list):
-                                app.logger.error(f"Critical Error: Data in {APPLICATION_LOG_FILE} is not a list. ABORTING SUBMISSION to prevent data corruption.")
-                                return jsonify({'success': False, 'message': 'Server error: Could not process application data. Please try again later.'}), 500
+                            if not isinstance(applications_log, list): # Ensure it's a list
+                                print(f"Warning: Log file {APPLICATION_LOG_FILE} does not contain a list. Resetting log.")
+                                applications_log = []
                         else:
-                            # File exists but is empty or whitespace, which is valid; applications_log remains []
-                            app.logger.info(f"{APPLICATION_LOG_FILE} exists but is empty. Initializing with empty list.")
-                            applications_log = []
-                except json.JSONDecodeError as e:
-                    app.logger.error(f"Critical Error: Could not decode JSON from {APPLICATION_LOG_FILE}: {e}. ABORTING SUBMISSION to prevent data corruption.")
-                    return jsonify({'success': False, 'message': 'Server error: Could not process application data. Please try again later.'}), 500
+                            applications_log = [] # File is empty
+                except json.JSONDecodeError:
+                    print(f"Warning: Could not decode JSON from {APPLICATION_LOG_FILE}. Starting with an empty log.")
+                    applications_log = [] # File is malformed
                 except IOError as e:
-                    app.logger.error(f"Critical Error: Could not read {APPLICATION_LOG_FILE}: {e}. ABORTING SUBMISSION to prevent data corruption.")
-                    return jsonify({'success': False, 'message': 'Server error: Could not process application data. Please try again later.'}), 500
-                except Exception as e: # Catch any other unexpected error during load
-                    app.logger.error(f"Unexpected critical error loading {APPLICATION_LOG_FILE}: {e}. ABORTING SUBMISSION.")
-                    return jsonify({'success': False, 'message': 'Server error: Could not process application data. Please try again later.'}), 500
-            else:
-                # Log file does not exist, which is fine for the first run.
-                app.logger.info(f"{APPLICATION_LOG_FILE} does not exist. Initializing with empty list for new applications.")
-                applications_log = []
+                    print(f"Warning: Could not read {APPLICATION_LOG_FILE}: {e}. Starting with an empty log.")
+                    applications_log = []
 
-            # Proceed with duplicate check only if applications_log was successfully loaded (or initialized as empty)
             for app_log in applications_log:
                 # Ensure keys exist in log entry before accessing
                 if app_log.get('email') == email and app_log.get('job_title') == job_title:
@@ -381,7 +372,7 @@ def submit_application(): # Synchronous route
 
             if cv_file and allowed_file(cv_file.filename):
                 original_filename = secure_filename(cv_file.filename)
-                timestamp_ms = int(datetime.utcnow().timestamp() * 1000)
+                timestamp_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
                 unique_filename = f"{timestamp_ms}-{original_filename}"
                 filename = unique_filename
 
@@ -414,42 +405,27 @@ def submit_application(): # Synchronous route
             #     'job_title': job_title
             # }
 
-            # --- Log Application (Atomic Write Implementation) ---
+            # --- Log Application ---
+            # The applications_log list is already populated from the duplicate check step earlier
+            # or initialized as an empty list if the log file didn't exist or was invalid.
             new_application_entry = {
                 'email': email,
                 'job_title': job_title,
-                'timestamp': datetime.utcnow().isoformat() + 'Z',
+                'timestamp': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
                 'full_name': full_name,
                 'phone_number': form_data.get('phone_number', ''),
                 'cv_filename': filename, # This is the unique filename
-                'cover_letter': form_data.get('cover_letter', ''),
-                'status': 'new'
+                'cover_letter': form_data.get('cover_letter', ''), # ADD THIS LINE
+                'status': 'new' # New field
             }
             applications_log.append(new_application_entry)
 
-            temp_file_path = APPLICATION_LOG_FILE + "." + str(uuid.uuid4()) + ".tmp"
             try:
-                with open(temp_file_path, 'w', encoding='utf-8') as f_temp:
-                    json.dump(applications_log, f_temp, indent=4, ensure_ascii=False)
-                
-                os.replace(temp_file_path, APPLICATION_LOG_FILE) # Atomically replaces the destination
-                app.logger.info(f"Successfully logged application for {full_name} to {APPLICATION_LOG_FILE}")
-
+                with open(APPLICATION_LOG_FILE, 'w') as f:
+                    json.dump(applications_log, f, indent=4)
+                print(f"Successfully logged application for {full_name} to {APPLICATION_LOG_FILE}")
             except IOError as e:
-                app.logger.error(f"IOError during atomic write for {APPLICATION_LOG_FILE}: {e}. Application for {full_name} was processed but final logging failed.")
-                # Clean up temp file if it exists
-                if os.path.exists(temp_file_path):
-                    try: os.remove(temp_file_path)
-                    except Exception as e_remove: app.logger.error(f"Error removing temp file {temp_file_path}: {e_remove}")
-                # Return a server error as the final step of saving the application record failed.
-                # The CV is saved, but the record is not. This is a server-side issue.
-                return jsonify({'success': False, 'message': 'Server error while finalizing application record. Please try again later or contact support.'}), 500
-            except Exception as e: # Catch any other unexpected errors during write/rename
-                app.logger.error(f"Unexpected error during atomic write for {APPLICATION_LOG_FILE}: {e}. Application for {full_name} processed but final logging failed.")
-                if os.path.exists(temp_file_path):
-                    try: os.remove(temp_file_path)
-                    except Exception as e_remove: app.logger.error(f"Error removing temp file {temp_file_path}: {e_remove}")
-                return jsonify({'success': False, 'message': 'Server error while finalizing application record. Please try again later or contact support.'}), 500
+                print(f"Error: Could not write to {APPLICATION_LOG_FILE}: {e}. Application for {full_name} was processed but not logged.")
             # --- End Log Application ---
 
             # Telegram notification is now handled by the HR bot, so we remove the direct call here.
@@ -631,7 +607,7 @@ def submit_contact_form():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('admin_test')) # Or an admin dashboard later
+        return redirect(url_for('admin_dashboard'))
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -650,7 +626,7 @@ def login():
             # Redirect to the page the user was trying to access, or a default
             next_page = request.args.get('next')
             if not next_page or url_for(next_page.lstrip('/')) == url_for('login'): # Basic security check for next_page
-                 next_page = url_for('admin_test') # Default to admin_test for now
+                 next_page = url_for('admin_dashboard')
             return redirect(next_page)
         else:
             flash('Invalid username or password. Please try again.', 'error')
@@ -662,12 +638,6 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for('serve_index'))
-
-# --- Protected Test Route ---
-@app.route('/admin_test')
-@login_required
-def admin_test():
-    return f"Hello, {current_user.username}! This is a protected admin page. Your ID is {current_user.id}"
 
 # --- Admin Panel Routes ---
 @app.route('/admin/blog')
@@ -681,7 +651,7 @@ def admin_blog_list():
     except Exception as e:
         app.logger.error(f"Error sorting blog posts for admin panel: {e}")
         # Continue with unsorted posts if sorting fails
-    return render_template('admin_blog_list.html', posts=posts, title="Blog Posts", now=datetime.utcnow()) # Changed title for clarity
+    return render_template('admin_blog_list.html', posts=posts, title="Blog Posts", now=datetime.now(timezone.utc)) # Changed title for clarity
 
 @app.route('/admin/blog/create', methods=['GET', 'POST'])
 @login_required
@@ -708,7 +678,7 @@ def admin_create_blog_post():
                     content_is_html = True # Override if docx is successfully processed
                 else:
                     flash('Error converting .docx file. Please check the file or provide content manually.', 'error')
-                    return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.utcnow())
+                    return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.now(timezone.utc))
             elif filename.lower().endswith(('.txt', '.md')):
                 text_from_file = read_text_from_file(content_file.stream)
                 if text_from_file:
@@ -716,20 +686,20 @@ def admin_create_blog_post():
                     # content_is_html might remain as user set it for .md if they want to parse it later
                 else:
                     flash('Error reading content from text/markdown file.', 'error')
-                    return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.utcnow())
+                    return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.now(timezone.utc))
             else:
                 flash('Unsupported content file type. Please use .txt, .md, or .docx.', 'error')
-                return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.utcnow())
+                return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.now(timezone.utc))
         elif content_text:
             final_content = content_text
         else:
             flash('Content is required (either typed or from a file).', 'error')
-            return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.utcnow())
+            return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, now=datetime.now(timezone.utc))
 
         if not title:
             flash('Title is required.', 'error')
             # Pass back current form data to re-populate
-            return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, content=final_content, content_is_html=content_is_html, now=datetime.utcnow())
+            return render_template('admin_blog_form.html', title="Create New Blog Post", post=request.form, content=final_content, content_is_html=content_is_html, now=datetime.now(timezone.utc))
 
         # --- Image Processing ---
         final_image_url = None
@@ -769,10 +739,10 @@ def admin_create_blog_post():
         else:
             flash('Error saving blog post to file. Please check server logs.', 'error')
             # Re-render form with data if save fails
-            return render_template('admin_blog_form.html', title="Create New Blog Post", post=new_post, now=datetime.utcnow())
+            return render_template('admin_blog_form.html', title="Create New Blog Post", post=new_post, now=datetime.now(timezone.utc))
 
     # GET request
-    return render_template('admin_blog_form.html', title="Create New Blog Post", post=None, now=datetime.utcnow())
+    return render_template('admin_blog_form.html', title="Create New Blog Post", post=None, now=datetime.now(timezone.utc))
 
 @app.route('/admin/blog/edit/<string:post_id>', methods=['GET', 'POST'])
 @login_required
@@ -815,7 +785,7 @@ def admin_edit_blog_post(post_id):
                 else:
                     flash('Error converting .docx file. Content not updated.', 'error')
                     # Return here or let it proceed with old content if desired. For now, let's return.
-                    return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
+                    return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.now(timezone.utc))
             elif filename.lower().endswith(('.txt', '.md')):
                 text_from_file = read_text_from_file(content_file.stream)
                 if text_from_file is not None:
@@ -823,7 +793,7 @@ def admin_edit_blog_post(post_id):
                     new_content_is_html = content_is_html_form # Respect checkbox for txt/md
                 else:
                     flash('Error reading content from text/markdown file. Content not updated.', 'error')
-                    return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
+                    return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.now(timezone.utc))
             # No error for unsupported type, just means content_file won't be used if not .docx, .txt, .md
         elif content_text: # Only use content_text if no (valid) file was uploaded
              new_content = content_text
@@ -836,7 +806,7 @@ def admin_edit_blog_post(post_id):
             current_form_data = request.form.to_dict()
             current_form_data['content'] = new_content # Use processed content
             current_form_data['content_is_html'] = new_content_is_html
-            return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=current_form_data, now=datetime.utcnow())
+            return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=current_form_data, now=datetime.now(timezone.utc))
 
         # --- Image Processing ---
         updated_image_url = post_to_edit.get('image_url')
@@ -912,11 +882,10 @@ def admin_edit_blog_post(post_id):
                 'image_url_is_static': updated_image_is_static,
                 'date_published': post_to_edit.get('date_published') # Keep original publish date
             }
-            return render_template('admin_blog_form.html', title=f"Edit Post: {title}", post=current_form_state, now=datetime.utcnow())
+            return render_template('admin_blog_form.html', title=f"Edit Post: {title}", post=current_form_state, now=datetime.now(timezone.utc))
 
     # GET request
-    return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
-
+    return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.now(timezone.utc))
 
 @app.route('/admin/dashboard')
 @login_required
@@ -942,12 +911,11 @@ def admin_dashboard():
 
     return render_template('admin_dashboard.html',
                            title="Admin Dashboard",
-                           now=datetime.utcnow(),
+                           now=datetime.now(timezone.utc),
                            total_blog_posts=total_blog_posts,
                            total_hr_applications=total_hr_applications,
                            hr_applications_by_status=hr_applications_by_status,
                            status_display_names_hr=STATUS_DISPLAY_NAMES_HR) # Pass for display
-
 
 @app.route('/admin/blog/delete/<string:post_id>', methods=['GET']) # Using GET for simplicity, ideally POST with CSRF
 @login_required
@@ -1106,7 +1074,7 @@ def admin_hr_applications_list():
                            total_pages=total_pages,
                            status_display_names=STATUS_DISPLAY_NAMES_HR, # For the filter dropdown
                            request_args=request.args, # To repopulate filter form
-                           now=datetime.utcnow())
+                           now=datetime.now(timezone.utc))
 
 @app.route('/admin/hr/application/<string:app_id>')
 @login_required
@@ -1128,7 +1096,7 @@ def admin_hr_application_detail(app_id):
                            title=f"Application: {target_application.get('full_name', 'N/A')}",
                            valid_status_transitions=VALID_STATUS_TRANSITIONS_HR,
                            status_display_names=STATUS_DISPLAY_NAMES_HR,
-                           now=datetime.utcnow())
+                           now=datetime.now(timezone.utc))
 
 @app.route('/admin/hr/application/update_status/<string:app_id>', methods=['POST'])
 @login_required
@@ -1161,7 +1129,7 @@ def admin_hr_update_application_status(app_id):
 
     # Update application
     all_applications[target_app_index]['status'] = new_status
-    all_applications[target_app_index]['reviewed_timestamp'] = datetime.utcnow().isoformat() + 'Z'
+    all_applications[target_app_index]['reviewed_timestamp'] = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
     all_applications[target_app_index]['reviewed_by'] = current_user.id
     all_applications[target_app_index]['reviewed_by_name'] = current_user.username
 

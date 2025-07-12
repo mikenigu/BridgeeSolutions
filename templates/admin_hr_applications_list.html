@@ -141,8 +141,8 @@
                 <div>
                     {% if current_page > 1 %}
                         {# Merge existing request args with new page number for previous page #}
-                        {% set prev_page_args = request_args.copy() %}
-                        {% set _ = prev_page_args.set('page', current_page - 1) %}
+                        {% set prev_page_args = request.args.to_dict() %}
+                        {% do prev_page_args.update({'page': current_page - 1}) %}
                         <a href="{{ url_for('admin_hr_applications_list', **prev_page_args) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg shadow-sm text-sm">
                             <i class="fas fa-arrow-left mr-1"></i> Previous
                         </a>
@@ -154,8 +154,8 @@
                 <div>
                     {% if current_page < total_pages %}
                         {# Merge existing request args with new page number for next page #}
-                        {% set next_page_args = request_args.copy() %}
-                        {% set _ = next_page_args.set('page', current_page + 1) %}
+                        {% set next_page_args = request.args.to_dict() %}
+                        {% do next_page_args.update({'page': current_page + 1}) %}
                         <a href="{{ url_for('admin_hr_applications_list', **next_page_args) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm text-sm">
                             Next <i class="fas fa-arrow-right ml-1"></i>
                         </a>

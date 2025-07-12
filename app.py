@@ -13,6 +13,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid # For generating unique post IDs
 import mammoth # For .docx conversion
+from collections import Counter # Import Counter for status breakdown
 
 load_dotenv()
 
@@ -884,8 +885,6 @@ def admin_edit_blog_post(post_id):
 
     # GET request
     return render_template('admin_blog_form.html', title=f"Edit Post: {post_to_edit.get('title')}", post=post_to_edit, now=datetime.utcnow())
-
-from collections import Counter # Import Counter for status breakdown
 
 @app.route('/admin/dashboard')
 @login_required

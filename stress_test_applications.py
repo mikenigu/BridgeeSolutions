@@ -38,17 +38,17 @@ def generate_form_data(request_id):
 def submit_application(request_id):
     """Submits a single application."""
     form_payload = generate_form_data(request_id)
-
+    
     try:
         with open(DUMMY_CV_FILENAME, "rb") as cv_file:
             files = {"cv_upload": (DUMMY_CV_FILENAME, cv_file, "application/pdf")} # CORRECTED
-
+            
             start_time = time.time()
             response = requests.post(URL, data=form_payload, files=files, timeout=30) # 30-second timeout
             end_time = time.time()
-
+            
             duration = end_time - start_time
-
+            
             if response.status_code == 200:
                 try:
                     response_json = response.json()
@@ -97,7 +97,7 @@ if __name__ == "__main__":
             if (i + 1) % NUM_CONCURRENT_REQUESTS == 0 : # Optional: slight delay after submitting a batch
                  if REQUEST_DELAY_SECONDS > 0:
                     time.sleep(REQUEST_DELAY_SECONDS)
-
+        
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
             request_details.append(result)
@@ -118,15 +118,15 @@ if __name__ == "__main__":
     print(f"Successful submissions: {successful_submissions}")
     print(f"Failed submissions (API errors): {failed_submissions}")
     print(f"Errored submissions (client-side/network): {error_submissions}")
-
+    
     if TOTAL_REQUESTS > 0 :
         print(f"Success rate: {(successful_submissions / TOTAL_REQUESTS) * 100:.2f}%")
     if successful_submissions > 0:
         avg_success_duration = sum(r['duration'] for r in request_details if r['status'] == 'success') / successful_submissions
         print(f"Average duration for successful requests: {avg_success_duration:.2f}s")
-
+    
     print(f"Total time spent sending requests (sum of durations): {total_duration:.2f}s")
-
+    
     # Detailed failures
     if failed_submissions > 0 or error_submissions > 0:
         print("\n--- Failure/Error Details ---")

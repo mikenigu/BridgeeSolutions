@@ -430,7 +430,7 @@ def submit_application(): # Synchronous route
             try:
                 with open(temp_file_path, 'w', encoding='utf-8') as f_temp:
                     json.dump(applications_log, f_temp, indent=4, ensure_ascii=False)
-
+                
                 os.replace(temp_file_path, APPLICATION_LOG_FILE) # Atomically replaces the destination
                 app.logger.info(f"Successfully logged application for {full_name} to {APPLICATION_LOG_FILE}")
 

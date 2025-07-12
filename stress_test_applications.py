@@ -9,8 +9,8 @@ BASE_URL = "http://127.0.0.1:5000"  # Assuming Flask app runs on default port
 ENDPOINT = "/api/submit-application"
 URL = BASE_URL + ENDPOINT
 
-NUM_CONCURRENT_REQUESTS = 1  # Number of threads to use for concurrent requests
-TOTAL_REQUESTS = 50         # Total number of applications to attempt to submit
+NUM_CONCURRENT_REQUESTS = 2  # Number of threads to use for concurrent requests
+TOTAL_REQUESTS = 100         # Total number of applications to attempt to submit
 REQUEST_DELAY_SECONDS = 1 # Optional delay between starting each batch of concurrent requests
 
 DUMMY_CV_FILENAME = "dummy_cv.pdf" # CORRECTED

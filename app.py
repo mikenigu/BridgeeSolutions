@@ -18,6 +18,7 @@ from collections import Counter # Import Counter for status breakdown
 load_dotenv()
 
 app = Flask(__name__)
+application = app
 app.jinja_env.add_extension('jinja2.ext.do') # Enable do extension
 CORS(app) # Initialize CORS globally
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'a_default_fallback_secret_key_for_development') # Added for Flask-Login session management

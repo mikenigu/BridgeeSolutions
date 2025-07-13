@@ -237,18 +237,68 @@ def load_blog_posts():
 
 # --- Routes ---
 @app.route('/')
-@cross_origin() # Add if CORS is applied globally, for consistency
-def serve_index():
-    return send_from_directory('.', 'Index.html')
+def index():
+    return render_template('Index.html')
 
-@app.route('/<path:filename>')
-@cross_origin() # For consistency
-def serve_static_files(filename):
-    # Basic security: prevent access to .py files or other sensitive files
-    # This is a simple check; more robust validation might be needed for production.
-    if filename.endswith('.py') or filename == '.env' or '.git' in filename:
-        return abort(404)
-    return send_from_directory('.', filename)
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/careers')
+def careers():
+    return render_template('careers.html')
+
+@app.route('/careers/business-analyst')
+def careers_business_analyst():
+    return render_template('careers/business-analyst.html')
+
+@app.route('/careers/custom-projects-coordinator')
+def careers_custom_projects_coordinator():
+    return render_template('careers/custom-projects-coordinator.html')
+
+@app.route('/careers/full-stack-developer')
+def careers_full_stack_developer():
+    return render_template('careers/full-stack-developer.html')
+
+@app.route('/careers/ui-ux-designer')
+def careers_ui_ux_designer():
+    return render_template('careers/ui-ux-designer.html')
+
+@app.route('/careers/virtual-assistant')
+def careers_virtual_assistant():
+    return render_template('careers/virtual-assistant.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy-policy.html')
+
+@app.route('/services')
+def services():
+    return render_template('services.html')
+
+@app.route('/service-bpo')
+def service_bpo():
+    return render_template('service-bpo.html')
+
+@app.route('/service-request')
+def service_request():
+    return render_template('service-request.html')
+
+@app.route('/service-software-development')
+def service_software_development():
+    return render_template('service-software-development.html')
+
+@app.route('/service-virtual-assistance')
+def service_virtual_assistance():
+    return render_template('service-virtual-assistance.html')
+
+@app.route('/terms-of-service')
+def terms_of_service():
+    return render_template('terms-of-service.html')
 
 @app.route('/api/blog-posts', methods=['GET'])
 @cross_origin()

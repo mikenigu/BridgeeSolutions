@@ -8,8 +8,7 @@
   <title>About Bridgee Solutions | Our Story, Mission, and Values</title>
   <meta name="description" content="Learn about Bridgee Solutions, our mission to provide top-tier outsourcing services from Addis Ababa, our values, our journey, and the dedicated team behind our success.">
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -209,22 +208,22 @@
                 </div>
 
                 <div class="md:flex items-center hidden space-x-8">
-                    <a href="index.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
-                    <a href="about.html" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
+                    <a href="/" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Home</a>
+                    <a href="/about" class="text-blue-600 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">About Us</a>
                     <!-- Services Dropdown -->
                     <div class="relative group">
                         <button class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md inline-flex items-center">
                             Services <i class="fas fa-chevron-down ml-2 text-xs"></i>
                         </button>
                         <div class="absolute left-0 w-56 bg-white rounded-md shadow-lg py-1 pt-2 z-20 hidden group-hover:block group-focus-within:block">
-                            <a href="service-virtual-assistance.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Virtual Assistance</a>
-                            <a href="service-software-development.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Software Development</a>
-                            <a href="service-bpo.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Custom BPO Services</a>
+                            <a href="/service-virtual-assistance" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Virtual Assistance</a>
+                            <a href="/service-software-development" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Software Development</a>
+                            <a href="/service-bpo" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">Custom BPO Services</a>
                         </div>
                     </div>
-                    <a href="careers.html" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
-                    <a href="index.html#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
-                    <a href="contact.html" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                    <a href="/careers" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Careers</a>
+                    <a href="/#blog" class="text-gray-700 hover:text-blue-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md">Blog</a>
+                    <a href="/contact" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
                 </div>
                 <div class="md:hidden flex items-center">
                     <button class="outline-none mobile-menu-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white rounded-md" id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
@@ -236,8 +235,8 @@
             </div>
             <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 bg-white/30 backdrop-blur-lg shadow-lg z-50" id="mobile-menu">
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col border-t">
-                    <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
-                    <a href="about.html" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
+                    <a href="/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Home</a>
+                    <a href="/about" class="px-3 py-2 rounded-md text-sm font-semibold text-blue-600 bg-blue-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">About Us</a>
                      <!-- Mobile Services Dropdown -->
                     <div>
                         <button class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50" onclick="toggleMobileServicesDropdown(event)">
@@ -245,14 +244,14 @@
                             <i class="fas fa-chevron-down ml-2 text-xs"></i>
                         </button>
                         <div id="mobile-services-dropdown" class="hidden pl-4 border-l border-gray-200 ml-3">
-                            <a href="service-virtual-assistance.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Virtual Assistance</a>
-                            <a href="service-software-development.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Software Development</a>
-                            <a href="service-bpo.html" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Custom BPO Services</a>
+                            <a href="/service-virtual-assistance" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Virtual Assistance</a>
+                            <a href="/service-software-development" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Software Development</a>
+                            <a href="/service-bpo" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Custom BPO Services</a>
                         </div>
                     </div>
-                    <a href="careers.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
-                    <a href="index.html#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
-                    <a href="contact.html" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
+                    <a href="/careers" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Careers</a>
+                    <a href="/#blog" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-50">Blog</a>
+                    <a href="/contact" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-blue-600">Contact Us</a>
                 </div>
             </div>
         </div>
@@ -435,7 +434,7 @@
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
                 <div class="md:col-span-2">
-                    <a href="index.html" class="flex items-center mb-6 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-lg">
+                    <a href="/" class="flex items-center mb-6 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-lg">
                     <img src="Solutions_darkmode.png" alt="Bridgee Solutions Logo" class="h-8 w-auto mr-2">
                     <span class="text-xl font-semibold">Bridgee <span class="text-blue-400">Solutions</span></span>
                     </a>
@@ -451,25 +450,25 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Company</h3>
                     <ul class="space-y-2">
-                        <li><a href="about.html" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">About Us</a></li>
-                        <li><a href="careers.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Careers</a></li>
-                        <li><a href="index.html#blog" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Blog</a></li>
-                        <li><a href="contact.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Contact</a></li>
+                        <li><a href="/about" class="text-blue-400 font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">About Us</a></li>
+                        <li><a href="/careers" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Careers</a></li>
+                        <li><a href="/#blog" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Blog</a></li>
+                        <li><a href="/contact" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Contact</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Services</h3>
                     <ul class="space-y-2">
-                        <li><a href="service-virtual-assistance.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
-                        <li><a href="service-software-development.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
-                        <li><a href="service-bpo.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom BPO Services</a></li>
+                        <li><a href="/service-virtual-assistance" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Virtual Assistants</a></li>
+                        <li><a href="/service-software-development" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Software Development</a></li>
+                        <li><a href="/service-bpo" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Custom BPO Services</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Legal</h3>
                     <ul class="space-y-2">
-                        <li><a href="privacy-policy.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
-                        <li><a href="terms-of-service.html" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
+                        <li><a href="/privacy-policy" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Privacy Policy</a></li>
+                        <li><a href="/terms-of-service" class="text-gray-300 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 focus:ring-offset-gray-900 rounded-md">Terms of Service</a></li>
 
                     </ul>
                 </div>

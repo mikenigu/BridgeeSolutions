@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /admin_blog_form.html
+Disallow: /admin_blog_list.html
+Disallow: /admin_dashboard.html
+Disallow: /admin_hr_application_detail.html
+Disallow: /admin_hr_applications_list.html
+Disallow: /login.html
+Disallow: /uploaded_images/
+Allow: /
+
+Sitemap: https://www.bridgeesolutions.com/sitemap.xml

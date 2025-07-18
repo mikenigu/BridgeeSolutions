@@ -18,7 +18,6 @@ from collections import Counter # Import Counter for status breakdown
 load_dotenv()
 
 app = Flask(__name__)
-application = app
 app.jinja_env.add_extension('jinja2.ext.do') # Enable do extension
 CORS(app) # Initialize CORS globally
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'a_default_fallback_secret_key_for_development') # Added for Flask-Login session management
@@ -163,7 +162,7 @@ def escape_markdown_v2(text: str) -> str:
 async def send_telegram_notification(applicant_data, cv_filepath):
     bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
 
-    message_text = f"ðŸ“¢ New Job Application Received!\n\n" # Corrected: Removed backslash before !
+    message_text = f"📢 New Job Application Received!\n\n" # Corrected: Removed backslash before !
 
     # Escape MarkdownV2 characters for user-provided fields
     job_title = escape_markdown_v2(applicant_data.get('job_title', 'N/A'))
@@ -187,7 +186,7 @@ async def send_telegram_notification(applicant_data, cv_filepath):
     if applicant_data.get('cover_letter'): # Check if cover_letter exists
         message_text += f"\n**Cover Letter Snippet:**\n{cover_letter_snippet}\n"
 
-    message_text += f"\n\nðŸ“„ CV attached\\." # Escape the final period as well
+    message_text += f"\n\n📄 CV attached\\." # Escape the final period as well
 
     try:
         # Send the text message (using MarkdownV2 for bolding)
@@ -237,6 +236,17 @@ def load_blog_posts():
         return []
 
 # --- Routes ---
+
+@app.route('/<path:filename>')
+@cross_origin() # For consistency
+def serve_static_files(filename):
+    # Basic security: prevent access to .py files or other sensitive files
+    # This is a simple check; more robust validation might be needed for production.
+    if filename.endswith('.py') or filename == '.env' or '.git' in filename:
+        return abort(404)
+    return send_from_directory('.', filename)
+
+
 @app.route('/')
 def index():
     return render_template('Index.html')
@@ -300,6 +310,7 @@ def service_virtual_assistance():
 @app.route('/terms-of-service')
 def terms_of_service():
     return render_template('terms-of-service.html')
+    
 
 @app.route('/api/blog-posts', methods=['GET'])
 @cross_origin()
@@ -688,7 +699,7 @@ def login():
 def logout():
     logout_user()
     flash('You have been logged out.', 'success')
-    return redirect(url_for('serve_index'))
+    return redirect(url_for('index'))
 
 # --- Admin Panel Routes ---
 @app.route('/admin/blog')
